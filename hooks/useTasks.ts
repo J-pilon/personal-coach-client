@@ -61,6 +61,22 @@ export const useIncompleteTasks = () => {
   });
 };
 
+export const useTask = (id: number) => {
+  return useQuery({
+    queryKey: ['task', id],
+    queryFn: async () => {
+      const response = await tasksApi.getTask(id);
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      return response.data;
+    },
+    enabled: id > 0,
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    retry: 2,
+  });
+};
+
 // Mutation hooks
 export const useCreateTask = () => {
   const queryClient = useQueryClient();
@@ -104,6 +120,7 @@ export const useDeleteTask = () => {
   return useMutation({
     mutationFn: async (id: number) => {
       const response = await tasksApi.deleteTask(id);
+
       if (response.error) {
         throw new Error(response.error);
       }

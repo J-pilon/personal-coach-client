@@ -9,6 +9,8 @@ export interface Task {
   description?: string;
   completed: boolean;
   action_category: 'do' | 'defer' | 'delegate';
+  created_at?: string;
+  updated_at?: string;
 }
 
 // Create task parameters (without id and timestamps)
@@ -49,11 +51,30 @@ async function apiRequest<T>(
       ...options,
     });
 
-    const data = await response.json();
+    // Check if response has content and is JSON
+    const contentType = response.headers.get('content-type');
+    const hasContent = contentType && contentType.includes('application/json');
+    
+    let data: any = undefined;
+    
+    if (hasContent) {
+      try {
+        data = await response.json();
+        console.log("**** RESPONSE: ", data);
+      } catch (parseError) {
+        console.log("**** JSON PARSE ERROR: ", parseError);
+        return {
+          error: 'Invalid JSON response from server',
+          status: response.status,
+        };
+      }
+    } else {
+      console.log("**** RESPONSE: No content (status:", response.status, ")");
+    }
 
     if (!response.ok) {
       return {
-        error: data.error || `HTTP ${response.status}: ${response.statusText}`,
+        error: data?.error || `HTTP ${response.status}: ${response.statusText}`,
         status: response.status,
       };
     }

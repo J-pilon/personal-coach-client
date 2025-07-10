@@ -3,6 +3,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, View, ActivityIndicator, Alert } from 'react-native';
 import { useTasks, useToggleTaskCompletion } from '@/hooks/useTasks';
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
   const { data: tasks = [], isLoading, error, refetch } = useTasks();
@@ -113,6 +114,14 @@ export default function HomeScreen() {
                         <Text className={`${task.completed ? 'text-[#708090]' : 'text-[#E6FAFF]'} text-[15px] tracking-tight`}>{task.description}</Text>
                       ) : null}
                     </View>
+
+                    {/* Edit Icon */}
+                    <Pressable
+                      onPress={() => router.push(`/taskDetail/${task.id}`)}
+                      className="p-2 ml-2"
+                    >
+                      <FontAwesome name="edit" size={16} color="#708090" />
+                    </Pressable>
                   </View>
                 ))}
               </View>
