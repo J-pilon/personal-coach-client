@@ -93,17 +93,21 @@ export default function AddTaskScreen() {
 
         <View className="flex flex-row gap-2 justify-end">
           <Pressable
+            testID="cancel-button"
             onPress={() => router.back()}
             className="px-6 py-3 rounded-xl border border-[#708090]"
+            accessibilityState={{ disabled: createTaskMutation.isPending }}
             disabled={createTaskMutation.isPending}
           >
             <Text className="font-semibold text-[#E6FAFF] text-lg">Cancel</Text>
           </Pressable>
 
           <Pressable
+            testID="add-button"
             onPress={handleAdd}
             className="px-6 py-3 rounded-xl bg-[#33CFFF] shadow-md flex-row items-center"
             style={{ opacity: (!taskDetails.name.trim() || createTaskMutation.isPending) ? 0.5 : 1 }}
+            accessibilityState={{ disabled: !taskDetails.name.trim() || createTaskMutation.isPending }}
             disabled={!taskDetails.name.trim() || createTaskMutation.isPending}
           >
             {createTaskMutation.isPending ? (

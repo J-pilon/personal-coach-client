@@ -99,6 +99,7 @@ export default function HomeScreen() {
                 {items.map((task) => (
                   <View key={task.id} className="flex flex-row items-center mb-5">
                     <Pressable
+                      testID="task-checkbox"
                       onPress={() => handleToggle(task.id!, !task.completed)}
                       className={`h-7 w-7 rounded-full border-2 mr-4 ${task.completed ? 'border-[#33CFFF] bg-[#33CFFF]' : 'border-[#708090] bg-[#021A40]'}`}
                       style={{ alignItems: 'center', justifyContent: 'center', shadowColor: task.completed ? '#33CFFF' : 'transparent', shadowOpacity: task.completed ? 0.12 : 0, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
@@ -117,6 +118,7 @@ export default function HomeScreen() {
 
                     {/* Edit Icon */}
                     <Pressable
+                      testID="task-edit-icon"
                       onPress={() => router.push(`/taskDetail/${task.id}`)}
                       className="p-2 ml-2"
                     >
