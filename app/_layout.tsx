@@ -36,6 +36,7 @@ export default function RootLayout() {
         <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />
