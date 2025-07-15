@@ -40,7 +40,7 @@ export default function SmartGoalsScreen() {
   if (isOnboardingIncomplete) {
     return (
       <SafeAreaView className="flex-1 bg-[#021A40]">
-        <View className="flex-1 p-6 justify-center">
+        <View className="flex-1 justify-center p-6">
           <View className="items-center mb-8">
             <View className="bg-[#33CFFF] rounded-full p-6 mb-6 shadow-lg">
               <Ionicons name="flag" size={80} color="#021A40" />
@@ -133,7 +133,7 @@ export default function SmartGoalsScreen() {
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-semibold text-[#F1F5F9] flex-1 mr-4">{goal.title}</Text>
         <View className={`px-3 py-1 rounded-full ${goal.completed ? 'bg-green-500' : 'bg-orange-500'}`}>
-          <Text className="text-white font-semibold text-sm">
+          <Text className="text-sm font-semibold text-white">
             {goal.completed ? 'Complete' : 'In Progress'}
           </Text>
         </View>
