@@ -1,15 +1,25 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Platform } from 'react-native';
+import { router } from 'expo-router';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { AntDesign } from '@expo/vector-icons';
+import { useProfile } from '@/hooks/useUser';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { data: profile, isLoading } = useProfile();
+
+  useEffect(() => {
+    // Check onboarding status when profile loads
+    if (!isLoading && profile && profile.onboarding_status !== 'complete') {
+      router.replace('/onboarding');
+    }
+  }, [profile, isLoading]);
 
   return (
     <Tabs
@@ -40,10 +50,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="menu"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Menu',
+          tabBarIcon: ({ color }) => <Ionicons name="menu" size={28} color={color} />,
         }}
       />
     </Tabs>
