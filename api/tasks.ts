@@ -9,6 +9,7 @@ export interface Task {
   description?: string;
   completed: boolean;
   action_category: 'do' | 'defer' | 'delegate';
+  profile_id: number;
   created_at?: string;
   updated_at?: string;
 }
