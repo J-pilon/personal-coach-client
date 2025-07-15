@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Platform } from 'react-native';
+import { router } from 'expo-router';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
@@ -10,6 +11,14 @@ import { AntDesign } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { data: profile, isLoading } = useProfile();
+
+  useEffect(() => {
+    // Check onboarding status when profile loads
+    if (!isLoading && profile && profile.onboarding_status !== 'complete') {
+      router.replace('/onboarding');
+    }
+  }, [profile, isLoading]);
 
   return (
     <Tabs
