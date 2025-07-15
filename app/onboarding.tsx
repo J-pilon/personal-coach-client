@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -27,136 +27,66 @@ export default function OnboardingScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.content}>
+    <SafeAreaView className="flex-1 bg-[#021A40]">
+      <View className="flex-1 justify-center p-5">
         {/* Header */}
-        <View style={styles.header}>
+        <View className="items-center mb-10">
           <Ionicons name="rocket" size={80} color={colors.tint} />
-          <Text style={[styles.title, { color: colors.text }]}>
+          <Text className="text-[32px] font-bold text-center text-[#F1F5F9] mt-5 mb-2.5">
             Welcome to Personal Coach
           </Text>
-          <Text style={[styles.subtitle, { color: colors.text }]}>
+          <Text className="text-base text-center text-[#E6FAFF] opacity-70 leading-6">
             Let&apos;s create your personalized SMART goals to achieve success
           </Text>
         </View>
 
         {/* Features */}
-        <View style={styles.featuresContainer}>
-          <View style={styles.feature}>
+        <View className="mb-10">
+          <View className="flex-row items-center mb-4">
             <Ionicons name="checkmark-circle" size={24} color={colors.tint} />
-            <Text style={[styles.featureText, { color: colors.text }]}>
+            <Text className="text-base text-[#F1F5F9] ml-3">
               Set clear, measurable goals
             </Text>
           </View>
-          <View style={styles.feature}>
+          <View className="flex-row items-center mb-4">
             <Ionicons name="checkmark-circle" size={24} color={colors.tint} />
-            <Text style={[styles.featureText, { color: colors.text }]}>
+            <Text className="text-base text-[#F1F5F9] ml-3">
               Track your progress over time
             </Text>
           </View>
-          <View style={styles.feature}>
+          <View className="flex-row items-center mb-4">
             <Ionicons name="checkmark-circle" size={24} color={colors.tint} />
-            <Text style={[styles.featureText, { color: colors.text }]}>
+            <Text className="text-base text-[#F1F5F9] ml-3">
               Break down goals into actionable tasks
             </Text>
           </View>
-          <View style={styles.feature}>
+          <View className="flex-row items-center mb-4">
             <Ionicons name="checkmark-circle" size={24} color={colors.tint} />
-            <Text style={[styles.featureText, { color: colors.text }]}>
+            <Text className="text-base text-[#F1F5F9] ml-3">
               Stay motivated with regular check-ins
             </Text>
           </View>
         </View>
 
         {/* SMART Goals Info */}
-        <View style={styles.smartInfoContainer}>
-          <Text style={[styles.smartTitle, { color: colors.text }]}>
+        <View className="bg-[#13203a] p-5 rounded-xl mb-10 border border-[#33CFFF] shadow-md">
+          <Text className="text-lg font-semibold text-[#F1F5F9] mb-2">
             What are SMART Goals?
           </Text>
-          <Text style={[styles.smartDescription, { color: colors.text }]}>
+          <Text className="text-sm text-[#E6FAFF] leading-5 opacity-80">
             SMART goals are Specific, Measurable, Achievable, Relevant, and Time-bound objectives that help you focus your efforts and increase your chances of achieving what you want.
           </Text>
         </View>
 
         {/* Start Button */}
         <TouchableOpacity
-          style={[styles.startButton, { backgroundColor: colors.tint }]}
+          className="flex-row items-center justify-center py-4 px-6 rounded-xl bg-[#33CFFF] shadow-md"
           onPress={handleStartWizard}
         >
-          <Text style={styles.startButtonText}>Start Creating Goals</Text>
-          <Ionicons name="arrow-forward" size={20} color="white" />
+          <Text className="text-lg font-semibold text-[#021A40] mr-2">Start Creating Goals</Text>
+          <Ionicons name="arrow-forward" size={20} color="#021A40" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-    opacity: 0.7,
-    lineHeight: 24,
-  },
-  featuresContainer: {
-    marginBottom: 40,
-  },
-  feature: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  featureText: {
-    fontSize: 16,
-    marginLeft: 12,
-  },
-  smartInfoContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 40,
-  },
-  smartTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  smartDescription: {
-    fontSize: 14,
-    lineHeight: 20,
-    opacity: 0.8,
-  },
-  startButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-  },
-  startButtonText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: 'white',
-    marginRight: 8,
-  },
-}); 
+} 
