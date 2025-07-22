@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import LinearGradient from '@/components/ui/LinearGradient';
 
 interface MenuItem {
   id: string;
@@ -58,30 +59,33 @@ export default function MenuScreen() {
   ];
 
   return (
-    <View className="flex-1 bg-[#021A40] p-6">
-      <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-8 tracking-wide">Menu</Text>
+    <LinearGradient>
+      <View className="flex-1 p-6">
+        <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-8 tracking-wide">Menu</Text>
 
-      <View className="space-y-4">
-        {menuItems.map((item) => (
-          <Pressable
-            key={item.id}
-            className="bg-[#13203a] rounded-2xl p-5 shadow-lg border border-[#33CFFF]"
-            onPress={item.onPress}
-          >
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center flex-1">
-                <View className="bg-[#33CFFF] rounded-xl p-3 mr-4">
-                  <Ionicons name={item.icon} size={24} color="#021A40" />
+        <View className="gap-4">
+          {menuItems.map((item) => (
+            <Pressable
+              key={item.id}
+              className="bg-[#2B42B6] rounded-2xl p-5 shadow-lg border"
+              style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
+              onPress={item.onPress}
+            >
+              <View className="flex-row justify-between items-center">
+                <View className="flex-row flex-1 items-center">
+                  <View className="bg-[#154FA6] rounded-xl p-3 mr-4">
+                    <Ionicons name={item.icon} size={24} color="#021A40" />
+                  </View>
+                  <Text className="text-[#F1F5F9] text-lg font-semibold">
+                    {item.title}
+                  </Text>
                 </View>
-                <Text className="text-[#F1F5F9] text-lg font-semibold">
-                  {item.title}
-                </Text>
+                <Ionicons name="chevron-forward" size={20} color="#E6FAFF" />
               </View>
-              <Ionicons name="chevron-forward" size={20} color="#E6FAFF" />
-            </View>
-          </Pressable>
-        ))}
+            </Pressable>
+          ))}
+        </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 } 

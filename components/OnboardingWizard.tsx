@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useCreateUser } from '@/hooks/useUser';
 import { useCreateMultipleSmartGoals } from '@/hooks/useSmartGoals';
 import { router } from 'expo-router';
+import LinearGradient from '@/components/ui/LinearGradient';
 
 interface SMARTGoalData {
   title: string;
@@ -138,12 +139,12 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
             styles.progressFill,
             {
               width: `${((currentStep + 1) / timeframes.length) * 100}%`,
-              backgroundColor: colors.tint
+              backgroundColor: '#33CFFF'
             }
           ]}
         />
       </View>
-      <Text style={[styles.progressText, { color: colors.text }]}>
+      <Text style={[styles.progressText, { color: '#F1F5F9' }]}>
         Step {currentStep + 1} of {timeframes.length}
       </Text>
     </View>
@@ -151,23 +152,23 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
   const renderQuestion = (question: any) => (
     <View key={question.key} style={styles.questionContainer}>
-      <Text style={[styles.questionLabel, { color: colors.text }]}>
+      <Text style={[styles.questionLabel, { color: '#F1F5F9' }]}>
         {question.label}
       </Text>
-      <Text style={[styles.questionDescription, { color: colors.text }]}>
+      <Text style={[styles.questionDescription, { color: '#E6FAFF' }]}>
         {question.description}
       </Text>
       <TextInput
         style={[
           styles.textInput,
           {
-            backgroundColor: colors.background,
-            borderColor: '#e0e0e0',
-            color: colors.text
+            backgroundColor: '#13203a',
+            borderColor: '#33CFFF',
+            color: '#F1F5F9'
           }
         ]}
         placeholder={question.placeholder}
-        placeholderTextColor="#999"
+        placeholderTextColor="#708090"
         value={currentGoal[question.key as keyof SMARTGoalData] || ''}
         onChangeText={(text) => handleInputChange(question.key, text)}
         multiline
@@ -177,56 +178,58 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.text }]}>
-            Create Your {currentTimeframe.label} Goal
-          </Text>
-          <Text style={[styles.subtitle, { color: colors.text }]}>
-            {currentTimeframe.description}
-          </Text>
-        </View>
-
-        {/* Progress Bar */}
-        {renderProgressBar()}
-
-        {/* Questions */}
-        <View style={styles.questionsContainer}>
-          {questions.map(renderQuestion)}
-        </View>
-
-        {/* Navigation Buttons */}
-        <View style={styles.navigationContainer}>
-          {currentStep > 0 && (
-            <TouchableOpacity
-              style={[styles.backButton, { borderColor: colors.tint }]}
-              onPress={handleBack}
-            >
-              <Ionicons name="arrow-back" size={20} color={colors.tint} />
-              <Text style={[styles.backButtonText, { color: colors.tint }]}>Back</Text>
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity
-            style={[
-              styles.nextButton,
-              {
-                backgroundColor: colors.tint,
-                marginLeft: currentStep > 0 ? 10 : 0
-              }
-            ]}
-            onPress={handleNext}
-          >
-            <Text style={styles.nextButtonText}>
-              {currentStep === timeframes.length - 1 ? 'Complete' : 'Next'}
+    <LinearGradient>
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: '#F1F5F9' }]}>
+              Create Your {currentTimeframe.label} Goal
             </Text>
-            <Ionicons name="arrow-forward" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            <Text style={[styles.subtitle, { color: '#E6FAFF' }]}>
+              {currentTimeframe.description}
+            </Text>
+          </View>
+
+          {/* Progress Bar */}
+          {renderProgressBar()}
+
+          {/* Questions */}
+          <View style={styles.questionsContainer}>
+            {questions.map(renderQuestion)}
+          </View>
+
+          {/* Navigation Buttons */}
+          <View style={styles.navigationContainer}>
+            {currentStep > 0 && (
+              <TouchableOpacity
+                style={[styles.backButton, { borderColor: '#33CFFF' }]}
+                onPress={handleBack}
+              >
+                <Ionicons name="arrow-back" size={20} color="#33CFFF" />
+                <Text style={[styles.backButtonText, { color: '#33CFFF' }]}>Back</Text>
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity
+              style={[
+                styles.nextButton,
+                {
+                  backgroundColor: '#33CFFF',
+                  marginLeft: currentStep > 0 ? 10 : 0
+                }
+              ]}
+              onPress={handleNext}
+            >
+              <Text style={styles.nextButtonText}>
+                {currentStep === timeframes.length - 1 ? 'Complete' : 'Next'}
+              </Text>
+              <Ionicons name="arrow-forward" size={20} color="#021A40" />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -258,7 +261,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 6,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#13203a',
     borderRadius: 3,
     marginBottom: 8,
   },
@@ -328,7 +331,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: 'white',
+    color: '#021A40',
     marginRight: 8,
   },
 }); 
