@@ -9,6 +9,7 @@ export interface Task {
   description?: string;
   completed: boolean;
   action_category: 'do' | 'defer' | 'delegate';
+  priority?: number;
   profile_id: number;
   created_at?: string;
   updated_at?: string;
@@ -19,6 +20,7 @@ export interface CreateTaskParams {
   title: string;
   description?: string;
   completed?: boolean;
+  priority?: number;
   action_category: 'do' | 'defer' | 'delegate';
 }
 
@@ -27,6 +29,7 @@ export interface UpdateTaskParams {
   title?: string;
   description?: string;
   completed?: boolean;
+  priority?: number;
   action_category?: 'do' | 'defer' | 'delegate';
 }
 
@@ -61,7 +64,6 @@ async function apiRequest<T>(
     if (hasContent) {
       try {
         data = await response.json();
-        console.log("**** RESPONSE: ", data);
       } catch (parseError) {
         console.log("**** JSON PARSE ERROR: ", parseError);
         return {

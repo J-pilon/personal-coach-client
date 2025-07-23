@@ -78,7 +78,7 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Loading...')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-loading-text')).toBeTruthy();
   });
 
   it('renders onboarding prompt when onboarding is incomplete', () => {
@@ -105,11 +105,11 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Create Your SMART Goals')).toBeTruthy();
-    expect(screen.getByText('Start Creating Goals')).toBeTruthy();
-    expect(screen.getByText('Set goals for 1 month, 3 months, and 6 months')).toBeTruthy();
-    expect(screen.getByText('Follow the proven SMART framework')).toBeTruthy();
-    expect(screen.getByText('Track your progress over time')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-create-title')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-start-text')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-feature-timeframes')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-feature-framework')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-feature-progress')).toBeTruthy();
   });
 
   it('shows onboarding wizard when start button is pressed', () => {
@@ -136,7 +136,7 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    const startButton = screen.getByText('Start Creating Goals');
+    const startButton = screen.getByTestId('smart-goals-start-button');
     fireEvent.press(startButton);
 
     // Instead of getByTestId, check for the wizard's button
@@ -167,7 +167,7 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Loading goals...')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-loading-goals-text')).toBeTruthy();
   });
 
   it('renders error state when goals fail to load', () => {
@@ -196,8 +196,8 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    const errorElements = screen.getAllByText('Failed to load goals');
-    expect(errorElements.length).toBeGreaterThan(1);
+    expect(screen.getByTestId('smart-goals-error-title')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-error-message')).toBeTruthy();
   });
 
   it('renders goals correctly when onboarding is complete', () => {
@@ -259,13 +259,13 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('My SMART Goals')).toBeTruthy();
-    expect(screen.getByText('Track your progress towards achieving your goals')).toBeTruthy();
-    expect(screen.getByText('3 Months Goals')).toBeTruthy();
-    expect(screen.getByText('6 Months Goals')).toBeTruthy();
-    expect(screen.getByText('Learn React Native')).toBeTruthy();
-    expect(screen.getByText('Get Certified')).toBeTruthy();
-    expect(screen.getByText('Add New Goal')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-title')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-subtitle')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-timeframe-3_months')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-timeframe-6_months')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-goal-title-1')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-goal-title-2')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-add-text')).toBeTruthy();
   });
 
   it('renders empty state for timeframe with no goals', () => {
@@ -311,8 +311,8 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('No 1 month goals yet.')).toBeTruthy();
-    expect(screen.getByText('No 6 months goals yet.')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-empty-1_month')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-empty-6_months')).toBeTruthy();
   });
 
   it('handles add new goal button press', () => {
@@ -341,7 +341,7 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    const addButton = screen.getByText('Add New Goal');
+    const addButton = screen.getByTestId('smart-goals-add-button');
     fireEvent.press(addButton);
 
     expect(Alert.alert).toHaveBeenCalledWith('Add Goal', 'Add goal functionality coming soon!');
@@ -372,7 +372,7 @@ describe('SmartGoalsScreen', () => {
     );
 
     // Start onboarding
-    const startButton = screen.getByText('Start Creating Goals');
+    const startButton = screen.getByTestId('smart-goals-start-button');
     fireEvent.press(startButton);
 
     // Complete onboarding (use click for the mock)
@@ -380,6 +380,6 @@ describe('SmartGoalsScreen', () => {
     fireEvent.press(completeButton);
 
     // Should return to the main screen
-    expect(screen.getByText('Create Your SMART Goals')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-create-title')).toBeTruthy();
   });
 }); 

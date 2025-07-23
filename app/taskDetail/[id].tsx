@@ -14,7 +14,8 @@ export default function TaskDetailScreen() {
   const [taskDetails, setTaskDetails] = useState({
     title: '',
     description: '',
-    action_category: 'do' as 'do' | 'defer' | 'delegate'
+    action_category: 'do' as 'do' | 'defer' | 'delegate',
+    priority: 1
   });
 
   const updateTaskMutation = useUpdateTask();
@@ -30,6 +31,7 @@ export default function TaskDetailScreen() {
         title: task.title,
         description: task.description || '',
         action_category: task.action_category,
+        priority: task.priority || 1,
       });
     }
   }, [task]);
@@ -44,6 +46,7 @@ export default function TaskDetailScreen() {
       title: taskDetails.title.trim(),
       description: taskDetails.description.trim() || undefined,
       action_category: taskDetails.action_category,
+      priority: taskDetails.priority
     };
 
     updateTaskMutation.mutate(
@@ -88,11 +91,15 @@ export default function TaskDetailScreen() {
     setTaskDetails(prev => ({ ...prev, action_category: category }));
   };
 
+  const handlePriorityChange = (priority: number) => {
+    setTaskDetails(prev => ({ ...prev, priority: priority }));
+  };
+
   if (isLoading) {
     return (
       <LinearGradient>
         <ActivityIndicator size="large" color="#33CFFF" />
-        <Text className="text-[#F1F5F9] mt-4 text-lg">Loading task...</Text>
+        <Text className="text-[#F1F5F9] mt-4 text-lg" testID="task-detail-loading-text">Loading task...</Text>
       </LinearGradient>
     );
   }
@@ -100,10 +107,10 @@ export default function TaskDetailScreen() {
   if (error || !task) {
     return (
       <LinearGradient>
-        <Text className="text-[#F1F5F9] text-lg text-center mb-4">
+        <Text className="text-[#F1F5F9] text-lg text-center mb-4" testID="task-detail-error-title">
           Failed to load task
         </Text>
-        <Text className="text-[#E6FAFF] text-center mb-6">
+        <Text className="text-[#E6FAFF] text-center mb-6" testID="task-detail-error-message">
           {error instanceof Error ? error.message : 'Task not found'}
         </Text>
         <View className="flex-row gap-3">
@@ -143,18 +150,20 @@ export default function TaskDetailScreen() {
                     onPress={() => setIsEditing(false)}
                     className="px-4 py-2 rounded-lg border border-[#708090]"
                     disabled={updateTaskMutation.isPending}
+                    testID="task-detail-cancel-button"
                   >
-                    <Text className="text-[#E6FAFF] font-medium">Cancel</Text>
+                    <Text className="text-[#E6FAFF] font-medium" testID="task-detail-cancel-text">Cancel</Text>
                   </Pressable>
                   <Pressable
                     onPress={handleSave}
                     className="px-4 py-2 rounded-lg bg-[#33CFFF] flex-row items-center"
                     disabled={updateTaskMutation.isPending}
+                    testID="task-detail-save-button"
                   >
                     {updateTaskMutation.isPending && (
                       <ActivityIndicator size="small" color="#021A40" className="mr-2" />
                     )}
-                    <Text className="text-[#021A40] font-medium">
+                    <Text className="text-[#021A40] font-medium" testID="task-detail-save-text">
                       {updateTaskMutation.isPending ? 'Saving...' : 'Save'}
                     </Text>
                   </Pressable>
@@ -164,15 +173,17 @@ export default function TaskDetailScreen() {
                   <Pressable
                     onPress={() => setIsEditing(true)}
                     className="px-4 py-2 rounded-lg border border-[#33CFFF]"
+                    testID="task-detail-edit-button"
                   >
-                    <Text className="text-[#33CFFF] font-medium">Edit</Text>
+                    <Text className="text-[#33CFFF] font-medium" testID="task-detail-edit-text">Edit</Text>
                   </Pressable>
                   <Pressable
                     onPress={handleDelete}
                     className="px-4 py-2 rounded-lg border border-red-500"
                     disabled={deleteTaskMutation.isPending}
+                    testID="task-detail-delete-button"
                   >
-                    <Text className="font-medium text-red-500">
+                    <Text className="font-medium text-red-500" testID="task-detail-delete-text">
                       {deleteTaskMutation.isPending ? 'Deleting...' : 'Delete'}
                     </Text>
                   </Pressable>
@@ -191,7 +202,7 @@ export default function TaskDetailScreen() {
                 <Text className={`font-medium ${task.completed
                   ? 'text-white'
                   : 'text-[#021A40]'
-                  }`}>
+                  }`} testID="task-detail-status">
                   {task.completed ? 'Completed' : 'Pending'}
                 </Text>
               </View>
@@ -208,10 +219,11 @@ export default function TaskDetailScreen() {
                 placeholder="Task title"
                 placeholderTextColor="#708090"
                 editable={!updateTaskMutation.isPending}
+                testID="task-detail-title-input"
               />
             ) : (
               <View className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]">
-                <Text className="text-[#F1F5F9] text-base">{task.title}</Text>
+                <Text className="text-[#F1F5F9] text-base" testID="task-detail-title">{task.title}</Text>
               </View>
             )}
           </View>
@@ -228,12 +240,64 @@ export default function TaskDetailScreen() {
                 multiline
                 numberOfLines={4}
                 editable={!updateTaskMutation.isPending}
+                testID="task-detail-description-input"
               />
             ) : (
               <View className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]">
-                <Text className="text-[#F1F5F9] text-base">
+                <Text className="text-[#F1F5F9] text-base" testID="task-detail-description">
                   {task.description || 'No description provided'}
                 </Text>
+              </View>
+            )}
+          </View>
+
+          <View className="mb-6">
+            <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Priority</Text>
+            {isEditing ? (
+              <View className="flex-row gap-2">
+                {[1, 2, 3, 4, 5].map((priority) => (
+                  <Pressable
+                    key={`priority-${priority}`}
+                    onPress={() => handlePriorityChange(priority)}
+                    className={`flex-1 py-3 px-4 rounded-lg border ${taskDetails.priority === priority
+                      ? 'border-[#33CFFF] bg-[#33CFFF]'
+                      : 'border-[#708090] bg-[#13203a]'
+                      }`}
+                    disabled={updateTaskMutation.isPending}
+                  >
+                    <Text
+                      className={`text-center font-medium capitalize ${taskDetails.priority === priority
+                        ? 'text-[#021A40]'
+                        : 'text-[#E6FAFF]'
+                        }`}
+                    >
+                      {priority}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            ) : (
+              <View className="flex-row gap-2 px-4 py-3">
+                {[1, 2, 3, 4, 5].map((priority) => (
+                  <Pressable
+                    key={`priority-${priority}`}
+                    onPress={() => handlePriorityChange(priority)}
+                    className={`flex-1 py-3 px-4 rounded-lg border ${taskDetails.priority === priority
+                      ? 'border-[#33CFFF] bg-[#33CFFF]'
+                      : 'border-[#708090] bg-[#13203a]'
+                      }`}
+                    disabled={updateTaskMutation.isPending}
+                  >
+                    <Text
+                      className={`text-center font-medium capitalize ${taskDetails.priority === priority
+                        ? 'text-[#021A40]'
+                        : 'text-[#E6FAFF]'
+                        }`}
+                    >
+                      {priority}
+                    </Text>
+                  </Pressable>
+                ))}
               </View>
             )}
           </View>

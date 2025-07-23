@@ -65,9 +65,9 @@ describe('AddTaskScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByPlaceholderText('Name')).toBeTruthy();
-    expect(screen.getByPlaceholderText('Description (optional)')).toBeTruthy();
-    expect(screen.getByText('Add')).toBeTruthy();
+    expect(screen.getByTestId('add-task-task-name-input')).toBeTruthy();
+    expect(screen.getByTestId('add-task-task-description-input')).toBeTruthy();
+    expect(screen.getByTestId('add-task-add-button-text')).toBeTruthy();
   });
 
   it('handles form submission with valid data', async () => {
@@ -88,8 +88,8 @@ describe('AddTaskScreen', () => {
       </QueryClientProvider>
     );
 
-    const titleInput = screen.getByPlaceholderText('Name');
-    const descriptionInput = screen.getByPlaceholderText('Description (optional)');
+    const titleInput = screen.getByTestId('add-task-task-name-input');
+    const descriptionInput = screen.getByTestId('add-task-task-description-input');
     const submitButton = screen.getByTestId('add-button');
 
     fireEvent.changeText(titleInput, 'Test Task');
@@ -103,6 +103,7 @@ describe('AddTaskScreen', () => {
           description: 'Test Description',
           action_category: 'do',
           completed: false,
+          priority: 1,
         },
         expect.objectContaining({
           onSuccess: expect.any(Function),
@@ -156,7 +157,7 @@ describe('AddTaskScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Adding...')).toBeTruthy();
+    expect(screen.getByTestId('add-task-add-button-text')).toBeTruthy();
     expect(screen.getByTestId('add-button').props.accessibilityState?.disabled).toBe(true);
   });
 
@@ -202,7 +203,7 @@ describe('AddTaskScreen', () => {
       </QueryClientProvider>
     );
 
-    const titleInput = screen.getByPlaceholderText('Name');
+    const titleInput = screen.getByTestId('add-task-task-name-input');
     const submitButton = screen.getByTestId('add-button');
 
     fireEvent.changeText(titleInput, 'Test Task');

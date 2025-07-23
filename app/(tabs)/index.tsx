@@ -43,7 +43,7 @@ export default function HomeScreen() {
     return (
       <LinearGradient>
         <ActivityIndicator size="large" color="#154FA6" />
-        <Text className="text-[#F1F5F9] mt-4 text-lg">Loading tasks...</Text>
+        <Text className="text-[#F1F5F9] mt-4 text-lg" testID="home-loading-text">Loading tasks...</Text>
       </LinearGradient>
     );
   }
@@ -51,10 +51,10 @@ export default function HomeScreen() {
   if (error) {
     return (
       <LinearGradient>
-        <Text className="text-[#F1F5F9] text-lg text-center mb-4">
+        <Text className="text-[#F1F5F9] text-lg text-center mb-4" testID="home-error-title">
           Failed to load tasks
         </Text>
-        <Text className="text-[#E6FAFF] text-center mb-6">
+        <Text className="text-[#E6FAFF] text-center mb-6" testID="home-error-message">
           {error instanceof Error ? error.message : 'Unknown error occurred'}
         </Text>
         <Pressable
@@ -74,8 +74,8 @@ export default function HomeScreen() {
 
         {tasks.length === 0 ? (
           <View className="flex-1 justify-center items-center py-20">
-            <Text className="text-[#E6FAFF] text-lg text-center mb-2">No tasks found</Text>
-            <Text className="text-[#708090] text-center">Create your first task to get started</Text>
+            <Text className="text-[#E6FAFF] text-lg text-center mb-2" testID="home-empty-title">No tasks found</Text>
+            <Text className="text-[#708090] text-center" testID="home-empty-message">Create your first task to get started</Text>
           </View>
         ) : (
           groupedTasks.map(({ category, items }) => (
@@ -112,9 +112,9 @@ export default function HomeScreen() {
                       </Pressable>
 
                       <View className="flex-1">
-                        <Text className={`font-bold ${task.completed ? 'text-[#708090]' : 'text-[#F1F5F9]'} text-[17px] mb-0.5 ${task.completed ? 'line-through' : ''} tracking-tight`}>{task.title}</Text>
+                        <Text className={`font-bold ${task.completed ? 'text-[#708090]' : 'text-[#F1F5F9]'} text-[17px] mb-0.5 ${task.completed ? 'line-through' : ''} tracking-tight`} testID={`home-task-title-${task.id}`}>{task.title}</Text>
                         {task.description ? (
-                          <Text className={`${task.completed ? 'text-[#708090]' : 'text-[#E6FAFF]'} text-[15px] tracking-tight`}>{task.description}</Text>
+                          <Text className={`${task.completed ? 'text-[#708090]' : 'text-[#E6FAFF]'} text-[15px] tracking-tight`} testID={`home-task-description-${task.id}`}>{task.description}</Text>
                         ) : null}
                       </View>
 

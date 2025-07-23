@@ -22,7 +22,7 @@ export default function MenuScreen() {
       },
     },
     {
-      id: 'smart goals',
+      id: 'smart-goals',
       title: 'Goals',
       icon: 'star-outline',
       onPress: () => {
@@ -61,7 +61,7 @@ export default function MenuScreen() {
   return (
     <LinearGradient>
       <View className="flex-1 p-6">
-        <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-8 tracking-wide">Menu</Text>
+        <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-8 tracking-wide" testID="menu-title">Menu</Text>
 
         <View className="gap-4">
           {menuItems.map((item) => (
@@ -70,13 +70,14 @@ export default function MenuScreen() {
               className="bg-[#2B42B6] rounded-2xl p-5 shadow-lg border"
               style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
               onPress={item.onPress}
+              testID={`menu-item-${item.id}`}
             >
               <View className="flex-row justify-between items-center">
                 <View className="flex-row flex-1 items-center">
                   <View className="bg-[#154FA6] rounded-xl p-3 mr-4">
                     <Ionicons name={item.icon} size={24} color="#021A40" />
                   </View>
-                  <Text className="text-[#F1F5F9] text-lg font-semibold">
+                  <Text className="text-[#F1F5F9] text-lg font-semibold" testID={`menu-item-text-${item.id}`}>
                     {item.title}
                   </Text>
                 </View>

@@ -65,7 +65,7 @@ describe('HomeScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Loading tasks...')).toBeTruthy();
+    expect(screen.getByTestId('home-loading-text')).toBeTruthy();
   });
 
   it('renders error state', () => {
@@ -86,8 +86,8 @@ describe('HomeScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Failed to load tasks')).toBeTruthy();
-    expect(screen.getByText('Failed to fetch tasks')).toBeTruthy();
+    expect(screen.getByTestId('home-error-title')).toBeTruthy();
+    expect(screen.getByTestId('home-error-message')).toBeTruthy();
   });
 
   it('renders empty state when no tasks', () => {
@@ -108,8 +108,8 @@ describe('HomeScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('No tasks found')).toBeTruthy();
-    expect(screen.getByText('Create your first task to get started')).toBeTruthy();
+    expect(screen.getByTestId('home-empty-title')).toBeTruthy();
+    expect(screen.getByTestId('home-empty-message')).toBeTruthy();
   });
 
   it('renders tasks list', () => {
@@ -136,10 +136,10 @@ describe('HomeScreen', () => {
     );
 
     // Only 'do' category is open by default, so only Task 1 should be visible
-    expect(screen.getByText('Task 1')).toBeTruthy();
-    expect(screen.getByText('Description 1')).toBeTruthy();
+    expect(screen.getByTestId('home-task-title-1')).toBeTruthy();
+    expect(screen.getByTestId('home-task-description-1')).toBeTruthy();
     // Task 2 is in 'defer' category which is closed by default
-    expect(screen.queryByText('Task 2')).toBeNull();
+    expect(screen.queryByTestId('home-task-title-2')).toBeNull();
   });
 
   it('handles task completion', async () => {

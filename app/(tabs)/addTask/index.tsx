@@ -9,6 +9,7 @@ export default function AddTaskScreen() {
   const [taskDetails, setTaskDetails] = useState({
     name: '',
     description: '',
+    priority: 1,
     action_category: 'do' as 'do' | 'defer' | 'delegate'
   });
 
@@ -19,6 +20,7 @@ export default function AddTaskScreen() {
       const newTask: CreateTaskParams = {
         title: taskDetails.name.trim(),
         description: taskDetails.description.trim() || undefined,
+        priority: taskDetails.priority,
         action_category: taskDetails.action_category,
         completed: false,
       };
@@ -39,6 +41,10 @@ export default function AddTaskScreen() {
     setTaskDetails(prev => ({ ...prev, action_category: category }));
   };
 
+  const handlePriorityChange = (priority: number) => {
+    setTaskDetails(prev => ({ ...prev, priority: priority }));
+  };
+
   return (
     <LinearGradient>
       <View className="justify-center items-center mt-8">
@@ -54,6 +60,7 @@ export default function AddTaskScreen() {
             onChangeText={(e) => setTaskDetails(prev => ({ ...prev, name: e }))}
             autoFocus
             editable={!createTaskMutation.isPending}
+            testID="add-task-task-name-input"
           />
 
           <TextInput
@@ -64,7 +71,34 @@ export default function AddTaskScreen() {
             onChangeText={(e) => setTaskDetails(prev => ({ ...prev, description: e }))}
             multiline
             editable={!createTaskMutation.isPending}
+            testID="add-task-task-description-input"
           />
+
+          <View className="mb-5">
+            <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Priority:</Text>
+            <View className="flex-row gap-2">
+              {([1, 2, 3, 4, 5] as const).map((priority) => (
+                <Pressable
+                  key={`priority-${priority}`}
+                  onPress={() => handlePriorityChange(priority)}
+                  className={`flex-1 py-2 px-3 rounded-lg border ${taskDetails.priority === priority
+                    ? 'border-[#33CFFF] bg-[#33CFFF]'
+                    : 'border-[#708090] bg-[#13203a]'
+                    }`}
+                  disabled={createTaskMutation.isPending}
+                >
+                  <Text
+                    className={`text-center font-medium capitalize ${taskDetails.priority === priority
+                      ? 'text-[#021A40]'
+                      : 'text-[#E6FAFF]'
+                      }`}
+                  >
+                    {priority}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
 
           <View className="mb-5">
             <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Action Category:</Text>
@@ -114,7 +148,7 @@ export default function AddTaskScreen() {
               {createTaskMutation.isPending ? (
                 <ActivityIndicator size="small" color="#021A40" className="mr-2" />
               ) : null}
-              <Text className="font-semibold text-[#021A40] text-lg">
+              <Text className="font-semibold text-[#021A40] text-lg" testID="add-task-add-button-text">
                 {createTaskMutation.isPending ? 'Adding...' : 'Add'}
               </Text>
             </Pressable>
