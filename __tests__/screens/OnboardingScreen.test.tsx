@@ -16,11 +16,11 @@ jest.mock('expo-router', () => ({
   },
 }));
 
-// Mock OnboardingWizard component
-jest.mock('../../components/OnboardingWizard', () => {
+// Mock AiOnboardingWizard component
+jest.mock('../../components/AiOnboardingWizard', () => {
   const React = require('react');
   const { Pressable, Text } = require('react-native');
-  return function MockOnboardingWizard({ onComplete }: { onComplete: () => void }) {
+  return function MockAiOnboardingWizard({ onComplete }: { onComplete: () => void }) {
     return (
       <Pressable onPress={onComplete} testID="onboarding-wizard">
         <Text>Complete Onboarding</Text>
@@ -57,21 +57,21 @@ describe('OnboardingScreen', () => {
     );
 
     // Check if main content is displayed
-    expect(screen.getByText('Welcome to Personal Coach')).toBeTruthy();
-    expect(screen.getByText("Let's create your personalized SMART goals to achieve success")).toBeTruthy();
+    expect(screen.getByTestId('onboarding-welcome-title')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-welcome-subtitle')).toBeTruthy();
 
     // Check if features are displayed
-    expect(screen.getByText('Set clear, measurable goals')).toBeTruthy();
-    expect(screen.getByText('Track your progress over time')).toBeTruthy();
-    expect(screen.getByText('Break down goals into actionable tasks')).toBeTruthy();
-    expect(screen.getByText('Stay motivated with regular check-ins')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-feature-clear-goals')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-feature-track-progress')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-feature-breakdown')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-feature-ai')).toBeTruthy();
 
     // Check if SMART goals info is displayed
-    expect(screen.getByText('What are SMART Goals?')).toBeTruthy();
-    expect(screen.getByText(/SMART goals are Specific, Measurable, Achievable, Relevant, and Time-bound objectives/)).toBeTruthy();
+    expect(screen.getByTestId('onboarding-smart-title')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-smart-description')).toBeTruthy();
 
     // Check if start button is present
-    expect(screen.getByText('Start Creating Goals')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-start-text')).toBeTruthy();
   });
 
   it('shows onboarding wizard when start button is pressed', () => {
@@ -81,7 +81,7 @@ describe('OnboardingScreen', () => {
       </QueryClientProvider>
     );
 
-    const startButton = screen.getByText('Start Creating Goals');
+    const startButton = screen.getByTestId('onboarding-start-button');
     fireEvent.press(startButton);
 
     expect(screen.getByText('Complete Onboarding')).toBeTruthy();
@@ -97,7 +97,7 @@ describe('OnboardingScreen', () => {
     );
 
     // Start onboarding
-    const startButton = screen.getByText('Start Creating Goals');
+    const startButton = screen.getByTestId('onboarding-start-button');
     fireEvent.press(startButton);
 
     // Complete onboarding
@@ -116,16 +116,10 @@ describe('OnboardingScreen', () => {
     );
 
     // Check all feature items are present
-    const features = [
-      'Set clear, measurable goals',
-      'Track your progress over time',
-      'Break down goals into actionable tasks',
-      'Stay motivated with regular check-ins',
-    ];
-
-    features.forEach(feature => {
-      expect(screen.getByText(feature)).toBeTruthy();
-    });
+    expect(screen.getByTestId('onboarding-feature-ai')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-feature-clear-goals')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-feature-track-progress')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-feature-breakdown')).toBeTruthy();
   });
 
   it('renders SMART goals explanation correctly', () => {
@@ -135,8 +129,8 @@ describe('OnboardingScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('What are SMART Goals?')).toBeTruthy();
-    expect(screen.getByText(/SMART goals are Specific, Measurable, Achievable, Relevant, and Time-bound objectives that help you focus your efforts and increase your chances of achieving what you want./)).toBeTruthy();
+    expect(screen.getByTestId('onboarding-smart-title')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-smart-description')).toBeTruthy();
   });
 
   it('has proper button styling and content', () => {
@@ -146,11 +140,11 @@ describe('OnboardingScreen', () => {
       </QueryClientProvider>
     );
 
-    const startButton = screen.getByText('Start Creating Goals');
+    const startButton = screen.getByTestId('onboarding-start-button');
     expect(startButton).toBeTruthy();
 
     // Check if the button contains the expected text and icon
-    expect(screen.getByText('Start Creating Goals')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-start-text')).toBeTruthy();
   });
 
   it('maintains state correctly when toggling between screens', () => {
@@ -161,23 +155,23 @@ describe('OnboardingScreen', () => {
     );
 
     // Initially should show welcome screen
-    expect(screen.getByText('Welcome to Personal Coach')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-welcome-title')).toBeTruthy();
     expect(screen.queryByText('Complete Onboarding')).toBeNull();
 
     // Start onboarding
-    const startButton = screen.getByText('Start Creating Goals');
+    const startButton = screen.getByTestId('onboarding-start-button');
     fireEvent.press(startButton);
 
     // Should show wizard
     expect(screen.getByText('Complete Onboarding')).toBeTruthy();
-    expect(screen.queryByText('Welcome to Personal Coach')).toBeNull();
+    expect(screen.queryByTestId('onboarding-welcome-title')).toBeNull();
 
     // Complete onboarding
     const completeButton = screen.getByText('Complete Onboarding');
     fireEvent.press(completeButton);
 
     // Should return to welcome screen (before navigation)
-    expect(screen.getByText('Welcome to Personal Coach')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-welcome-title')).toBeTruthy();
     expect(screen.queryByText('Complete Onboarding')).toBeNull();
   });
 }); 

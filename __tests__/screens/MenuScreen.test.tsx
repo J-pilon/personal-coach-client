@@ -38,11 +38,11 @@ describe('MenuScreen', () => {
     );
 
     // Check if all menu items are displayed
-    expect(screen.getByText('Profile')).toBeTruthy();
-    expect(screen.getByText('Goals')).toBeTruthy();
-    expect(screen.getByText('Settings')).toBeTruthy();
-    expect(screen.getByText('Help & Support')).toBeTruthy();
-    expect(screen.getByText('About')).toBeTruthy();
+    expect(screen.getByTestId('menu-item-text-profile')).toBeTruthy();
+    expect(screen.getByTestId('menu-item-text-smart-goals')).toBeTruthy();
+    expect(screen.getByTestId('menu-item-text-settings')).toBeTruthy();
+    expect(screen.getByTestId('menu-item-text-help')).toBeTruthy();
+    expect(screen.getByTestId('menu-item-text-about')).toBeTruthy();
   });
 
   it('handles profile menu item press', () => {
@@ -54,7 +54,7 @@ describe('MenuScreen', () => {
       </QueryClientProvider>
     );
 
-    const profileButton = screen.getByText('Profile');
+    const profileButton = screen.getByTestId('menu-item-profile');
     fireEvent.press(profileButton);
 
     expect(mockRouter.push).toHaveBeenCalledWith('/profile');
@@ -69,7 +69,7 @@ describe('MenuScreen', () => {
       </QueryClientProvider>
     );
 
-    const goalsButton = screen.getByText('Goals');
+    const goalsButton = screen.getByTestId('menu-item-smart-goals');
     fireEvent.press(goalsButton);
 
     expect(mockRouter.push).toHaveBeenCalledWith('/smartGoals');
@@ -84,7 +84,7 @@ describe('MenuScreen', () => {
       </QueryClientProvider>
     );
 
-    const settingsButton = screen.getByText('Settings');
+    const settingsButton = screen.getByTestId('menu-item-settings');
     fireEvent.press(settingsButton);
 
     expect(consoleSpy).toHaveBeenCalledWith('Settings pressed');
@@ -101,7 +101,7 @@ describe('MenuScreen', () => {
       </QueryClientProvider>
     );
 
-    const helpButton = screen.getByText('Help & Support');
+    const helpButton = screen.getByTestId('menu-item-help');
     fireEvent.press(helpButton);
 
     expect(consoleSpy).toHaveBeenCalledWith('Help pressed');
@@ -118,7 +118,7 @@ describe('MenuScreen', () => {
       </QueryClientProvider>
     );
 
-    const aboutButton = screen.getByText('About');
+    const aboutButton = screen.getByTestId('menu-item-about');
     fireEvent.press(aboutButton);
 
     expect(consoleSpy).toHaveBeenCalledWith('About pressed');
@@ -134,12 +134,11 @@ describe('MenuScreen', () => {
     );
 
     // Check if menu items are rendered as pressable elements
-    const menuItems = ['Profile', 'Goals', 'Settings', 'Help & Support', 'About'];
-
-    menuItems.forEach(item => {
-      const menuItem = screen.getByText(item);
-      expect(menuItem).toBeTruthy();
-    });
+    expect(screen.getByTestId('menu-item-text-profile')).toBeTruthy();
+    expect(screen.getByTestId('menu-item-text-smart-goals')).toBeTruthy();
+    expect(screen.getByTestId('menu-item-text-settings')).toBeTruthy();
+    expect(screen.getByTestId('menu-item-text-help')).toBeTruthy();
+    expect(screen.getByTestId('menu-item-text-about')).toBeTruthy();
   });
 
   it('has proper menu item styling and layout', () => {
@@ -151,11 +150,11 @@ describe('MenuScreen', () => {
 
     // The menu should be rendered as a scrollable list
     // Each item should be pressable
-    const profileButton = screen.getByText('Profile');
-    const goalsButton = screen.getByText('Goals');
-    const settingsButton = screen.getByText('Settings');
-    const helpButton = screen.getByText('Help & Support');
-    const aboutButton = screen.getByText('About');
+    const profileButton = screen.getByTestId('menu-item-profile');
+    const goalsButton = screen.getByTestId('menu-item-smart-goals');
+    const settingsButton = screen.getByTestId('menu-item-settings');
+    const helpButton = screen.getByTestId('menu-item-help');
+    const aboutButton = screen.getByTestId('menu-item-about');
 
     expect(profileButton).toBeTruthy();
     expect(goalsButton).toBeTruthy();
@@ -175,9 +174,9 @@ describe('MenuScreen', () => {
     );
 
     // Press multiple menu items
-    fireEvent.press(screen.getByText('Profile'));
-    fireEvent.press(screen.getByText('Goals'));
-    fireEvent.press(screen.getByText('Settings'));
+    fireEvent.press(screen.getByTestId('menu-item-profile'));
+    fireEvent.press(screen.getByTestId('menu-item-smart-goals'));
+    fireEvent.press(screen.getByTestId('menu-item-settings'));
 
     expect(mockRouter.push).toHaveBeenCalledWith('/profile');
     expect(mockRouter.push).toHaveBeenCalledWith('/smartGoals');

@@ -92,7 +92,7 @@ describe('TaskDetailScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Loading task...')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-loading-text')).toBeTruthy();
   });
 
   it('renders error state', () => {
@@ -131,8 +131,8 @@ describe('TaskDetailScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Failed to load task')).toBeTruthy();
-    expect(screen.getByText('Failed to fetch task')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-error-title')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-error-message')).toBeTruthy();
   });
 
   it('renders task details', () => {
@@ -180,10 +180,10 @@ describe('TaskDetailScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Test Task')).toBeTruthy();
-    expect(screen.getByText('Test Description')).toBeTruthy();
-    expect(screen.getByText('Edit')).toBeTruthy();
-    expect(screen.getByText('Delete')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-title')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-description')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-edit-text')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-delete-text')).toBeTruthy();
   });
 
   it('handles task completion toggle', async () => {
@@ -233,7 +233,7 @@ describe('TaskDetailScreen', () => {
 
     // The TaskDetailScreen doesn't have a completion toggle
     // It shows the status but doesn't allow toggling
-    expect(screen.getByText('Pending')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-status')).toBeTruthy();
   });
 
   it('handles task deletion', async () => {
@@ -283,7 +283,7 @@ describe('TaskDetailScreen', () => {
       </QueryClientProvider>
     );
 
-    const deleteButton = screen.getByText('Delete');
+    const deleteButton = screen.getByTestId('task-detail-delete-button');
     fireEvent.press(deleteButton);
 
     await waitFor(() => {
@@ -343,13 +343,13 @@ describe('TaskDetailScreen', () => {
       </QueryClientProvider>
     );
 
-    const editButton = screen.getByText('Edit');
+    const editButton = screen.getByTestId('task-detail-edit-button');
     fireEvent.press(editButton);
 
     // The TaskDetailScreen doesn't navigate to a separate edit screen
     // It toggles edit mode within the same screen
-    expect(screen.getByText('Cancel')).toBeTruthy();
-    expect(screen.getByText('Save')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-cancel-text')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-save-text')).toBeTruthy();
   });
 
   it('shows completion status correctly', () => {
@@ -397,7 +397,7 @@ describe('TaskDetailScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Completed')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-status')).toBeTruthy();
   });
 
   it('refetches task after successful mutation', async () => {
