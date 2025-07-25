@@ -42,10 +42,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="addTask"
+        name="focus"
         options={{
           headerShown: false,
-          title: "Add",
+          title: "Focus Mode",
           tabBarIcon: ({ color }) => <AntDesign name="plus" size={28} color={color} />,
         }}
       />

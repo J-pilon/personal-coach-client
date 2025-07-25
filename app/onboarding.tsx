@@ -7,6 +7,7 @@ import AiOnboardingWizard from '@/components/AiOnboardingWizard';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import LinearGradient from '@/components/ui/LinearGradient';
+import PrimaryButton from '@/components/buttons/PrimaryButton';
 
 export default function OnboardingScreen() {
   const colorScheme = useColorScheme();
@@ -69,7 +70,6 @@ export default function OnboardingScreen() {
             </View>
           </View>
 
-          {/* SMART Goals Info */}
           <View className="bg-[#2B42B6] p-5 rounded-xl mb-10 border border-[#33CFFF] shadow-md" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
             <Text className="text-lg font-semibold text-[#F1F5F9] mb-2" testID="onboarding-smart-title">
               What are SMART Goals?
@@ -79,15 +79,11 @@ export default function OnboardingScreen() {
             </Text>
           </View>
 
-          {/* Start Button */}
-          <TouchableOpacity
-            className="flex-row items-center justify-center py-4 px-6 rounded-xl bg-[#33CFFF] shadow-md"
+          <PrimaryButton
             onPress={handleStartWizard}
-            testID="onboarding-start-button"
-          >
-            <Text className="text-lg font-semibold text-[#021A40] mr-2" testID="onboarding-start-text">Start with AI</Text>
-            <Ionicons name="arrow-forward" size={20} color="#021A40" />
-          </TouchableOpacity>
+            title='Start with AI'
+            icon='arrow-forward'
+            iconColor='#021A40' />
         </View>
       </SafeAreaView>
     </LinearGradient>

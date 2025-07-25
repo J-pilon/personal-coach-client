@@ -116,7 +116,7 @@ export default function TaskDetailScreen() {
         <View className="flex-row gap-3">
           <Pressable
             onPress={() => refetch()}
-            className="bg-[#33CFFF] px-6 py-3 rounded-lg"
+            className="bg-cyan-400 px-6 py-3 rounded-lg"
           >
             <Text className="text-[#021A40] font-semibold">Retry</Text>
           </Pressable>
@@ -156,7 +156,7 @@ export default function TaskDetailScreen() {
                   </Pressable>
                   <Pressable
                     onPress={handleSave}
-                    className="px-4 py-2 rounded-lg bg-[#33CFFF] flex-row items-center"
+                    className="px-4 py-2 rounded-lg bg-cyan-400 flex-row items-center"
                     disabled={updateTaskMutation.isPending}
                     testID="task-detail-save-button"
                   >
@@ -197,7 +197,7 @@ export default function TaskDetailScreen() {
               <Text className="text-[#E6FAFF] text-lg font-medium">Status</Text>
               <View className={`px-3 py-1 rounded-full ${task.completed
                 ? 'bg-green-500'
-                : 'bg-[#33CFFF]'
+                : 'bg-cyan-400'
                 }`}>
                 <Text className={`font-medium ${task.completed
                   ? 'text-white'
@@ -260,7 +260,7 @@ export default function TaskDetailScreen() {
                     key={`priority-${priority}`}
                     onPress={() => handlePriorityChange(priority)}
                     className={`flex-1 py-3 px-4 rounded-lg border ${taskDetails.priority === priority
-                      ? 'border-[#33CFFF] bg-[#33CFFF]'
+                      ? 'border-[#33CFFF] bg-cyan-400'
                       : 'border-[#708090] bg-[#13203a]'
                       }`}
                     disabled={updateTaskMutation.isPending}
@@ -283,7 +283,7 @@ export default function TaskDetailScreen() {
                     key={`priority-${priority}`}
                     onPress={() => handlePriorityChange(priority)}
                     className={`flex-1 py-3 px-4 rounded-lg border ${taskDetails.priority === priority
-                      ? 'border-[#33CFFF] bg-[#33CFFF]'
+                      ? 'border-[#33CFFF] bg-cyan-400'
                       : 'border-[#708090] bg-[#13203a]'
                       }`}
                     disabled={updateTaskMutation.isPending}
@@ -311,7 +311,7 @@ export default function TaskDetailScreen() {
                     key={category}
                     onPress={() => handleCategoryChange(category)}
                     className={`flex-1 py-3 px-4 rounded-lg border ${taskDetails.action_category === category
-                      ? 'border-[#33CFFF] bg-[#33CFFF]'
+                      ? 'border-[#33CFFF] bg-cyan-400'
                       : 'border-[#708090] bg-[#13203a]'
                       }`}
                     disabled={updateTaskMutation.isPending}

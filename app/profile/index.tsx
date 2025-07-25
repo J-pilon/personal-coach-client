@@ -103,7 +103,7 @@ export default function ProfileScreen() {
           </View>
 
           <Pressable
-            className="bg-[#33CFFF] py-4 px-8 rounded-2xl shadow-md"
+            className="px-8 py-4 bg-cyan-400 rounded-2xl shadow-md"
             onPress={() => {
               // TODO: Navigate to edit profile screen
               console.log('Edit profile pressed');
