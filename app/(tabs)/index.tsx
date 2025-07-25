@@ -1,5 +1,6 @@
 import LinearGradient from '@/components/ui/LinearGradient';
 import { ThemedText } from '@/components/ThemedText';
+import AddTaskButton from '@/components/AddTaskButton';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, View, ActivityIndicator, Alert } from 'react-native';
@@ -133,6 +134,7 @@ export default function HomeScreen() {
           ))
         )}
       </ScrollView>
+      <AddTaskButton />
     </LinearGradient>
   );
 }
