@@ -100,7 +100,8 @@ export const useAiResponseHelpers = () => {
     isSmartGoalResponse: aiApi.isSmartGoalResponse,
     isPrioritizationResponse: aiApi.isPrioritizationResponse,
     isErrorResponse: aiApi.isErrorResponse,
-    formatSmartGoalResponse: aiApi.formatSmartGoalResponse,
+    formatMultiPeriodSmartGoalResponse: aiApi.formatMultiPeriodSmartGoalResponse,
+    formatSingleSmartGoal: aiApi.formatSingleGoal,
     formatPrioritizationResponse: aiApi.formatPrioritizationResponse,
   };
 };

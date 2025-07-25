@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Alert } from 'react-native';
-import AddTaskScreen from '../../app/(tabs)/addTask';
+import AddTaskScreen from '../../app/addTask';
 import * as api from '../../api/tasks';
 
 // Mock the API module
