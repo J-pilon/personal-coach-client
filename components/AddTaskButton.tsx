@@ -18,8 +18,9 @@ export default function AddTaskButton({ onPress }: AddTaskButtonProps) {
 
   return (
     <Pressable
+      testID='add-task-button-button'
       onPress={handlePress}
-      className="absolute bottom-6 right-6 h-14 w-14 rounded-full bg-gradient-to-br from-[#33CFFF] to-[#274B8E] items-center justify-center shadow-lg"
+      className="absolute right-6 bottom-28 z-50 justify-center items-center w-16 h-16 bg-cyan-400 rounded-full shadow-lg"
       style={{
         shadowColor: '#33CFFF',
         shadowOpacity: 0.3,
