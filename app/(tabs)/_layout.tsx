@@ -45,8 +45,8 @@ export default function TabLayout() {
         name="focus"
         options={{
           headerShown: false,
-          title: "Focus Mode",
-          tabBarIcon: ({ color }) => <AntDesign name="plus" size={28} color={color} />,
+          title: "Today's Focus",
+          tabBarIcon: ({ color }) => <Ionicons name="compass" size={28} color={color} />,
         }}
       />
       <Tabs.Screen

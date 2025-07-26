@@ -13,6 +13,7 @@ export interface Task {
   profile_id: number;
   created_at?: string;
   updated_at?: string;
+  isAiSuggestion?: boolean;
 }
 
 // Create task parameters (without id and timestamps)
