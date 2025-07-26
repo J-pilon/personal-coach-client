@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, Text, TextInput, View, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import { Pressable, Text, TextInput, View, Alert, ActivityIndicator } from 'react-native';
+import ScrollView from '@/components/util/ScrollView';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useUpdateTask, useDeleteTask, useTask } from '@/hooks/useTasks';
 import { UpdateTaskParams } from '@/api/tasks';
@@ -116,7 +117,7 @@ export default function TaskDetailScreen() {
         <View className="flex-row gap-3">
           <Pressable
             onPress={() => refetch()}
-            className="bg-cyan-400 px-6 py-3 rounded-lg"
+            className="px-6 py-3 bg-cyan-400 rounded-lg"
           >
             <Text className="text-[#021A40] font-semibold">Retry</Text>
           </Pressable>
@@ -156,7 +157,7 @@ export default function TaskDetailScreen() {
                   </Pressable>
                   <Pressable
                     onPress={handleSave}
-                    className="px-4 py-2 rounded-lg bg-cyan-400 flex-row items-center"
+                    className="flex-row items-center px-4 py-2 bg-cyan-400 rounded-lg"
                     disabled={updateTaskMutation.isPending}
                     testID="task-detail-save-button"
                   >

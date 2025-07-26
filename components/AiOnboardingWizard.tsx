@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
+import ScrollView from '@/components/util/ScrollView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCreateMultipleSmartGoals } from '@/hooks/useSmartGoals';
 import { useCreateSmartGoal, useAiResponseHelpers } from '@/hooks/useAi';

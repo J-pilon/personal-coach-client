@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Dimensions, StatusBar, Text } from 'react-native';
+import { View, TouchableOpacity, StatusBar, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import LinearGradient from '@/components/ui/LinearGradient';

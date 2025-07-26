@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable, Alert } from 'react-native';
+import ScrollView from '@/components/util/ScrollView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSmartGoals } from '@/hooks/useSmartGoals';
 import { useProfile } from '@/hooks/useUser';
@@ -44,7 +45,7 @@ export default function SmartGoalsScreen() {
         <SafeAreaView className="flex-1">
           <View className="flex-1 justify-center p-6">
             <View className="items-center mb-8">
-              <View className="bg-cyan-400 rounded-full p-6 mb-6 shadow-lg">
+              <View className="p-6 mb-6 bg-cyan-400 rounded-full shadow-lg">
                 <Ionicons name="flag" size={80} color="#021A40" />
               </View>
               <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-4 tracking-wide" testID="smart-goals-create-title">
@@ -59,7 +60,7 @@ export default function SmartGoalsScreen() {
               <View className="bg-[#2B42B6] rounded-2xl p-6 shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
                 <View className="mb-3">
                   <View className="flex-row items-center mb-3">
-                    <View className="bg-cyan-400 rounded-full p-2 mr-3">
+                    <View className="p-2 mr-3 bg-cyan-400 rounded-full">
                       <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                     </View>
                     <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-timeframes">
@@ -67,7 +68,7 @@ export default function SmartGoalsScreen() {
                     </Text>
                   </View>
                   <View className="flex-row items-center mb-3">
-                    <View className="bg-cyan-400 rounded-full p-2 mr-3">
+                    <View className="p-2 mr-3 bg-cyan-400 rounded-full">
                       <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                     </View>
                     <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-framework">
@@ -75,7 +76,7 @@ export default function SmartGoalsScreen() {
                     </Text>
                   </View>
                   <View className="flex-row items-center">
-                    <View className="bg-cyan-400 rounded-full p-2 mr-3">
+                    <View className="p-2 mr-3 bg-cyan-400 rounded-full">
                       <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                     </View>
                     <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-progress">
@@ -87,7 +88,7 @@ export default function SmartGoalsScreen() {
             </View>
 
             <Pressable
-              className="bg-cyan-400 py-5 px-8 rounded-2xl shadow-lg flex-row items-center justify-center"
+              className="flex-row justify-center items-center px-8 py-5 bg-cyan-400 rounded-2xl shadow-lg"
               onPress={handleStartOnboarding}
               testID="smart-goals-start-button"
             >
@@ -215,7 +216,7 @@ export default function SmartGoalsScreen() {
           </View>
 
           <Pressable
-            className="bg-cyan-400 py-4 px-6 rounded-2xl shadow-lg flex-row items-center justify-center mb-8"
+            className="flex-row justify-center items-center px-6 py-4 mb-8 bg-cyan-400 rounded-2xl shadow-lg"
             onPress={() => {
               // TODO: Navigate to add goal screen
               Alert.alert('Add Goal', 'Add goal functionality coming soon!');

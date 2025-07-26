@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import ScrollView from '@/components/util/ScrollView';
 import { useProfile, useUpdateProfile } from '@/hooks/useUser';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from '@/components/ui/LinearGradient';

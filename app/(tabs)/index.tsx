@@ -3,7 +3,8 @@ import { ThemedText } from '@/components/ThemedText';
 import AddTaskButton from '@/components/AddTaskButton';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, View, ActivityIndicator, Alert } from 'react-native';
+import { Pressable, Text, View, ActivityIndicator, Alert } from 'react-native';
+import ScrollView from '@/components/util/ScrollView';
 import { useTasks, useToggleTaskCompletion } from '@/hooks/useTasks';
 import { router } from 'expo-router';
 
