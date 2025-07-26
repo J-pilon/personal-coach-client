@@ -71,7 +71,8 @@ describe('OnboardingScreen', () => {
     expect(screen.getByTestId('onboarding-smart-description')).toBeTruthy();
 
     // Check if start button is present
-    expect(screen.getByTestId('onboarding-start-text')).toBeTruthy();
+    expect(screen.getByTestId('primary-button')).toBeTruthy();
+    expect(screen.getByTestId('primary-button-text')).toBeTruthy();
   });
 
   it('shows onboarding wizard when start button is pressed', () => {
@@ -81,7 +82,7 @@ describe('OnboardingScreen', () => {
       </QueryClientProvider>
     );
 
-    const startButton = screen.getByTestId('onboarding-start-button');
+    const startButton = screen.getByTestId('primary-button');
     fireEvent.press(startButton);
 
     expect(screen.getByText('Complete Onboarding')).toBeTruthy();
@@ -97,7 +98,7 @@ describe('OnboardingScreen', () => {
     );
 
     // Start onboarding
-    const startButton = screen.getByTestId('onboarding-start-button');
+    const startButton = screen.getByTestId('primary-button');
     fireEvent.press(startButton);
 
     // Complete onboarding
@@ -140,11 +141,11 @@ describe('OnboardingScreen', () => {
       </QueryClientProvider>
     );
 
-    const startButton = screen.getByTestId('onboarding-start-button');
+    const startButton = screen.getByTestId('primary-button');
     expect(startButton).toBeTruthy();
 
     // Check if the button contains the expected text and icon
-    expect(screen.getByTestId('onboarding-start-text')).toBeTruthy();
+    expect(screen.getByTestId('primary-button-text')).toBeTruthy();
   });
 
   it('maintains state correctly when toggling between screens', () => {
@@ -159,7 +160,7 @@ describe('OnboardingScreen', () => {
     expect(screen.queryByText('Complete Onboarding')).toBeNull();
 
     // Start onboarding
-    const startButton = screen.getByTestId('onboarding-start-button');
+    const startButton = screen.getByTestId('primary-button');
     fireEvent.press(startButton);
 
     // Should show wizard
