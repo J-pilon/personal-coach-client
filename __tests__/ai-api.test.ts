@@ -201,12 +201,12 @@ describe('AI API', () => {
         time_bound: 'Complete 30 workouts in 3 months'
       };
 
-      const formatted = aiApi.formatSmartGoalResponse(smartGoalResponse);
-      expect(formatted).toContain('Specific: Exercise for 30 minutes daily');
-      expect(formatted).toContain('Measurable: Track workouts in fitness app');
-      expect(formatted).toContain('Achievable: Start with 3 days per week');
-      expect(formatted).toContain('Relevant: Improves overall health and energy');
-      expect(formatted).toContain('Time-bound: Complete 30 workouts in 3 months');
+      const formatted = aiApi.formatSingleGoal(smartGoalResponse, 'Test Goal');
+      expect(formatted['Test Goal']['Specific']).toBe('Exercise for 30 minutes daily');
+      expect(formatted['Test Goal']['Measurable']).toBe('Track workouts in fitness app');
+      expect(formatted['Test Goal']['Achievable']).toBe('Start with 3 days per week');
+      expect(formatted['Test Goal']['Relevant']).toBe('Improves overall health and energy');
+      expect(formatted['Test Goal']['Time-bound']).toBe('Complete 30 workouts in 3 months');
     });
 
     it('should format prioritization response correctly', () => {

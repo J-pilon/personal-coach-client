@@ -6,6 +6,7 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
+          headerShown: false,
           title: "Add Task",
         }}
       />

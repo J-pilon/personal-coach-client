@@ -29,6 +29,30 @@ export interface PrioritizationItem {
 
 export interface PrioritizationResponse extends Array<PrioritizationItem> {}
 
+export interface MultiPeriodSmartGoalResponse {
+  one_month: {
+    specific: string;
+    measurable: string;
+    achievable: string;
+    relevant: string;
+    time_bound: string;
+  };
+  three_months: {
+    specific: string;
+    measurable: string;
+    achievable: string;
+    relevant: string;
+    time_bound: string;
+  };
+  six_months: {
+    specific: string;
+    measurable: string;
+    achievable: string;
+    relevant: string;
+    time_bound: string;
+  };
+}
+
 // Error response interface
 export interface ErrorResponse {
   error: string;
@@ -99,6 +123,19 @@ async function apiRequest<T>(
   }
 }
 
+// Standalone helper function for formatting single goals
+export const formatSingleGoal = (goal: any, period: string): Record<string, Record<string, string>> => {
+  return {
+    [period]: {
+      'Specific': goal.specific || '',
+      'Measurable': goal.measurable || '',
+      'Achievable': goal.achievable || '',
+      'Relevant': goal.relevant || '',
+      'Time-bound': goal.time_bound || ''
+    }
+  };
+};
+
 // AI API functions
 export const aiApi = {
   // Process AI request
@@ -134,15 +171,25 @@ export const aiApi = {
     return response.intent === 'error';
   },
 
-  // Helper function to format smart goal response
-  formatSmartGoalResponse(response: SmartGoalResponse): string {
-    const parts = [];
-    if (response.specific) parts.push(`Specific: ${response.specific}`);
-    if (response.measurable) parts.push(`Measurable: ${response.measurable}`);
-    if (response.achievable) parts.push(`Achievable: ${response.achievable}`);
-    if (response.relevant) parts.push(`Relevant: ${response.relevant}`);
-    if (response.time_bound) parts.push(`Time-bound: ${response.time_bound}`);
-    return parts.join('\n');
+  formatSingleGoal(goal: any, period: string): Record<string, Record<string, string>> {
+    return {
+      [period]: {
+        'Specific': goal.specific || '',
+        'Measurable': goal.measurable || '',
+        'Achievable': goal.achievable || '',
+        'Relevant': goal.relevant || '',
+        'Time-bound': goal.time_bound || ''
+      }
+    };
+  },
+
+  // Helper function to format multi-period SMART goal response
+  formatMultiPeriodSmartGoalResponse(response: MultiPeriodSmartGoalResponse): Record<string, Record<string, string>> {
+    return {
+      ...formatSingleGoal(response.one_month, '1 Month Goal'),
+      ...formatSingleGoal(response.three_months, '3 Month Goal'),
+      ...formatSingleGoal(response.six_months, '6 Month Goal')
+    };
   },
 
   // Helper function to format prioritization response

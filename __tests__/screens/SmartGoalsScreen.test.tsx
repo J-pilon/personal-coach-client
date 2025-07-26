@@ -28,11 +28,11 @@ jest.mock('expo-router', () => ({
 // Mock Alert
 jest.spyOn(Alert, 'alert').mockImplementation(() => { });
 
-// Mock OnboardingWizard component
-jest.mock('../../components/OnboardingWizard', () => {
+// Mock AiOnboardingWizard component
+jest.mock('../../components/AiOnboardingWizard', () => {
   const React = require('react');
   const { Pressable, Text } = require('react-native');
-  return function MockOnboardingWizard({ onComplete }: { onComplete: () => void }) {
+  return function MockAiOnboardingWizard({ onComplete }: { onComplete: () => void }) {
     return (
       <Pressable onPress={onComplete} testID="onboarding-wizard">
         <Text>Complete Onboarding</Text>

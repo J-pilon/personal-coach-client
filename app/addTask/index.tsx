@@ -82,7 +82,7 @@ export default function AddTaskScreen() {
                   key={`priority-${priority}`}
                   onPress={() => handlePriorityChange(priority)}
                   className={`flex-1 py-2 px-3 rounded-lg border ${taskDetails.priority === priority
-                    ? 'border-[#33CFFF] bg-[#33CFFF]'
+                    ? 'border-cyan-400 bg-cyan-400'
                     : 'border-[#708090] bg-[#13203a]'
                     }`}
                   disabled={createTaskMutation.isPending}
@@ -108,7 +108,7 @@ export default function AddTaskScreen() {
                   key={category}
                   onPress={() => handleCategoryChange(category)}
                   className={`flex-1 py-2 px-3 rounded-lg border ${taskDetails.action_category === category
-                    ? 'border-[#33CFFF] bg-[#33CFFF]'
+                    ? 'border-cyan-400 bg-cyan-400'
                     : 'border-[#708090] bg-[#13203a]'
                     }`}
                   disabled={createTaskMutation.isPending}
@@ -140,7 +140,7 @@ export default function AddTaskScreen() {
             <Pressable
               testID="add-button"
               onPress={handleAdd}
-              className="px-6 py-3 rounded-xl bg-[#33CFFF] shadow-md flex-row items-center"
+              className="flex-row items-center px-6 py-3 bg-cyan-400 rounded-xl shadow-md"
               style={{ opacity: (!taskDetails.name.trim() || createTaskMutation.isPending) ? 0.5 : 1 }}
               accessibilityState={{ disabled: !taskDetails.name.trim() || createTaskMutation.isPending }}
               disabled={!taskDetails.name.trim() || createTaskMutation.isPending}
