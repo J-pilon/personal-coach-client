@@ -63,7 +63,7 @@ export default function RootLayout() {
               options={{
                 headerShown: true,
                 headerTitle: "Task Details",
-                headerBackTitle: "Menu"
+                headerBackTitle: "Tasks"
               }} />
             <Stack.Screen
               name="addTask/index"
