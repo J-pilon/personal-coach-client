@@ -11,6 +11,7 @@ interface PrimaryButtonProps {
   iconColor?: string
   disabled?: boolean
   className?: string
+  testID?: string
 }
 
 export default function PrimaryButton({
@@ -21,7 +22,8 @@ export default function PrimaryButton({
   icon,
   iconColor = "#021A40",
   disabled = false,
-  className = ""
+  className = "",
+  testID = "primary-button"
 }: PrimaryButtonProps) {
   const isDisabled = disabled || isLoading
   const displayText = isLoading && loadingText ? loadingText : title
@@ -31,7 +33,7 @@ export default function PrimaryButton({
       className={`flex-row items-center justify-center py-4 px-6 rounded-xl shadow-md ${isDisabled ? 'bg-[#808080]' : 'bg-cyan-400'} ${className}`}
       onPress={onPress}
       disabled={isDisabled}
-      testID="primary-button"
+      testID={testID}
     >
       <Text className="text-lg font-semibold text-[#021A40]" testID="primary-button-text">
         {displayText}
