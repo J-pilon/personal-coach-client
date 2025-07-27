@@ -16,7 +16,7 @@ export default function HomeScreen() {
 
   const groupedTasks = categoryOrder.map(category => ({
     category,
-    items: tasks ? tasks.filter(task => task.action_category === category) : [],
+    items: tasks ? tasks.filter(task => task.action_category === category && !task.completed) : [],
   }));
 
   const [openCategories, setOpenCategories] = useState<{ [key: string]: boolean }>({
@@ -35,6 +35,7 @@ export default function HomeScreen() {
         },
       }
     );
+
   };
 
   const toggleAccordion = (category: string) => {
