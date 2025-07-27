@@ -58,6 +58,13 @@ export default function RootLayout() {
                 headerTitle: "Task Details",
                 headerBackTitle: "Menu"
               }} />
+            <Stack.Screen
+              name="addTask/index"
+              options={{
+                headerShown: true,
+                headerTitle: "New Task",
+                headerBackTitle: "Tasks"
+              }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />
