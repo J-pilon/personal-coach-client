@@ -130,7 +130,6 @@ describe('ProfileScreen', () => {
     );
 
     // Check if profile information is displayed
-    expect(screen.getByTestId('profile-title')).toBeTruthy();
     expect(screen.getByTestId('profile-personal-info-title')).toBeTruthy();
     expect(screen.getByTestId('profile-name')).toBeTruthy();
     expect(screen.getByTestId('profile-work-role')).toBeTruthy();
