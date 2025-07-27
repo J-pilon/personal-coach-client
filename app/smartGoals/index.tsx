@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable, Alert } from 'react-native';
+import ScrollView from '@/components/util/ScrollView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSmartGoals } from '@/hooks/useSmartGoals';
 import { useProfile } from '@/hooks/useUser';
@@ -41,61 +42,59 @@ export default function SmartGoalsScreen() {
   if (isOnboardingIncomplete) {
     return (
       <LinearGradient>
-        <SafeAreaView className="flex-1">
-          <View className="flex-1 justify-center p-6">
-            <View className="items-center mb-8">
-              <View className="bg-cyan-400 rounded-full p-6 mb-6 shadow-lg">
-                <Ionicons name="flag" size={80} color="#021A40" />
-              </View>
-              <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-4 tracking-wide" testID="smart-goals-create-title">
-                Create Your SMART Goals
-              </Text>
-              <Text className="text-lg text-center text-[#E6FAFF] opacity-90 leading-6" testID="smart-goals-create-subtitle">
-                Let&apos;s set up your personalized goals to help you achieve success. We&apos;ll guide you through creating specific, measurable, achievable, relevant, and time-bound objectives.
-              </Text>
+        <View className="flex-1 justify-center p-6">
+          <View className="items-center mb-8">
+            <View className="p-6 mb-6 bg-cyan-400 rounded-full shadow-lg">
+              <Ionicons name="flag" size={80} color="#021A40" />
             </View>
+            <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-4 tracking-wide" testID="smart-goals-create-title">
+              Create Your SMART Goals
+            </Text>
+            <Text className="text-lg text-center text-[#E6FAFF] opacity-90 leading-6" testID="smart-goals-create-subtitle">
+              Let&apos;s set up your personalized goals to help you achieve success. We&apos;ll guide you through creating specific, measurable, achievable, relevant, and time-bound objectives.
+            </Text>
+          </View>
 
-            <View className="mb-8">
-              <View className="bg-[#2B42B6] rounded-2xl p-6 shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
-                <View className="mb-3">
-                  <View className="flex-row items-center mb-3">
-                    <View className="bg-cyan-400 rounded-full p-2 mr-3">
-                      <Ionicons name="checkmark-circle" size={20} color="#021A40" />
-                    </View>
-                    <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-timeframes">
-                      Set goals for 1 month, 3 months, and 6 months
-                    </Text>
+          <View className="mb-8">
+            <View className="bg-[#2B42B6] rounded-2xl p-6 shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
+              <View className="mb-3">
+                <View className="flex-row items-center mb-3">
+                  <View className="p-2 mr-3 bg-cyan-400 rounded-full">
+                    <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                   </View>
-                  <View className="flex-row items-center mb-3">
-                    <View className="bg-cyan-400 rounded-full p-2 mr-3">
-                      <Ionicons name="checkmark-circle" size={20} color="#021A40" />
-                    </View>
-                    <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-framework">
-                      Follow the proven SMART framework
-                    </Text>
+                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-timeframes">
+                    Set goals for 1 month, 3 months, and 6 months
+                  </Text>
+                </View>
+                <View className="flex-row items-center mb-3">
+                  <View className="p-2 mr-3 bg-cyan-400 rounded-full">
+                    <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                   </View>
-                  <View className="flex-row items-center">
-                    <View className="bg-cyan-400 rounded-full p-2 mr-3">
-                      <Ionicons name="checkmark-circle" size={20} color="#021A40" />
-                    </View>
-                    <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-progress">
-                      Track your progress over time
-                    </Text>
+                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-framework">
+                    Follow the proven SMART framework
+                  </Text>
+                </View>
+                <View className="flex-row items-center">
+                  <View className="p-2 mr-3 bg-cyan-400 rounded-full">
+                    <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                   </View>
+                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-progress">
+                    Track your progress over time
+                  </Text>
                 </View>
               </View>
             </View>
-
-            <Pressable
-              className="bg-cyan-400 py-5 px-8 rounded-2xl shadow-lg flex-row items-center justify-center"
-              onPress={handleStartOnboarding}
-              testID="smart-goals-start-button"
-            >
-              <Text className="text-[#021A40] font-semibold text-lg mr-2" testID="smart-goals-start-text">Start Creating Goals</Text>
-              <Ionicons name="arrow-forward" size={20} color="#021A40" />
-            </Pressable>
           </View>
-        </SafeAreaView>
+
+          <Pressable
+            className="flex-row justify-center items-center px-8 py-5 bg-cyan-400 rounded-2xl shadow-lg"
+            onPress={handleStartOnboarding}
+            testID="smart-goals-start-button"
+          >
+            <Text className="text-[#021A40] font-semibold text-lg mr-2" testID="smart-goals-start-text">Start Creating Goals</Text>
+            <Ionicons name="arrow-forward" size={20} color="#021A40" />
+          </Pressable>
+        </View>
       </LinearGradient>
     );
   }
@@ -199,34 +198,32 @@ export default function SmartGoalsScreen() {
 
   return (
     <LinearGradient>
-      <SafeAreaView className="flex-1">
-        <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
-          <View className="mb-8">
-            <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-2 tracking-wide" testID="smart-goals-title">My SMART Goals</Text>
-            <Text className="text-lg text-center text-[#E6FAFF] opacity-80" testID="smart-goals-subtitle">
-              Track your progress towards achieving your goals
-            </Text>
-          </View>
+      <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
+        <View className="mb-8">
+          <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-2 tracking-wide" testID="smart-goals-title">My SMART Goals</Text>
+          <Text className="text-lg text-center text-[#E6FAFF] opacity-80" testID="smart-goals-subtitle">
+            Track your progress towards achieving your goals
+          </Text>
+        </View>
 
-          <View className="mb-8">
-            {Object.entries(goalsByTimeframe).map(([timeframe, goals]) =>
-              renderTimeframeSection(timeframe, goals)
-            )}
-          </View>
+        <View className="mb-8">
+          {Object.entries(goalsByTimeframe).map(([timeframe, goals]) =>
+            renderTimeframeSection(timeframe, goals)
+          )}
+        </View>
 
-          <Pressable
-            className="bg-cyan-400 py-4 px-6 rounded-2xl shadow-lg flex-row items-center justify-center mb-8"
-            onPress={() => {
-              // TODO: Navigate to add goal screen
-              Alert.alert('Add Goal', 'Add goal functionality coming soon!');
-            }}
-            testID="smart-goals-add-button"
-          >
-            <Ionicons name="add" size={24} color="#021A40" />
-            <Text className="text-[#021A40] font-semibold text-lg ml-2" testID="smart-goals-add-text">Add New Goal</Text>
-          </Pressable>
-        </ScrollView>
-      </SafeAreaView>
+        <Pressable
+          className="flex-row justify-center items-center px-6 py-4 mb-8 bg-cyan-400 rounded-2xl shadow-lg"
+          onPress={() => {
+            // TODO: Navigate to add goal screen
+            Alert.alert('Add Goal', 'Add goal functionality coming soon!');
+          }}
+          testID="smart-goals-add-button"
+        >
+          <Ionicons name="add" size={24} color="#021A40" />
+          <Text className="text-[#021A40] font-semibold text-lg ml-2" testID="smart-goals-add-text">Add New Goal</Text>
+        </Pressable>
+      </ScrollView>
     </LinearGradient>
   );
 } 

@@ -3,7 +3,8 @@ import { ThemedText } from '@/components/ThemedText';
 import AddTaskButton from '@/components/AddTaskButton';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, View, ActivityIndicator, Alert } from 'react-native';
+import { Pressable, Text, View, ActivityIndicator, Alert } from 'react-native';
+import ScrollView from '@/components/util/ScrollView';
 import { useTasks, useToggleTaskCompletion } from '@/hooks/useTasks';
 import { router } from 'expo-router';
 
@@ -15,7 +16,7 @@ export default function HomeScreen() {
 
   const groupedTasks = categoryOrder.map(category => ({
     category,
-    items: tasks ? tasks.filter(task => task.action_category === category) : [],
+    items: tasks ? tasks.filter(task => task.action_category === category && !task.completed) : [],
   }));
 
   const [openCategories, setOpenCategories] = useState<{ [key: string]: boolean }>({
@@ -34,6 +35,7 @@ export default function HomeScreen() {
         },
       }
     );
+
   };
 
   const toggleAccordion = (category: string) => {

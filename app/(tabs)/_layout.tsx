@@ -8,7 +8,7 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useProfile } from '@/hooks/useUser';
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -25,7 +25,6 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
@@ -37,22 +36,24 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Tasks',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <FontAwesome5 name="tasks" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="focus"
         options={{
           headerShown: false,
-          title: "Focus Mode",
-          tabBarIcon: ({ color }) => <AntDesign name="plus" size={28} color={color} />,
+          title: "Today's Focus",
+          tabBarIcon: ({ color }) => <Ionicons name="compass" size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="menu"
         options={{
           title: 'Menu',
+          headerShown: false,
           tabBarIcon: ({ color }) => <Ionicons name="menu" size={28} color={color} />,
         }}
       />

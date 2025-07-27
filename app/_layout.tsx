@@ -37,6 +37,34 @@ export default function RootLayout() {
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="profile/index"
+              options={{
+                headerShown: true,
+                headerTitle: "Profile",
+                headerBackTitle: "Menu"
+              }} />
+            <Stack.Screen
+              name="smartGoals/index"
+              options={{
+                headerShown: true,
+                headerTitle: "Goals",
+                headerBackTitle: "Menu"
+              }} />
+            <Stack.Screen
+              name="taskDetail/[id]"
+              options={{
+                headerShown: true,
+                headerTitle: "Task Details",
+                headerBackTitle: "Menu"
+              }} />
+            <Stack.Screen
+              name="addTask/index"
+              options={{
+                headerShown: true,
+                headerTitle: "New Task",
+                headerBackTitle: "Tasks"
+              }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />
