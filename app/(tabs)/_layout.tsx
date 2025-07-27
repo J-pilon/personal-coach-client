@@ -25,7 +25,6 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
@@ -38,6 +37,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
+          headerShown: false,
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
@@ -53,6 +53,7 @@ export default function TabLayout() {
         name="menu"
         options={{
           title: 'Menu',
+          headerShown: false,
           tabBarIcon: ({ color }) => <Ionicons name="menu" size={28} color={color} />,
         }}
       />

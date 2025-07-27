@@ -37,6 +37,20 @@ export default function RootLayout() {
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="profile/index"
+              options={{
+                headerShown: true,
+                headerTitle: "Profile",
+                headerBackTitle: "Menu"
+              }} />
+            <Stack.Screen
+              name="smartGoals/index"
+              options={{
+                headerShown: true,
+                headerTitle: "Goals",
+                headerBackTitle: "Menu"
+              }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />

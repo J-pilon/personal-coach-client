@@ -3,8 +3,7 @@ import { View, TouchableOpacity, Alert, Text } from 'react-native';
 import ScrollView from '@/components/util/ScrollView';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
+import PrimaryButton from '@/components/buttons/PrimaryButton';
 import { Colors } from '@/constants/Colors';
 import { Task } from '@/api/tasks';
 import { useIncompleteTasks, useCreateTask } from '@/hooks/useTasks';
@@ -49,7 +48,7 @@ export default function TodaysFocusScreen() {
     }
   };
 
-  const handleAddToToday = (suggestion: AiTaskSuggestion) => {
+  const handleAddToToday = async (suggestion: AiTaskSuggestion) => {
     const newTask: Task = {
       title: suggestion.title,
       description: suggestion.description,
@@ -58,9 +57,19 @@ export default function TodaysFocusScreen() {
       priority: 2,
       profile_id: profile?.id || 1,
     };
-
     setSelectedTasks(prev => [...prev, newTask]);
-    dismissSuggestion(suggestion);
+
+    try {
+      await createTaskMutation.mutateAsync({
+        title: suggestion.title,
+        description: suggestion.description,
+        action_category: 'do',
+        priority: 2,
+      })
+      dismissSuggestion(suggestion);
+    } catch {
+      Alert.alert('Error', 'Failed to save task');
+    }
   };
 
   const handleAddForLater = async (suggestion: AiTaskSuggestion) => {
@@ -128,7 +137,6 @@ export default function TodaysFocusScreen() {
 
   return (
     <LinearGradient>
-      {/* Header */}
       <View className="flex-row justify-between items-center px-5 py-4">
         <Text className="text-3xl font-bold text-slate-100">
           Today&apos;s Focus
@@ -178,7 +186,6 @@ export default function TodaysFocusScreen() {
           </View>
         )}
 
-        {/* Your Tasks */}
         <View className="mb-6">
           <Text className="mx-5 mb-3 text-xl font-bold text-slate-100">
             Your Tasks ({selectedTasks.length} selected)
@@ -234,26 +241,20 @@ export default function TodaysFocusScreen() {
             ))
           )}
         </View>
-      </ScrollView>
 
-      {/* Focus Mode Button */}
-      {selectedTasks.length > 0 && (
-        <View className="px-5 py-4">
-          <TouchableOpacity
-            className="overflow-hidden rounded-2xl"
-            onPress={handleEnterFocusMode}
-          >
-            <LinearGradient>
-              <View className="flex-row justify-center items-center px-6 py-4">
-                <Ionicons name="play" size={24} color={Colors.text.primary} />
-                <Text className="ml-2 text-base font-semibold text-slate-100">
-                  Enter Focus Mode ({selectedTasks.length})
-                </Text>
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      )}
+        {/* Focus Mode Button */}
+        {selectedTasks.length > 0 && (
+          <View className="px-5 py-4">
+            <PrimaryButton
+              title={`Enter Focus Mode (${selectedTasks.length})`}
+              onPress={handleEnterFocusMode}
+              icon="play"
+              iconColor={Colors.text.primary}
+              className="bg-cyan-400"
+            />
+          </View>
+        )}
+      </ScrollView>
     </LinearGradient>
   );
 }
