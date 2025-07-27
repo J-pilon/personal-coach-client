@@ -138,13 +138,14 @@ export default function TodaysFocusScreen() {
   return (
     <LinearGradient>
       <View className="flex-row justify-between items-center px-5 py-4">
-        <Text className="text-3xl font-bold text-slate-100">
+        <Text className="text-3xl font-bold text-slate-100" testID="todays-focus-title">
           Today&apos;s Focus
         </Text>
         <TouchableOpacity
           className="flex-row items-center px-4 py-2 rounded-full border border-cyan-400 bg-cyan-400/10"
           onPress={handleAssistMe}
           disabled={aiLoading}
+          testID="todays-focus-assist-me-button"
         >
           <Ionicons
             name="bulb"
@@ -159,7 +160,7 @@ export default function TodaysFocusScreen() {
 
       {/* AI Error */}
       {aiError && (
-        <View className="p-3 mx-5 mb-4 rounded-lg border bg-red-500/10 border-red-500/30">
+        <View className="p-3 mx-5 mb-4 rounded-lg border bg-red-500/10 border-red-500/30" testID="todays-focus-ai-error">
           <Text className="text-sm text-red-400">
             {aiError}
           </Text>
@@ -171,7 +172,7 @@ export default function TodaysFocusScreen() {
         {/* AI Suggestions */}
         {aiSuggestions.length > 0 && (
           <View className="mb-6">
-            <Text className="mx-5 mb-3 text-xl font-bold text-slate-100">
+            <Text className="mx-5 mb-3 text-xl font-bold text-slate-100" testID="todays-focus-ai-suggestions-title">
               AI Suggestions
             </Text>
             {aiSuggestions.map((suggestion, index) => (
@@ -187,17 +188,17 @@ export default function TodaysFocusScreen() {
         )}
 
         <View className="mb-6">
-          <Text className="mx-5 mb-3 text-xl font-bold text-slate-100">
+          <Text className="mx-5 mb-3 text-xl font-bold text-slate-100" testID="todays-focus-tasks-title">
             Your Tasks ({selectedTasks.length} selected)
           </Text>
 
           {sortedTasks.length === 0 && aiSuggestions.length === 0 ? (
-            <View className="items-center px-5 py-10">
+            <View className="items-center px-5 py-10" testID="todays-focus-empty-state">
               <Ionicons name="checkmark-circle-outline" size={48} color={Colors.text.muted} />
-              <Text className="mt-4 mb-2 text-lg text-slate-100">
+              <Text className="mt-4 mb-2 text-lg text-slate-100" testID="todays-focus-empty-state-title">
                 No tasks to focus on today
               </Text>
-              <Text className="text-sm text-center text-slate-400">
+              <Text className="text-sm text-center text-slate-400" testID="todays-focus-empty-state-message">
                 Tap &quot;Assist Me&quot; to get AI suggestions
               </Text>
             </View>
@@ -207,13 +208,14 @@ export default function TodaysFocusScreen() {
                 key={task.id}
                 className={`flex-row bg-white/5 mx-5 my-1.5 p-4 rounded-xl border ${isTaskSelected(task) ? 'border-cyan-400 bg-cyan-400/10' : 'border-white/10'}`}
                 onPress={() => toggleTaskSelection(task)}
+                testID={`todays-focus-task-${task.id}`}
               >
                 <View className="flex-1">
-                  <Text className="text-base font-semibold text-slate-100 mb-1.5">
+                  <Text className="text-base font-semibold text-slate-100 mb-1.5" testID={`todays-focus-task-title-${task.id}`}>
                     {task.title}
                   </Text>
                   {task.description && (
-                    <Text className="mb-2 text-sm text-slate-200">
+                    <Text className="mb-2 text-sm text-slate-200" testID={`todays-focus-task-description-${task.id}`}>
                       {task.description}
                     </Text>
                   )}
@@ -225,7 +227,7 @@ export default function TodaysFocusScreen() {
                           size={14}
                           color={task.priority >= 3 ? Colors.accent.primary : Colors.text.muted}
                         />
-                        <Text className="ml-1 text-xs text-slate-400">
+                        <Text className="ml-1 text-xs text-slate-400" testID={`todays-focus-task-priority-${task.id}`}>
                           Priority {task.priority}
                         </Text>
                       </View>
@@ -251,6 +253,7 @@ export default function TodaysFocusScreen() {
               icon="play"
               iconColor={Colors.text.primary}
               className="bg-cyan-400"
+              testID="todays-focus-enter-focus-mode-button"
             />
           </View>
         )}

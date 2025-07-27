@@ -51,6 +51,13 @@ export default function RootLayout() {
                 headerTitle: "Goals",
                 headerBackTitle: "Menu"
               }} />
+            <Stack.Screen
+              name="taskDetail/[id]"
+              options={{
+                headerShown: true,
+                headerTitle: "Task Details",
+                headerBackTitle: "Menu"
+              }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />
