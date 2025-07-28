@@ -19,6 +19,7 @@ export default function TodaysFocusScreen() {
 
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
   const [isFocusMode, setIsFocusMode] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState<Set<string>>(new Set());
 
   const {
     suggestions: aiSuggestions,
@@ -49,30 +50,44 @@ export default function TodaysFocusScreen() {
   };
 
   const handleAddToToday = async (suggestion: AiTaskSuggestion) => {
-    const newTask: Task = {
-      title: suggestion.title,
-      description: suggestion.description,
-      completed: false,
-      action_category: 'do',
-      priority: 2,
-      profile_id: profile?.id || 1,
-    };
-    setSelectedTasks(prev => [...prev, newTask]);
+    // Create a unique key for this suggestion to track loading state
+    const suggestionKey = `${suggestion.title}-${suggestion.description}`;
+
+    // Set loading state for this suggestion
+    setLoadingSuggestions(prev => new Set(prev).add(suggestionKey));
 
     try {
-      await createTaskMutation.mutateAsync({
+      const createdTask = await createTaskMutation.mutateAsync({
         title: suggestion.title,
         description: suggestion.description,
         action_category: 'do',
         priority: 2,
-      })
+      });
+
+      // Add the created task (with proper id) to selectedTasks
+      if (createdTask) {
+        setSelectedTasks(prev => [...prev, createdTask]);
+      }
       dismissSuggestion(suggestion);
     } catch {
       Alert.alert('Error', 'Failed to save task');
+    } finally {
+      // Clear loading state for this suggestion
+      setLoadingSuggestions(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(suggestionKey);
+        return newSet;
+      });
     }
   };
 
   const handleAddForLater = async (suggestion: AiTaskSuggestion) => {
+    // Create a unique key for this suggestion to track loading state
+    const suggestionKey = `${suggestion.title}-${suggestion.description}`;
+
+    // Set loading state for this suggestion
+    setLoadingSuggestions(prev => new Set(prev).add(suggestionKey));
+
     try {
       await createTaskMutation.mutateAsync({
         title: suggestion.title,
@@ -83,11 +98,23 @@ export default function TodaysFocusScreen() {
       dismissSuggestion(suggestion);
     } catch {
       Alert.alert('Error', 'Failed to save task for later');
+    } finally {
+      // Clear loading state for this suggestion
+      setLoadingSuggestions(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(suggestionKey);
+        return newSet;
+      });
     }
   };
 
   const handleDismissAiTask = (suggestion: AiTaskSuggestion) => {
     dismissSuggestion(suggestion);
+  };
+
+  const isSuggestionLoading = (suggestion: AiTaskSuggestion) => {
+    const suggestionKey = `${suggestion.title}-${suggestion.description}`;
+    return loadingSuggestions.has(suggestionKey);
   };
 
   const handleEnterFocusMode = () => {
@@ -182,6 +209,7 @@ export default function TodaysFocusScreen() {
                 onAddToToday={handleAddToToday}
                 onAddForLater={handleAddForLater}
                 onDismiss={handleDismissAiTask}
+                isLoading={isSuggestionLoading(suggestion)}
               />
             ))}
           </View>

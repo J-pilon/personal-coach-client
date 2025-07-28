@@ -11,7 +11,7 @@ export const useTasks = () => {
       }
       return response.data || [];
     },
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: 1000 * 30, // 30 seconds (reduced from 2 minutes)
     retry: 2,
   });
 };
@@ -72,7 +72,6 @@ export const useTask = (id: number) => {
       return response.data;
     },
     enabled: id > 0,
-    staleTime: 1000 * 60 * 2, // 2 minutes
     retry: 2,
   });
 };
@@ -127,7 +126,6 @@ export const useDeleteTask = () => {
       return response.data;
     },
     onSuccess: () => {
-      // Invalidate and refetch tasks to update the UI
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });

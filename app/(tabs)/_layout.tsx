@@ -42,7 +42,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="focus"
+        name="todaysFocus"
         options={{
           headerShown: false,
           title: "Today's Focus",
