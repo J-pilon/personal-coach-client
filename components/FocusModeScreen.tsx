@@ -13,18 +13,16 @@ interface FocusModeScreenProps {
   onExit: () => void;
 }
 
-
-
 export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusModeScreenProps) {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState<number[]>([]);
-
+  const [tasksToComplete, setTasksToComplete] = useState<Task[]>(selectedTasks || [])
 
   const updateTaskMutation = useUpdateTask();
 
-  const currentTask = selectedTasks[currentTaskIndex];
+  const currentTask = tasksToComplete[currentTaskIndex];
   const progress = completedTasks.length;
-  const totalTasks = selectedTasks.length;
+  const totalTasks = tasksToComplete.length;
   const progressPercentage = totalTasks > 0 ? (progress / totalTasks) * 100 : 0;
 
   useEffect(() => {
@@ -46,6 +44,7 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
       });
 
       setCompletedTasks(prev => [...prev, currentTask.id!]);
+      setTasksToComplete(prev => prev.filter(task => task.id !== currentTask.id));
       onComplete(currentTask.id);
       moveToNextTask();
     } catch (error) {
@@ -56,7 +55,7 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
   const handleSnooze = () => {
     if (!currentTask?.id) return;
 
-    // Move to next task (snoozed tasks are not counted as completed)
+    setTasksToComplete(prev => prev.filter(task => task.id !== currentTask.id));
     moveToNextTask();
   };
 
@@ -67,8 +66,10 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
 
   const moveToNextTask = () => {
     const nextIndex = currentTaskIndex + 1;
-    if (nextIndex < selectedTasks.length) {
+    if (nextIndex < tasksToComplete.length) {
       setCurrentTaskIndex(nextIndex);
+    } else if (nextIndex === tasksToComplete.length) {
+      setCurrentTaskIndex(0)
     } else {
       // All tasks completed or skipped - set currentTaskIndex to -1 to show completion screen
       setCurrentTaskIndex(-1);
@@ -106,7 +107,6 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
   return (
     <LinearGradient>
       <View className="absolute inset-0 z-50">
-        {/* Progress Bar */}
         <View className="absolute right-5 left-5 z-10 top-15">
           <View className="mb-2 h-1 rounded bg-white/10">
             <View
@@ -119,7 +119,6 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
           </Text>
         </View>
 
-        {/* Exit Button */}
         <TouchableOpacity
           className="absolute right-5 top-12 z-10 justify-center items-center w-10 h-10 rounded-full bg-white/10"
           onPress={handleExit}
@@ -128,7 +127,6 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
           <Ionicons name="close" size={24} color={Colors.text.primary} />
         </TouchableOpacity>
 
-        {/* Task Content */}
         <View className="flex-1 justify-center items-center px-10">
           <View className="items-center mb-20">
             <Text className="mb-5 text-2xl leading-9 text-center text-slate-100" testID="focus-mode-task-title">
