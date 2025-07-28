@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Colors } from '@/constants/Colors';
@@ -10,13 +10,15 @@ interface AiTaskCardProps {
   onAddToToday: (suggestion: AiTaskSuggestion) => void;
   onAddForLater: (suggestion: AiTaskSuggestion) => void;
   onDismiss: (suggestion: AiTaskSuggestion) => void;
+  isLoading?: boolean;
 }
 
 export function AiTaskCard({
   suggestion,
   onAddToToday,
   onAddForLater,
-  onDismiss
+  onDismiss,
+  isLoading = false
 }: AiTaskCardProps) {
   return (
     <View className="p-4 mx-4 my-2 rounded-2xl border border-cyan-400 border-solid shadow-lg">
@@ -53,27 +55,54 @@ export function AiTaskCard({
       {/* Action Buttons */}
       <View className="flex-row gap-2 justify-between">
         <TouchableOpacity
-          className="flex-row flex-1 justify-center items-center px-3 py-2 rounded-lg border border-cyan-400 bg-cyan-400/10"
-          onPress={() => onAddToToday(suggestion)}
+          className={`flex-row flex-1 justify-center items-center px-3 py-2 rounded-lg border ${isLoading ? 'border-slate-400 bg-slate-400/10' : 'border-cyan-400 bg-cyan-400/10'
+            }`}
+          onPress={() => !isLoading && onAddToToday(suggestion)}
+          disabled={isLoading}
         >
-          <Ionicons name="checkmark-circle" size={16} color={Colors.accent.primary} />
-          <Text className="ml-1 text-xs font-medium text-cyan-400">Add to Today</Text>
+          {isLoading ? (
+            <ActivityIndicator size="small" color={Colors.text.muted} />
+          ) : (
+            <Ionicons name="checkmark-circle" size={16} color={Colors.accent.primary} />
+          )}
+          <Text className={`ml-1 text-xs font-medium ${isLoading ? 'text-slate-400' : 'text-cyan-400'
+            }`}>
+            {isLoading ? 'Adding...' : 'Add to Today'}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="flex-row flex-1 justify-center items-center px-3 py-2 rounded-lg border border-slate-400 bg-slate-400/10"
-          onPress={() => onAddForLater(suggestion)}
+          className={`flex-row flex-1 justify-center items-center px-3 py-2 rounded-lg border ${isLoading ? 'border-slate-400 bg-slate-400/10' : 'border-slate-400 bg-slate-400/10'
+            }`}
+          onPress={() => !isLoading && onAddForLater(suggestion)}
+          disabled={isLoading}
         >
-          <Ionicons name="time" size={16} color={Colors.text.muted} />
-          <Text className="ml-1 text-xs font-medium text-slate-400">Add for Later</Text>
+          {isLoading ? (
+            <ActivityIndicator size="small" color={Colors.text.muted} />
+          ) : (
+            <Ionicons name="time" size={16} color={Colors.text.muted} />
+          )}
+          <Text className={`ml-1 text-xs font-medium ${isLoading ? 'text-slate-400' : 'text-slate-400'
+            }`}>
+            {isLoading ? 'Adding...' : 'Add for Later'}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="flex-row flex-1 justify-center items-center px-3 py-2 rounded-lg border border-slate-400 bg-slate-400/10"
-          onPress={() => onDismiss(suggestion)}
+          className={`flex-row flex-1 justify-center items-center px-3 py-2 rounded-lg border ${isLoading ? 'border-slate-400 bg-slate-400/10' : 'border-slate-400 bg-slate-400/10'
+            }`}
+          onPress={() => !isLoading && onDismiss(suggestion)}
+          disabled={isLoading}
         >
-          <Ionicons name="close-circle" size={16} color={Colors.text.muted} />
-          <Text className="ml-1 text-xs font-medium text-slate-400">Dismiss</Text>
+          {isLoading ? (
+            <ActivityIndicator size="small" color={Colors.text.muted} />
+          ) : (
+            <Ionicons name="close-circle" size={16} color={Colors.text.muted} />
+          )}
+          <Text className={`ml-1 text-xs font-medium ${isLoading ? 'text-slate-400' : 'text-slate-400'
+            }`}>
+            {isLoading ? 'Adding...' : 'Dismiss'}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
