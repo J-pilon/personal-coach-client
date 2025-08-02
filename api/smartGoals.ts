@@ -46,25 +46,16 @@ export interface UpdateSmartGoalParams {
 }
 
 export const getSmartGoals = async (): Promise<SmartGoal[]> => {
-  const response = await fetch(`${API_BASE_URL}/smart_goals`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch smart goals');
-  }
-  return response.json();
+  const { apiRequest } = await import('../utils/api');
+  return apiRequest('/smart_goals');
 };
 
 export const createSmartGoal = async (data: CreateSmartGoalParams): Promise<SmartGoal> => {
-  const response = await fetch(`${API_BASE_URL}/smart_goals`, {
+  const { apiRequest } = await import('../utils/api');
+  return apiRequest('/smart_goals', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({ smart_goal: data }),
   });
-  if (!response.ok) {
-    throw new Error('Failed to create smart goal');
-  }
-  return response.json();
 };
 
 export const createMultipleSmartGoals = async (goals: CreateSmartGoalParams[]): Promise<SmartGoal[]> => {
@@ -73,24 +64,16 @@ export const createMultipleSmartGoals = async (goals: CreateSmartGoalParams[]): 
 };
 
 export const updateSmartGoal = async (id: number, data: UpdateSmartGoalParams): Promise<SmartGoal> => {
-  const response = await fetch(`${API_BASE_URL}/smart_goals/${id}`, {
+  const { apiRequest } = await import('../utils/api');
+  return apiRequest(`/smart_goals/${id}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({ smart_goal: data }),
   });
-  if (!response.ok) {
-    throw new Error('Failed to update smart goal');
-  }
-  return response.json();
 };
 
 export const deleteSmartGoal = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/smart_goals/${id}`, {
+  const { apiRequest } = await import('../utils/api');
+  return apiRequest(`/smart_goals/${id}`, {
     method: 'DELETE',
   });
-  if (!response.ok) {
-    throw new Error('Failed to delete smart goal');
-  }
 }; 

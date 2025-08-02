@@ -50,7 +50,13 @@ export interface ProfileUpdateData {
   onboarding_status?: 'incomplete' | 'complete';
 }
 
-// User authentication functions
+// Get current user (authenticated)
+export const getCurrentUser = async (): Promise<UserResponse> => {
+  const { apiRequest } = await import('../utils/api');
+  return apiRequest('/me');
+};
+
+// User registration (no auth required)
 export const createUser = async (data: UserRegistrationData): Promise<UserResponse> => {
   const response = await fetch(`${API_BASE_URL}/users`, {
     method: 'POST',
@@ -65,46 +71,29 @@ export const createUser = async (data: UserRegistrationData): Promise<UserRespon
   return response.json();
 };
 
-export const getUser = async (userId: number = 1): Promise<UserResponse> => {
-  const response = await fetch(`${API_BASE_URL}/users/${userId}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch user');
-  }
-  return response.json();
+// Get user by ID (authenticated)
+export const getUser = async (userId: number): Promise<UserResponse> => {
+  const { apiRequest } = await import('../utils/api');
+  return apiRequest(`/users/${userId}`);
 };
 
-// Profile functions
-export const getProfile = async (profileId: number = 1): Promise<Profile> => {
-  const response = await fetch(`${API_BASE_URL}/profiles/${profileId}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch profile');
-  }
-  return response.json();
+// Profile functions (authenticated)
+export const getProfile = async (profileId: number): Promise<Profile> => {
+  const { apiRequest } = await import('../utils/api');
+  return apiRequest(`/profiles/${profileId}`);
 };
 
-export const updateProfile = async (profileId: number = 1, data: ProfileUpdateData): Promise<Profile> => {
-  const response = await fetch(`${API_BASE_URL}/profiles/${profileId}`, {
+export const updateProfile = async (profileId: number, data: ProfileUpdateData): Promise<Profile> => {
+  const { apiRequest } = await import('../utils/api');
+  return apiRequest(`/profiles/${profileId}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({ profile: data }),
   });
-  if (!response.ok) {
-    throw new Error('Failed to update profile');
-  }
-  return response.json();
 };
 
-export const completeOnboarding = async (profileId: number = 1): Promise<Profile> => {
-  const response = await fetch(`${API_BASE_URL}/profiles/${profileId}/complete_onboarding`, {
+export const completeOnboarding = async (profileId: number): Promise<Profile> => {
+  const { apiRequest } = await import('../utils/api');
+  return apiRequest(`/profiles/${profileId}/complete_onboarding`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
   });
-  if (!response.ok) {
-    throw new Error('Failed to complete onboarding');
-  }
-  return response.json();
 }; 

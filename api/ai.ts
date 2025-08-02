@@ -77,10 +77,14 @@ async function apiRequest<T>(
 ): Promise<ApiResponse<T>> {
   try {
     const url = `${API_BASE_URL}${endpoint}`;
+    
+    // Import the auth headers function
+    const { getAuthHeaders } = await import('../utils/api');
+    const headers = await getAuthHeaders();
+    
     const response = await fetch(url, {
       headers: {
-        'Content-Type': 'application/json',
-        'X-User-ID': '1', // TODO: Get from auth context
+        ...headers,
         ...options.headers,
       },
       ...options,
