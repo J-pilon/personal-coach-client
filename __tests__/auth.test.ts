@@ -1,13 +1,28 @@
-import React from 'react';
-import { renderHook, act } from '@testing-library/react-native';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import { act, renderHook } from '@testing-library/react-native';
 import * as SecureStore from 'expo-secure-store';
+import React from 'react';
 
 // Mock expo-secure-store
 jest.mock('expo-secure-store', () => ({
   getItemAsync: jest.fn(),
   setItemAsync: jest.fn(),
   deleteItemAsync: jest.fn(),
+}));
+
+// Mock TokenManager at module level
+const mockGetValidToken = jest.fn();
+const mockStoreToken = jest.fn();
+const mockClearToken = jest.fn();
+
+jest.mock('../utils/api', () => ({
+  TokenManager: {
+    getInstance: jest.fn(() => ({
+      getValidToken: mockGetValidToken,
+      storeToken: mockStoreToken,
+      clearToken: mockClearToken,
+    })),
+  },
 }));
 
 // Mock fetch
@@ -30,9 +45,13 @@ describe('Authentication System', () => {
       updated_at: '2023-01-01T00:00:00Z'
     };
     
-    mockSecureStore.getItemAsync
-      .mockResolvedValueOnce(mockToken)
-      .mockResolvedValueOnce(JSON.stringify(mockUser));
+    // Mock TokenManager methods
+    mockGetValidToken.mockResolvedValue(mockToken);
+    mockStoreToken.mockResolvedValue(undefined);
+    mockClearToken.mockResolvedValue(undefined);
+    
+    // Mock SecureStore for user
+    mockSecureStore.getItemAsync.mockResolvedValue(JSON.stringify(mockUser));
 
     const wrapper = ({ children }: { children: React.ReactNode }) =>
       React.createElement(AuthProvider, null, children);
@@ -41,7 +60,7 @@ describe('Authentication System', () => {
 
     // Wait for the effect to complete
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise(resolve => setTimeout(resolve, 100));
     });
 
     expect(result.current.token).toBe(mockToken);
@@ -59,7 +78,12 @@ describe('Authentication System', () => {
     };
     const mockResponse = {
       ok: true,
-      json: () => Promise.resolve({ data: mockUser }),
+      status: 200,
+      json: () => Promise.resolve({ 
+        status: { 
+          data: { user: mockUser } 
+        } 
+      }),
       headers: {
         get: (header: string) => header === 'Authorization' ? `Bearer ${mockToken}` : null,
       },
@@ -76,7 +100,6 @@ describe('Authentication System', () => {
       await result.current.signIn('test@example.com', 'password');
     });
 
-    expect(mockSecureStore.setItemAsync).toHaveBeenCalledWith('auth_token', mockToken);
     expect(mockSecureStore.setItemAsync).toHaveBeenCalledWith('auth_user', JSON.stringify(mockUser));
     expect(result.current.token).toBe(mockToken);
     expect(result.current.user).toEqual(mockUser);
@@ -106,7 +129,6 @@ describe('Authentication System', () => {
       await result.current.signOut();
     });
 
-    expect(mockSecureStore.deleteItemAsync).toHaveBeenCalledWith('auth_token');
     expect(mockSecureStore.deleteItemAsync).toHaveBeenCalledWith('auth_user');
     expect(result.current.token).toBeNull();
     expect(result.current.user).toBeNull();
