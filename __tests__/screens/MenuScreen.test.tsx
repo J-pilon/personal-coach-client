@@ -1,6 +1,7 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { AuthProvider } from '@/hooks/useAuth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen } from '@testing-library/react-native';
+import React from 'react';
 import MenuScreen from '../../app/(tabs)/menu';
 
 // Mock expo-router
@@ -12,8 +13,34 @@ jest.mock('expo-router', () => ({
   router: {
     push: jest.fn(),
     back: jest.fn(),
+    replace: jest.fn(),
   },
 }));
+
+// Mock expo-secure-store
+jest.mock('expo-secure-store', () => ({
+  getItemAsync: jest.fn(),
+  setItemAsync: jest.fn(),
+  deleteItemAsync: jest.fn(),
+}));
+
+// Mock TokenManager
+const mockGetValidToken = jest.fn();
+const mockStoreToken = jest.fn();
+const mockClearToken = jest.fn();
+
+jest.mock('../../utils/api', () => ({
+  TokenManager: {
+    getInstance: jest.fn(() => ({
+      getValidToken: mockGetValidToken,
+      storeToken: mockStoreToken,
+      clearToken: mockClearToken,
+    })),
+  },
+}));
+
+// Mock fetch
+global.fetch = jest.fn();
 
 describe('MenuScreen', () => {
   let queryClient: QueryClient;
@@ -28,14 +55,25 @@ describe('MenuScreen', () => {
 
     // Reset all mocks
     jest.clearAllMocks();
+
+    // Mock TokenManager methods
+    mockGetValidToken.mockResolvedValue('test-token');
+    mockStoreToken.mockResolvedValue(undefined);
+    mockClearToken.mockResolvedValue(undefined);
   });
 
-  it('renders all menu items correctly', () => {
-    render(
+  const renderWithProviders = (component: React.ReactElement) => {
+    return render(
       <QueryClientProvider client={queryClient}>
-        <MenuScreen />
+        <AuthProvider>
+          {component}
+        </AuthProvider>
       </QueryClientProvider>
     );
+  };
+
+  it('renders all menu items correctly', () => {
+    renderWithProviders(<MenuScreen />);
 
     // Check if all menu items are displayed
     expect(screen.getByTestId('menu-item-text-profile')).toBeTruthy();
@@ -48,11 +86,7 @@ describe('MenuScreen', () => {
   it('handles profile menu item press', () => {
     const mockRouter = require('expo-router').router;
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MenuScreen />
-      </QueryClientProvider>
-    );
+    renderWithProviders(<MenuScreen />);
 
     const profileButton = screen.getByTestId('menu-item-profile');
     fireEvent.press(profileButton);
@@ -63,11 +97,7 @@ describe('MenuScreen', () => {
   it('handles goals menu item press', () => {
     const mockRouter = require('expo-router').router;
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MenuScreen />
-      </QueryClientProvider>
-    );
+    renderWithProviders(<MenuScreen />);
 
     const goalsButton = screen.getByTestId('menu-item-smart-goals');
     fireEvent.press(goalsButton);
@@ -78,11 +108,7 @@ describe('MenuScreen', () => {
   it('handles settings menu item press', () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MenuScreen />
-      </QueryClientProvider>
-    );
+    renderWithProviders(<MenuScreen />);
 
     const settingsButton = screen.getByTestId('menu-item-settings');
     fireEvent.press(settingsButton);
@@ -95,11 +121,7 @@ describe('MenuScreen', () => {
   it('handles help & support menu item press', () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MenuScreen />
-      </QueryClientProvider>
-    );
+    renderWithProviders(<MenuScreen />);
 
     const helpButton = screen.getByTestId('menu-item-help');
     fireEvent.press(helpButton);
@@ -112,11 +134,7 @@ describe('MenuScreen', () => {
   it('handles about menu item press', () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MenuScreen />
-      </QueryClientProvider>
-    );
+    renderWithProviders(<MenuScreen />);
 
     const aboutButton = screen.getByTestId('menu-item-about');
     fireEvent.press(aboutButton);
@@ -127,11 +145,7 @@ describe('MenuScreen', () => {
   });
 
   it('renders menu items with correct structure', () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MenuScreen />
-      </QueryClientProvider>
-    );
+    renderWithProviders(<MenuScreen />);
 
     // Check if menu items are rendered as pressable elements
     expect(screen.getByTestId('menu-item-text-profile')).toBeTruthy();
@@ -142,11 +156,7 @@ describe('MenuScreen', () => {
   });
 
   it('has proper menu item styling and layout', () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MenuScreen />
-      </QueryClientProvider>
-    );
+    renderWithProviders(<MenuScreen />);
 
     // The menu should be rendered as a scrollable list
     // Each item should be pressable
@@ -167,11 +177,7 @@ describe('MenuScreen', () => {
     const mockRouter = require('expo-router').router;
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MenuScreen />
-      </QueryClientProvider>
-    );
+    renderWithProviders(<MenuScreen />);
 
     // Press multiple menu items
     fireEvent.press(screen.getByTestId('menu-item-profile'));
