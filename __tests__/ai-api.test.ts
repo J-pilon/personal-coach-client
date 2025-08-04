@@ -3,6 +3,13 @@ import { aiApi } from '../api/ai';
 // Mock fetch globally
 global.fetch = jest.fn();
 
+// Mock the getAuthHeaders function
+jest.mock('../utils/api', () => ({
+  getAuthHeaders: jest.fn().mockResolvedValue({
+    'Content-Type': 'application/json'
+  })
+}));
+
 describe('AI API', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -23,12 +30,16 @@ describe('AI API', () => {
         request_id: 123
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
+      const mockFetchResponse = {
         ok: true,
         status: 200,
-        headers: new Map([['content-type', 'application/json']]),
+        headers: {
+          get: jest.fn().mockReturnValue('application/json')
+        },
         json: async () => mockResponse
-      });
+      };
+
+      (fetch as jest.Mock).mockResolvedValueOnce(mockFetchResponse);
 
       const result = await aiApi.processAiRequest({ input: 'Create a goal to exercise more' });
 
@@ -39,8 +50,7 @@ describe('AI API', () => {
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
-            'Content-Type': 'application/json',
-            'X-User-ID': '1'
+            'Content-Type': 'application/json'
           }),
           body: JSON.stringify({ input: 'Create a goal to exercise more' })
         })
@@ -53,7 +63,9 @@ describe('AI API', () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 400,
-        headers: new Map([['content-type', 'application/json']]),
+        headers: {
+          get: jest.fn().mockReturnValue('application/json')
+        },
         json: async () => mockError
       });
 
@@ -91,7 +103,9 @@ describe('AI API', () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         status: 200,
-        headers: new Map([['content-type', 'application/json']]),
+        headers: {
+          get: jest.fn().mockReturnValue('application/json')
+        },
         json: async () => mockResponse
       });
 
@@ -133,7 +147,9 @@ describe('AI API', () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         status: 200,
-        headers: new Map([['content-type', 'application/json']]),
+        headers: {
+          get: jest.fn().mockReturnValue('application/json')
+        },
         json: async () => mockResponse
       });
 
