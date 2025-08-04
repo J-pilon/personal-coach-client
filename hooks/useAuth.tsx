@@ -41,10 +41,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loadStoredAuth();
   }, []);
 
-  console.log('====================================');
-  console.log(user, "user");
-  console.log('====================================');
-
   const loadStoredAuth = async () => {
     try {
       const storedToken = await tokenManager.getValidToken();
@@ -98,11 +94,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           user: { email, password }
         }),
       });
-
-      console.log('====================================');
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-      console.log('====================================');
 
       if (!response.ok) {
         // Handle 401 specifically for authentication failures
