@@ -1,16 +1,14 @@
-import React from 'react';
-import { renderHook, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useUser, useProfile, useCreateUser, useUpdateProfile, useCompleteOnboarding } from '../../hooks/useUser';
+import { renderHook, waitFor } from '@testing-library/react-native';
+import React from 'react';
 import * as usersApi from '../../api/users';
+import { useCompleteOnboarding, useProfile, useUpdateProfile } from '../../hooks/useUser';
 
 // Mock the API module
 jest.mock('../../api/users', () => ({
-  getUser: jest.fn(),
   getProfile: jest.fn(),
   updateProfile: jest.fn(),
   completeOnboarding: jest.fn(),
-  createUser: jest.fn(),
 }));
 
 // Mock React Query hooks
@@ -41,76 +39,6 @@ describe('useUser Hooks', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
-
-  describe('useUser', () => {
-    it('returns user data', () => {
-      const mockUser = {
-        id: 1,
-        email: 'test@example.com',
-        profile: {
-          id: 1,
-          first_name: 'John',
-          last_name: 'Doe',
-          onboarding_status: 'complete',
-        },
-      };
-
-      mockUseQuery.mockReturnValue({
-        data: mockUser,
-        isLoading: false,
-        error: null,
-        isError: false,
-        isSuccess: true,
-        isFetching: false,
-        isRefetching: false,
-        refetch: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useUser(), { wrapper });
-
-      expect(result.current.data).toEqual(mockUser);
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.error).toBeNull();
-    });
-
-    it('returns loading state', () => {
-      mockUseQuery.mockReturnValue({
-        data: undefined,
-        isLoading: true,
-        error: null,
-        isError: false,
-        isSuccess: false,
-        isFetching: false,
-        isRefetching: false,
-        refetch: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useUser(), { wrapper });
-
-      expect(result.current.isLoading).toBe(true);
-      expect(result.current.data).toBeUndefined();
-    });
-
-    it('returns error state', () => {
-      const error = new Error('Failed to fetch user');
-
-      mockUseQuery.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        error,
-        isError: true,
-        isSuccess: false,
-        isFetching: false,
-        isRefetching: false,
-        refetch: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useUser(), { wrapper });
-
-      expect(result.current.error).toEqual(error);
-      expect(result.current.isError).toBe(true);
-    });
-  });
 
   describe('useProfile', () => {
     it('returns profile data', () => {
@@ -183,54 +111,6 @@ describe('useUser Hooks', () => {
 
       expect(result.current.error).toEqual(error);
       expect(result.current.isError).toBe(true);
-    });
-  });
-
-  describe('useCreateUser', () => {
-    it('returns mutation object', () => {
-      const mockMutate = jest.fn();
-
-      mockUseMutation.mockReturnValue({
-        mutate: mockMutate,
-        isPending: false,
-        isError: false,
-        isSuccess: false,
-        error: null,
-        reset: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useCreateUser(), { wrapper });
-
-      expect(result.current.mutate).toBe(mockMutate);
-      expect(result.current.isPending).toBe(false);
-      expect(result.current.isError).toBe(false);
-    });
-
-    it('calls createUser API when mutate is called', async () => {
-      const mockMutate = jest.fn();
-      const mockCreateUser = usersApi.createUser as jest.MockedFunction<typeof usersApi.createUser>;
-
-      mockUseMutation.mockReturnValue({
-        mutate: mockMutate,
-        isPending: false,
-        isError: false,
-        isSuccess: false,
-        error: null,
-        reset: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useCreateUser(), { wrapper });
-
-      const userData = {
-        email: 'test@example.com',
-        password: 'password123',
-        password_confirmation: 'password123',
-      };
-      result.current.mutate(userData);
-
-      await waitFor(() => {
-        expect(mockMutate).toHaveBeenCalledWith(userData);
-      });
     });
   });
 

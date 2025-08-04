@@ -32,13 +32,6 @@ export interface UserResponse {
   profile: Profile;
 }
 
-// User registration data
-export interface UserRegistrationData {
-  email: string;
-  password: string;
-  password_confirmation: string;
-}
-
 // Profile update data
 export interface ProfileUpdateData {
   first_name?: string;
@@ -54,27 +47,6 @@ export interface ProfileUpdateData {
 export const getCurrentUser = async (): Promise<UserResponse> => {
   const { apiRequest } = await import('../utils/api');
   return apiRequest('/me');
-};
-
-// User registration (no auth required)
-export const createUser = async (data: UserRegistrationData): Promise<UserResponse> => {
-  const response = await fetch(`${API_BASE_URL}/users`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ user: data }),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to create user');
-  }
-  return response.json();
-};
-
-// Get user by ID (authenticated)
-export const getUser = async (userId: number): Promise<UserResponse> => {
-  const { apiRequest } = await import('../utils/api');
-  return apiRequest(`/users/${userId}`);
 };
 
 // Profile functions (authenticated)
