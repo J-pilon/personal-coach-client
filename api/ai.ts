@@ -2,6 +2,9 @@
 // Base URL for the Rails server API
 const API_BASE_URL = 'http://localhost:3000/api/v1';
 
+// Import auth headers function
+import { getAuthHeaders } from '../utils/api';
+
 // AI response interfaces
 export interface AiResponse {
   intent: 'smart_goal' | 'prioritization' | 'error';
@@ -78,8 +81,7 @@ async function apiRequest<T>(
   try {
     const url = `${API_BASE_URL}${endpoint}`;
     
-    // Import the auth headers function
-    const { getAuthHeaders } = await import('../utils/api');
+    // Get auth headers
     const headers = await getAuthHeaders();
     
     const response = await fetch(url, {
