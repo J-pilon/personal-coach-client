@@ -44,14 +44,24 @@ describe('Authentication System', () => {
       created_at: '2023-01-01T00:00:00Z',
       updated_at: '2023-01-01T00:00:00Z'
     };
+    const mockProfile = {
+      id: 1,
+      first_name: 'John',
+      last_name: 'Doe',
+      onboarding_status: 'complete' as const,
+      user_id: 1,
+      created_at: '2023-01-01T00:00:00Z',
+      updated_at: '2023-01-01T00:00:00Z'
+    };
     
     // Mock TokenManager methods
     mockGetValidToken.mockResolvedValue(mockToken);
     mockStoreToken.mockResolvedValue(undefined);
     mockClearToken.mockResolvedValue(undefined);
     
-    // Mock SecureStore for user
-    mockSecureStore.getItemAsync.mockResolvedValue(JSON.stringify(mockUser));
+    // Mock SecureStore for user and profile
+    mockSecureStore.getItemAsync.mockResolvedValueOnce(JSON.stringify(mockUser));
+    mockSecureStore.getItemAsync.mockResolvedValueOnce(JSON.stringify(mockProfile));
 
     const wrapper = ({ children }: { children: React.ReactNode }) =>
       React.createElement(AuthProvider, null, children);
@@ -65,6 +75,7 @@ describe('Authentication System', () => {
 
     expect(result.current.token).toBe(mockToken);
     expect(result.current.user).toEqual(mockUser);
+    expect(result.current.profile).toEqual(mockProfile);
     expect(result.current.isLoading).toBe(false);
   });
 
@@ -76,12 +87,26 @@ describe('Authentication System', () => {
       created_at: '2023-01-01T00:00:00Z',
       updated_at: '2023-01-01T00:00:00Z'
     };
+    const mockProfile = {
+      id: 1,
+      first_name: 'John',
+      last_name: 'Doe',
+      onboarding_status: 'complete' as const,
+      user_id: 1,
+      created_at: '2023-01-01T00:00:00Z',
+      updated_at: '2023-01-01T00:00:00Z'
+    };
     const mockResponse = {
       ok: true,
       status: 200,
       json: () => Promise.resolve({ 
         status: { 
-          data: { user: mockUser } 
+          code: 200,
+          message: 'Logged in successfully.',
+          data: {
+            user: mockUser,
+            profile: mockProfile
+          }
         } 
       }),
       headers: {
@@ -101,8 +126,10 @@ describe('Authentication System', () => {
     });
 
     expect(mockSecureStore.setItemAsync).toHaveBeenCalledWith('auth_user', JSON.stringify(mockUser));
+    expect(mockSecureStore.setItemAsync).toHaveBeenCalledWith('auth_profile', JSON.stringify(mockProfile));
     expect(result.current.token).toBe(mockToken);
     expect(result.current.user).toEqual(mockUser);
+    expect(result.current.profile).toEqual(mockProfile);
   });
 
   it('should handle sign out successfully', async () => {
@@ -120,6 +147,15 @@ describe('Authentication System', () => {
         created_at: '2023-01-01T00:00:00Z',
         updated_at: '2023-01-01T00:00:00Z'
       };
+      result.current.profile = {
+        id: 1,
+        first_name: 'John',
+        last_name: 'Doe',
+        onboarding_status: 'complete' as const,
+        user_id: 1,
+        created_at: '2023-01-01T00:00:00Z',
+        updated_at: '2023-01-01T00:00:00Z'
+      };
     });
 
     const mockResponse = { ok: true };
@@ -130,7 +166,9 @@ describe('Authentication System', () => {
     });
 
     expect(mockSecureStore.deleteItemAsync).toHaveBeenCalledWith('auth_user');
+    expect(mockSecureStore.deleteItemAsync).toHaveBeenCalledWith('auth_profile');
     expect(result.current.token).toBeNull();
     expect(result.current.user).toBeNull();
+    expect(result.current.profile).toBeNull();
   });
 });
