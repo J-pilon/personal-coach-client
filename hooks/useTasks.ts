@@ -14,7 +14,6 @@ export const useTasks = () => {
       }
       return response.data || [];
     },
-    staleTime: 1000 * 30, // 30 seconds (reduced from 2 minutes)
     retry: 2,
   });
 };
@@ -29,7 +28,6 @@ export const useTasksByCategory = (category: 'do' | 'defer' | 'delegate') => {
       }
       return response.data || [];
     },
-    staleTime: 1000 * 60 * 2, // 2 minutes
     retry: 2,
   });
 };
@@ -44,7 +42,6 @@ export const useCompletedTasks = () => {
       }
       return response.data || [];
     },
-    staleTime: 1000 * 60 * 2, // 2 minutes
     retry: 2,
   });
 };
@@ -59,7 +56,6 @@ export const useIncompleteTasks = () => {
       }
       return response.data || [];
     },
-    staleTime: 1000 * 60 * 2, // 2 minutes
     retry: 2,
   });
 };

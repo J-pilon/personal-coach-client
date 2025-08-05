@@ -117,7 +117,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
       ];
 
       await createMultipleSmartGoals.mutateAsync(smartGoals);
-      await completeOnboarding.mutateAsync()
+      await completeOnboarding.mutateAsync();
 
       onComplete();
       router.replace('/(tabs)');

@@ -1,3 +1,5 @@
+import LinearGradient from '@/components/ui/LinearGradient';
+import ScrollView from '@/components/util/ScrollView';
 import { useAuth } from '@/hooks/useAuth';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -40,79 +42,105 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
-      <View className="flex-1 justify-center px-6 bg-white">
-        <View className="space-y-6">
-          <View className="space-y-2">
-            <Text testID="login-title" className="text-3xl font-bold text-center text-gray-900">
-              Welcome Back
-            </Text>
-            <Text testID="login-subtitle" className="text-center text-gray-600">
-              Sign in to your account
-            </Text>
-          </View>
-
-          <View className="space-y-4">
-            <View>
-              <Text className="mb-2 text-sm font-medium text-gray-700">
-                Email
+    <LinearGradient>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            padding: 20,
+            paddingBottom: 40
+          }}
+        >
+          <View>
+            <View className="mb-8">
+              <Text testID="login-title" className="text-[28px] font-semibold text-center text-[#F1F5F9] tracking-wide mb-2">
+                Welcome Back
               </Text>
-              <TextInput
-                testID="login-email-input"
-                className="px-4 py-3 w-full rounded-lg border border-gray-300 focus:border-blue-500"
-                placeholder="Enter your email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+              <Text testID="login-subtitle" className="text-center text-[#E6FAFF] text-lg">
+                Sign in to your account
+              </Text>
             </View>
 
-            <View>
-              <Text className="mb-2 text-sm font-medium text-gray-700">
-                Password
-              </Text>
-              <TextInput
-                testID="login-password-input"
-                className="px-4 py-3 w-full rounded-lg border border-gray-300 focus:border-blue-500"
-                placeholder="Enter your password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+            <View className="mb-8">
+              <View className="mb-4">
+                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                  Email
+                </Text>
+                <TextInput
+                  testID="login-email-input"
+                  className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={{
+                    shadowColor: '#274B8E',
+                    shadowOpacity: 0.10,
+                    shadowRadius: 10,
+                    shadowOffset: { width: 0, height: 3 }
+                  }}
+                />
+              </View>
+
+              <View>
+                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                  Password
+                </Text>
+                <TextInput
+                  testID="login-password-input"
+                  className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={{
+                    shadowColor: '#274B8E',
+                    shadowOpacity: 0.10,
+                    shadowRadius: 10,
+                    shadowOffset: { width: 0, height: 3 }
+                  }}
+                />
+              </View>
             </View>
-          </View>
 
-          <TouchableOpacity
-            testID="login-signin-button"
-            className={`w-full py-3 rounded-lg ${isLoading ? 'bg-gray-400' : 'bg-blue-600'
-              }`}
-            onPress={handleSignIn}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator testID="login-loading-indicator" color="white" />
-            ) : (
-              <Text className="text-lg font-semibold text-center text-white">
-                Sign In
-              </Text>
-            )}
-          </TouchableOpacity>
-
-          <View className="flex-row justify-center">
-            <Text className="text-gray-600">Don't have an account? </Text>
-            <TouchableOpacity testID="login-signup-link" onPress={handleSignUp}>
-              <Text className="font-semibold text-blue-600">Sign Up</Text>
+            <TouchableOpacity
+              testID="login-signin-button"
+              className={`w-full py-4 rounded-xl shadow-md mb-8 ${isLoading ? 'bg-[#808080]' : 'bg-cyan-400'}`}
+              onPress={handleSignIn}
+              disabled={isLoading}
+              style={{
+                shadowColor: isLoading ? '#808080' : '#33CFFF',
+                shadowOpacity: isLoading ? 0.12 : 0.25,
+                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 4 }
+              }}
+            >
+              {isLoading ? (
+                <ActivityIndicator testID="login-loading-indicator" color="#021A40" />
+              ) : (
+                <Text className="text-lg font-semibold text-center text-[#021A40]">
+                  Sign In
+                </Text>
+              )}
             </TouchableOpacity>
+
+            <View className="flex-row justify-center">
+              <Text className="text-[#E6FAFF]">Don&apos;t have an account? </Text>
+              <TouchableOpacity testID="login-signup-link" onPress={handleSignUp}>
+                <Text className="font-semibold text-cyan-400">Sign Up</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
