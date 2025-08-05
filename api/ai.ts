@@ -65,15 +65,15 @@ export interface AiRequestParams {
 // AI API class
 export class AIAPI {
   async processAiRequest(params: AiRequestParams): Promise<ApiResponse<AiResponse>> {
-    return apiPost<AiResponse>('/ai/process', params);
+    return apiPost<AiResponse>('/process', params);
   }
 
   async createSmartGoal(input: string): Promise<ApiResponse<AiResponse>> {
-    return apiPost<AiResponse>('/ai/smart_goal', { input });
+    return apiPost<AiResponse>('/ai', { input });
   }
 
   async prioritizeTasks(input: string): Promise<ApiResponse<AiResponse>> {
-    return apiPost<AiResponse>('/ai/prioritize', { input });
+    return apiPost<AiResponse>('/prioritize', { input });
   }
 
   // Type guards for response validation

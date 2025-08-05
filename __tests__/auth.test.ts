@@ -100,14 +100,10 @@ describe('Authentication System', () => {
       ok: true,
       status: 200,
       json: () => Promise.resolve({ 
-        status: { 
-          code: 200,
-          message: 'Logged in successfully.',
-          data: {
-            user: mockUser,
-            profile: mockProfile
-          }
-        } 
+        data: {
+          user: mockUser,
+          profile: mockProfile
+        }
       }),
       headers: {
         get: (header: string) => header === 'Authorization' ? `Bearer ${mockToken}` : null,
