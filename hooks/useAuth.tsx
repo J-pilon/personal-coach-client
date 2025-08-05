@@ -177,11 +177,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       const data = await response.json();
-
-      console.log('====================================');
-      console.log(data, "data");
-      console.log('====================================');
-
       const authToken = response.headers.get('Authorization')?.replace('Bearer ', '');
 
       if (!authToken) {

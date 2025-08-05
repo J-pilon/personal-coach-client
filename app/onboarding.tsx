@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import AiOnboardingWizard from '@/components/AiOnboardingWizard';
+import PrimaryButton from '@/components/buttons/PrimaryButton';
+import LinearGradient from '@/components/ui/LinearGradient';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import AiOnboardingWizard from '@/components/AiOnboardingWizard';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import LinearGradient from '@/components/ui/LinearGradient';
-import PrimaryButton from '@/components/buttons/PrimaryButton';
+import React, { useState } from 'react';
+import { Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function OnboardingScreen() {
   const colorScheme = useColorScheme();
@@ -20,7 +19,6 @@ export default function OnboardingScreen() {
 
   const handleWizardComplete = () => {
     setShowWizard(false);
-    router.replace('/(tabs)');
   };
 
   if (showWizard) {
