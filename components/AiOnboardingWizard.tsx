@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, Alert } from 'react-native';
-import ScrollView from '@/components/util/ScrollView';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useCreateMultipleSmartGoals } from '@/hooks/useSmartGoals';
-import { useCreateSmartGoal, useAiResponseHelpers } from '@/hooks/useAi';
-import { router } from 'expo-router';
 import LinearGradient from '@/components/ui/LinearGradient';
+import ScrollView from '@/components/util/ScrollView';
+import { useAiResponseHelpers, useCreateSmartGoal } from '@/hooks/useAi';
+import { useCreateMultipleSmartGoals } from '@/hooks/useSmartGoals';
 import { useCompleteOnboarding } from '@/hooks/useUser';
-import { GoalDescriptionStep, AiResponseStep, ConfirmationStep } from './AiOnboardingWizardSteps';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AiResponseStep, ConfirmationStep, GoalDescriptionStep } from './AiOnboardingWizardSteps';
 import ProgressBar from './ProgressBar';
 
 interface SMARTGoalData {
