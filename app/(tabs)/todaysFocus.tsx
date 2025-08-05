@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Alert, Text } from 'react-native';
-import ScrollView from '@/components/util/ScrollView';
-import LinearGradient from '@/components/ui/LinearGradient';
-import { Ionicons } from '@expo/vector-icons';
-import PrimaryButton from '@/components/buttons/PrimaryButton';
-import { Colors } from '@/constants/Colors';
 import { Task } from '@/api/tasks';
-import { useIncompleteTasks, useCreateTask } from '@/hooks/useTasks';
-import { useAiSuggestedTasks, AiTaskSuggestion } from '@/hooks/useAiSuggestedTasks';
-import { useProfile } from '@/hooks/useUser';
 import { AiTaskCard } from '@/components/AiTaskCard';
+import PrimaryButton from '@/components/buttons/PrimaryButton';
 import { FocusModeScreen } from '@/components/FocusModeScreen';
+import LinearGradient from '@/components/ui/LinearGradient';
+import ScrollView from '@/components/util/ScrollView';
+import { Colors } from '@/constants/Colors';
+import { AiTaskSuggestion, useAiSuggestedTasks } from '@/hooks/useAiSuggestedTasks';
+import { useAuth } from '@/hooks/useAuth';
+import { useCreateTask, useIncompleteTasks } from '@/hooks/useTasks';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
 export default function TodaysFocusScreen() {
-  const { data: profile } = useProfile();
+  const { profile } = useAuth();
   const { data: incompleteTasks = [] } = useIncompleteTasks();
   const createTaskMutation = useCreateTask();
 
@@ -21,13 +21,18 @@ export default function TodaysFocusScreen() {
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState<Set<string>>(new Set());
 
+  // Profile should always exist at this point due to auth protection in _layout.tsx
+  if (!profile) {
+    throw new Error('Profile is required but not available. This should not happen.');
+  }
+
   const {
     suggestions: aiSuggestions,
     isLoading: aiLoading,
     error: aiError,
     generateSuggestions,
     dismissSuggestion,
-  } = useAiSuggestedTasks(profile?.id || 1);
+  } = useAiSuggestedTasks(profile.id);
 
   // Sort tasks by priority (highest first)
   const sortedTasks = [...incompleteTasks].sort((a, b) => {

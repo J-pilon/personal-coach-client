@@ -20,7 +20,7 @@ const API_BASE_URL = 'http://localhost:3000/api/v1';
 
 ### Authentication
 
-The API uses the `X-User-ID` header for authentication. Currently hardcoded to user ID `1`, but should be updated to use the actual authenticated user.
+The API uses JWT token authentication via the `Authorization` header. The user ID is extracted from the JWT token on the server side.
 
 ## API Functions
 
@@ -234,7 +234,7 @@ Planned features:
 
 ### Common Issues
 
-1. **Authentication errors**: Ensure `X-User-ID` header is set correctly
+1. **Authentication errors**: Ensure JWT token is valid and included in Authorization header
 2. **Network errors**: Check if the Rails server is running on port 3000
 3. **Type errors**: Ensure all TypeScript interfaces are properly imported
 4. **Response parsing errors**: Check server response format matches expected interfaces

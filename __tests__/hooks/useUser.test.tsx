@@ -1,16 +1,24 @@
-import React from 'react';
-import { renderHook, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useUser, useProfile, useCreateUser, useUpdateProfile, useCompleteOnboarding } from '../../hooks/useUser';
-import * as usersApi from '../../api/users';
+import { renderHook, waitFor } from '@testing-library/react-native';
+import React from 'react';
+import { UsersAPI } from '../../api/users';
+import { AuthProvider } from '../../hooks/useAuth';
+import { useCompleteOnboarding, useProfile, useUpdateProfile } from '../../hooks/useUser';
 
 // Mock the API module
 jest.mock('../../api/users', () => ({
-  getUser: jest.fn(),
-  getProfile: jest.fn(),
-  updateProfile: jest.fn(),
-  completeOnboarding: jest.fn(),
-  createUser: jest.fn(),
+  UsersAPI: jest.fn().mockImplementation(() => ({
+    getCurrentUser: jest.fn(),
+    getProfile: jest.fn(),
+    updateProfile: jest.fn(),
+    completeOnboarding: jest.fn(),
+  })),
+}));
+
+// Mock the AuthProvider to avoid async initialization
+jest.mock('../../hooks/useAuth', () => ({
+  AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useAuth: jest.fn(),
 }));
 
 // Mock React Query hooks
@@ -22,6 +30,7 @@ jest.mock('@tanstack/react-query', () => ({
 
 const mockUseQuery = require('@tanstack/react-query').useQuery;
 const mockUseMutation = require('@tanstack/react-query').useMutation;
+const mockUseAuth = require('../../hooks/useAuth').useAuth;
 
 describe('useUser Hooks', () => {
   let queryClient: QueryClient;
@@ -36,81 +45,33 @@ describe('useUser Hooks', () => {
 
     // Reset all mocks
     jest.clearAllMocks();
+
+    // Mock useAuth to return a profile
+    mockUseAuth.mockReturnValue({
+      user: { id: 1, email: 'test@example.com' },
+      profile: {
+        id: 1,
+        first_name: 'John',
+        last_name: 'Doe',
+        work_role: 'Software Engineer',
+        education: 'Bachelor of Science',
+        desires: 'I want to become a senior developer',
+        limiting_beliefs: 'I am not good enough',
+        onboarding_status: 'complete',
+        onboarding_completed_at: '2024-01-01T00:00:00Z',
+        user_id: 1,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+      },
+      isLoading: false,
+    });
   });
 
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>{children}</AuthProvider>
+    </QueryClientProvider>
   );
-
-  describe('useUser', () => {
-    it('returns user data', () => {
-      const mockUser = {
-        id: 1,
-        email: 'test@example.com',
-        profile: {
-          id: 1,
-          first_name: 'John',
-          last_name: 'Doe',
-          onboarding_status: 'complete',
-        },
-      };
-
-      mockUseQuery.mockReturnValue({
-        data: mockUser,
-        isLoading: false,
-        error: null,
-        isError: false,
-        isSuccess: true,
-        isFetching: false,
-        isRefetching: false,
-        refetch: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useUser(), { wrapper });
-
-      expect(result.current.data).toEqual(mockUser);
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.error).toBeNull();
-    });
-
-    it('returns loading state', () => {
-      mockUseQuery.mockReturnValue({
-        data: undefined,
-        isLoading: true,
-        error: null,
-        isError: false,
-        isSuccess: false,
-        isFetching: false,
-        isRefetching: false,
-        refetch: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useUser(), { wrapper });
-
-      expect(result.current.isLoading).toBe(true);
-      expect(result.current.data).toBeUndefined();
-    });
-
-    it('returns error state', () => {
-      const error = new Error('Failed to fetch user');
-
-      mockUseQuery.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        error,
-        isError: true,
-        isSuccess: false,
-        isFetching: false,
-        isRefetching: false,
-        refetch: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useUser(), { wrapper });
-
-      expect(result.current.error).toEqual(error);
-      expect(result.current.isError).toBe(true);
-    });
-  });
 
   describe('useProfile', () => {
     it('returns profile data', () => {
@@ -186,54 +147,6 @@ describe('useUser Hooks', () => {
     });
   });
 
-  describe('useCreateUser', () => {
-    it('returns mutation object', () => {
-      const mockMutate = jest.fn();
-
-      mockUseMutation.mockReturnValue({
-        mutate: mockMutate,
-        isPending: false,
-        isError: false,
-        isSuccess: false,
-        error: null,
-        reset: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useCreateUser(), { wrapper });
-
-      expect(result.current.mutate).toBe(mockMutate);
-      expect(result.current.isPending).toBe(false);
-      expect(result.current.isError).toBe(false);
-    });
-
-    it('calls createUser API when mutate is called', async () => {
-      const mockMutate = jest.fn();
-      const mockCreateUser = usersApi.createUser as jest.MockedFunction<typeof usersApi.createUser>;
-
-      mockUseMutation.mockReturnValue({
-        mutate: mockMutate,
-        isPending: false,
-        isError: false,
-        isSuccess: false,
-        error: null,
-        reset: jest.fn(),
-      });
-
-      const { result } = renderHook(() => useCreateUser(), { wrapper });
-
-      const userData = {
-        email: 'test@example.com',
-        password: 'password123',
-        password_confirmation: 'password123',
-      };
-      result.current.mutate(userData);
-
-      await waitFor(() => {
-        expect(mockMutate).toHaveBeenCalledWith(userData);
-      });
-    });
-  });
-
   describe('useUpdateProfile', () => {
     it('returns mutation object', () => {
       const mockMutate = jest.fn();
@@ -256,7 +169,7 @@ describe('useUser Hooks', () => {
 
     it('calls updateProfile API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockUpdateProfile = usersApi.updateProfile as jest.MockedFunction<typeof usersApi.updateProfile>;
+      const mockUpdateProfile = UsersAPI.prototype.updateProfile;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,
@@ -304,7 +217,7 @@ describe('useUser Hooks', () => {
 
     it('calls completeOnboarding API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockCompleteOnboarding = usersApi.completeOnboarding as jest.MockedFunction<typeof usersApi.completeOnboarding>;
+      const mockCompleteOnboarding = UsersAPI.prototype.completeOnboarding;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,

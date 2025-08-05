@@ -1,19 +1,19 @@
-import React from 'react';
-import { renderHook, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useTasks, useCreateTask, useUpdateTask, useDeleteTask, useTask } from '../../hooks/useTasks';
-import { tasksApi } from '../../api/tasks';
+import { renderHook, waitFor } from '@testing-library/react-native';
+import React from 'react';
+import { TasksAPI } from '../../api/tasks';
+import { useCreateTask, useDeleteTask, useTask, useTasks, useUpdateTask } from '../../hooks/useTasks';
 
 // Mock the API module
 jest.mock('../../api/tasks', () => ({
-  tasksApi: {
+  TasksAPI: jest.fn().mockImplementation(() => ({
     getAllTasks: jest.fn(),
     getTask: jest.fn(),
     createTask: jest.fn(),
     updateTask: jest.fn(),
     deleteTask: jest.fn(),
     toggleTaskCompletion: jest.fn(),
-  },
+  })),
 }));
 
 // Mock React Query hooks
@@ -131,7 +131,7 @@ describe('useTasks', () => {
 
     it('calls createTask API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockCreateTask = tasksApi.createTask as jest.MockedFunction<typeof tasksApi.createTask>;
+      const mockCreateTask = TasksAPI.createTask as jest.MockedFunction<typeof TasksAPI.createTask>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,
@@ -175,7 +175,7 @@ describe('useTasks', () => {
 
     it('calls updateTask API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockUpdateTask = tasksApi.updateTask as jest.MockedFunction<typeof tasksApi.updateTask>;
+      const mockUpdateTask = TasksAPI.updateTask as jest.MockedFunction<typeof TasksAPI.updateTask>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,
@@ -219,7 +219,7 @@ describe('useTasks', () => {
 
     it('calls deleteTask API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockDeleteTask = tasksApi.deleteTask as jest.MockedFunction<typeof tasksApi.deleteTask>;
+      const mockDeleteTask = TasksAPI.deleteTask as jest.MockedFunction<typeof TasksAPI.deleteTask>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,

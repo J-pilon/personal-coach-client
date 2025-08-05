@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Pressable, Text, TextInput, View, Alert, ActivityIndicator } from 'react-native';
-import ScrollView from '@/components/util/ScrollView';
-import { useLocalSearchParams, router } from 'expo-router';
-import { useUpdateTask, useDeleteTask, useTask } from '@/hooks/useTasks';
 import { UpdateTaskParams } from '@/api/tasks';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import LinearGradient from '@/components/ui/LinearGradient';
+import ScrollView from '@/components/util/ScrollView';
+import { useDeleteTask, useTask, useUpdateTask } from '@/hooks/useTasks';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Pressable, Text, TextInput, View } from 'react-native';
 
 export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -136,14 +135,7 @@ export default function TaskDetailScreen() {
     <LinearGradient>
       <ScrollView className="flex-1">
         <View className="p-6">
-          <View className="flex-row justify-between items-center mb-6">
-            <Pressable
-              onPress={() => router.back()}
-              className="p-2"
-            >
-              <FontAwesome name="arrow-left" size={20} color="#E6FAFF" />
-            </Pressable>
-
+          <View className="flex-row justify-end items-center mb-6">
             <View className="flex-row gap-3">
               {isEditing ? (
                 <>

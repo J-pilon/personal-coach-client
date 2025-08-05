@@ -1,5 +1,6 @@
-import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
+import { apiPost, type ApiResponse } from '../utils/apiRequest';
 
 // Interface for AI-generated task suggestions
 export interface AiTaskSuggestion {
@@ -9,54 +10,14 @@ export interface AiTaskSuggestion {
   time_estimate_minutes: number;
 }
 
-// Interface for the API response
-interface AiSuggestedTasksResponse {
-  data?: AiTaskSuggestion[];
-  error?: string;
-  status: number;
-}
-
-// API function to fetch AI suggested tasks
-const fetchAiSuggestedTasks = async (profileId: number): Promise<AiSuggestedTasksResponse> => {
-  try {
-    const response = await fetch('http://localhost:3000/api/v1/ai/suggested_tasks', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-User-ID': '1', // TODO: Get from auth context
-      },
-      body: JSON.stringify({ profile_id: profileId }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        error: data?.error || `HTTP ${response.status}: ${response.statusText}`,
-        status: response.status,
-      };
-    }
-
-    return {
-      data,
-      status: response.status,
-    };
-  } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : 'Network error',
-      status: 0,
-    };
-  }
-};
-
 export const useAiSuggestedTasks = (profileId: number) => {
   const [suggestions, setSuggestions] = useState<AiTaskSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const mutation = useMutation({
-    mutationFn: () => fetchAiSuggestedTasks(profileId),
-    onSuccess: (response) => {
+    mutationFn: () => apiPost<AiTaskSuggestion[]>('/ai/suggested_tasks', { profile_id: profileId }),
+    onSuccess: (response: ApiResponse<AiTaskSuggestion[]>) => {
       if (response.error) {
         setError(response.error);
       } else {

@@ -1,16 +1,19 @@
-import React from 'react';
-import { renderHook, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useSmartGoals, useCreateSmartGoal, useCreateMultipleSmartGoals, useUpdateSmartGoal, useDeleteSmartGoal } from '../../hooks/useSmartGoals';
-import * as smartGoalsApi from '../../api/smartGoals';
+import { renderHook, waitFor } from '@testing-library/react-native';
+import React from 'react';
+import { SmartGoalsAPI } from '../../api/smartGoals';
+import { useCreateMultipleSmartGoals, useCreateSmartGoal, useDeleteSmartGoal, useSmartGoals, useUpdateSmartGoal } from '../../hooks/useSmartGoals';
 
 // Mock the API module
 jest.mock('../../api/smartGoals', () => ({
-  getSmartGoals: jest.fn(),
-  createSmartGoal: jest.fn(),
-  createMultipleSmartGoals: jest.fn(),
-  updateSmartGoal: jest.fn(),
-  deleteSmartGoal: jest.fn(),
+  SmartGoalsAPI: jest.fn().mockImplementation(() => ({
+    getAllSmartGoals: jest.fn(),
+    getSmartGoal: jest.fn(),
+    createSmartGoal: jest.fn(),
+    createMultipleSmartGoals: jest.fn(),
+    updateSmartGoal: jest.fn(),
+    deleteSmartGoal: jest.fn(),
+  })),
 }));
 
 // Mock React Query hooks
@@ -158,7 +161,7 @@ describe('useSmartGoals Hooks', () => {
 
     it('calls createSmartGoal API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockCreateSmartGoal = smartGoalsApi.createSmartGoal as jest.MockedFunction<typeof smartGoalsApi.createSmartGoal>;
+      const mockCreateSmartGoal = SmartGoalsAPI.createSmartGoal as jest.MockedFunction<typeof SmartGoalsAPI.createSmartGoal>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,
@@ -213,7 +216,7 @@ describe('useSmartGoals Hooks', () => {
 
     it('calls createMultipleSmartGoals API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockCreateMultipleSmartGoals = smartGoalsApi.createMultipleSmartGoals as jest.MockedFunction<typeof smartGoalsApi.createMultipleSmartGoals>;
+      const mockCreateMultipleSmartGoals = SmartGoalsAPI.createMultipleSmartGoals as jest.MockedFunction<typeof SmartGoalsAPI.createMultipleSmartGoals>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,
@@ -282,7 +285,7 @@ describe('useSmartGoals Hooks', () => {
 
     it('calls updateSmartGoal API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockUpdateSmartGoal = smartGoalsApi.updateSmartGoal as jest.MockedFunction<typeof smartGoalsApi.updateSmartGoal>;
+      const mockUpdateSmartGoal = SmartGoalsAPI.updateSmartGoal as jest.MockedFunction<typeof SmartGoalsAPI.updateSmartGoal>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,
@@ -333,7 +336,7 @@ describe('useSmartGoals Hooks', () => {
 
     it('calls deleteSmartGoal API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockDeleteSmartGoal = smartGoalsApi.deleteSmartGoal as jest.MockedFunction<typeof smartGoalsApi.deleteSmartGoal>;
+      const mockDeleteSmartGoal = SmartGoalsAPI.deleteSmartGoal as jest.MockedFunction<typeof SmartGoalsAPI.deleteSmartGoal>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,

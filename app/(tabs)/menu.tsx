@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import LinearGradient from '@/components/ui/LinearGradient';
+import { useAuth } from '@/hooks/useAuth';
 
 interface MenuItem {
   id: string;
@@ -12,6 +13,33 @@ interface MenuItem {
 }
 
 export default function MenuScreen() {
+  const { signOut } = useAuth();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await signOut();
+              router.replace('/auth/login');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to sign out');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const menuItems: MenuItem[] = [
     {
       id: 'profile',
@@ -56,6 +84,12 @@ export default function MenuScreen() {
         console.log('About pressed');
       },
     },
+    {
+      id: 'logout',
+      title: 'Sign Out',
+      icon: 'log-out-outline',
+      onPress: handleLogout,
+    },
   ];
 
   return (
@@ -67,14 +101,16 @@ export default function MenuScreen() {
           {menuItems.map((item) => (
             <Pressable
               key={item.id}
-              className="bg-[#2B42B6] rounded-2xl p-5 shadow-lg border"
+              className={`rounded-2xl p-5 shadow-lg border ${item.id === 'logout' ? 'bg-red-600' : 'bg-[#2B42B6]'
+                }`}
               style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
               onPress={item.onPress}
               testID={`menu-item-${item.id}`}
             >
               <View className="flex-row justify-between items-center">
                 <View className="flex-row flex-1 items-center">
-                  <View className="bg-[#154FA6] rounded-xl p-3 mr-4">
+                  <View className={`rounded-xl p-3 mr-4 ${item.id === 'logout' ? 'bg-red-700' : 'bg-[#154FA6]'
+                    }`}>
                     <Ionicons name={item.icon} size={24} color="#021A40" />
                   </View>
                   <Text className="text-[#F1F5F9] text-lg font-semibold" testID={`menu-item-text-${item.id}`}>

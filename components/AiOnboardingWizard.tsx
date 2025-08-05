@@ -36,11 +36,9 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
   const [aiResponse, setAiResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const mockProfileId = 1
-
   const createSmartGoal = useCreateSmartGoal();
   const createMultipleSmartGoals = useCreateMultipleSmartGoals();
-  const completeOnboarding = useCompleteOnboarding(mockProfileId)
+  const completeOnboarding = useCompleteOnboarding()
   const { isSmartGoalResponse, formatMultiPeriodSmartGoalResponse } = useAiResponseHelpers();
 
   const steps: OnboardingStep[] = [

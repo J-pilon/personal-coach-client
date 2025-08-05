@@ -1,59 +1,50 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  getUser, 
-  getProfile, 
-  updateProfile, 
-  completeOnboarding, 
-  createUser,
-  type UserResponse, 
-  type Profile, 
-  type ProfileUpdateData,
-  type UserRegistrationData
+import {
+  UsersAPI,
+  type ProfileUpdateData
 } from '@/api/users';
+import { useAuth } from '@/hooks/useAuth';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-// Helper function to get current user/profile IDs
-// In a real app, this would come from authentication context
-const getCurrentUserId = () => 1; // Default to user 1 for now
-const getCurrentProfileId = () => 1; // Default to profile 1 for now
-
-// User authentication hooks
-export const useUser = (userId?: number) => {
-  const currentUserId = userId || getCurrentUserId();
-  
-  return useQuery({
-    queryKey: ['user', currentUserId],
-    queryFn: () => getUser(currentUserId),
-  });
-};
-
-export const useCreateUser = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: createUser,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-    },
-  });
-};
+// Create a singleton instance of UsersAPI
+const usersApi = new UsersAPI();
 
 // Profile hooks
 export const useProfile = (profileId?: number) => {
-  const currentProfileId = profileId || getCurrentProfileId();
+  const { profile: authProfile } = useAuth();
+  const currentProfileId = profileId || authProfile?.id;
   
   return useQuery({
     queryKey: ['profile', currentProfileId],
-    queryFn: () => getProfile(currentProfileId),
+    queryFn: async () => {
+      if (!currentProfileId) {
+        throw new Error('Profile ID is required');
+      }
+      const response = await usersApi.getProfile(currentProfileId);
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      return response.data;
+    },
+    enabled: !!currentProfileId,
   });
 };
 
 export const useUpdateProfile = (profileId?: number) => {
   const queryClient = useQueryClient();
-  const currentProfileId = profileId || getCurrentProfileId();
+  const { profile: authProfile } = useAuth();
+  const currentProfileId = profileId || authProfile?.id;
   
   return useMutation({
-    mutationFn: (data: ProfileUpdateData) => updateProfile(currentProfileId, data),
+    mutationFn: async (data: ProfileUpdateData) => {
+      if (!currentProfileId) {
+        throw new Error('Profile ID is required');
+      }
+      const response = await usersApi.updateProfile(currentProfileId, data);
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
@@ -62,10 +53,20 @@ export const useUpdateProfile = (profileId?: number) => {
 
 export const useCompleteOnboarding = (profileId?: number) => {
   const queryClient = useQueryClient();
-  const currentProfileId = profileId || getCurrentProfileId();
+  const { profile: authProfile } = useAuth();
+  const currentProfileId = profileId || authProfile?.id;
   
   return useMutation({
-    mutationFn: () => completeOnboarding(currentProfileId),
+    mutationFn: async () => {
+      if (!currentProfileId) {
+        throw new Error('Profile ID is required');
+      }
+      const response = await usersApi.completeOnboarding(currentProfileId);
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
     },

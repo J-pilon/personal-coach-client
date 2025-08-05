@@ -1,12 +1,9 @@
+import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import AiOnboardingWizard from '../components/AiOnboardingWizard';
 
 // Mock the hooks
 jest.mock('@/hooks/useUser', () => ({
-  useCreateUser: () => ({
-    mutateAsync: jest.fn().mockResolvedValue({}),
-  }),
   useCompleteOnboarding: () => ({
     mutateAsync: jest.fn().mockResolvedValue({}),
   }),
