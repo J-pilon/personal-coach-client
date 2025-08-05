@@ -1,9 +1,12 @@
 import AiOnboardingWizard from '@/components/AiOnboardingWizard';
 import PrimaryButton from '@/components/buttons/PrimaryButton';
+import SecondaryButton from '@/components/buttons/SecondaryButton';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { setSkippedOnboarding } from '@/utils/handleSkipOnboarding';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,8 +24,13 @@ export default function OnboardingScreen() {
     setShowWizard(false);
   };
 
+  const handleSkippingOnboarding = () => {
+    setSkippedOnboarding()
+    router.replace('/(tabs)')
+  }
+
   if (showWizard) {
-    return <AiOnboardingWizard onComplete={handleWizardComplete} />;
+    return <AiOnboardingWizard onComplete={handleWizardComplete} onSkip={handleSkippingOnboarding} />;
   }
 
   return (
@@ -77,11 +85,20 @@ export default function OnboardingScreen() {
             </Text>
           </View>
 
-          <PrimaryButton
-            onPress={handleStartWizard}
-            title='Start with AI'
-            icon='arrow-forward'
-            iconColor='#021A40' />
+          <View>
+            <PrimaryButton
+              onPress={handleStartWizard}
+              title='Start with AI'
+              icon='arrow-forward'
+              iconColor='#021A40' />
+
+            <SecondaryButton
+              testID="ai-onboarding-skip-button"
+              title="Skip For Now"
+              loadingText="Skipping onboarding..."
+              onPress={handleSkippingOnboarding}
+            />
+          </View>
         </View>
       </SafeAreaView>
     </LinearGradient>
