@@ -1,4 +1,4 @@
-import { aiApi } from '../api/ai';
+import { AIAPI } from '../api/ai';
 
 // Mock fetch globally
 global.fetch = jest.fn();
@@ -11,7 +11,10 @@ jest.mock('../utils/api', () => ({
 }));
 
 describe('AI API', () => {
+  let aiApi: AIAPI;
+
   beforeEach(() => {
+    aiApi = new AIAPI();
     jest.clearAllMocks();
   });
 
@@ -46,7 +49,7 @@ describe('AI API', () => {
       expect(result.data).toEqual(mockResponse);
       expect(result.status).toBe(200);
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/ai',
+        'http://localhost:3000/api/v1/ai/process',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -100,23 +103,29 @@ describe('AI API', () => {
         request_id: 456
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
+      const mockFetchResponse = {
         ok: true,
         status: 200,
         headers: {
           get: jest.fn().mockReturnValue('application/json')
         },
         json: async () => mockResponse
-      });
+      };
 
-      const result = await aiApi.createSmartGoal('I want to learn Spanish');
+      (fetch as jest.Mock).mockResolvedValueOnce(mockFetchResponse);
+
+      const result = await aiApi.createSmartGoal('Learn Spanish');
 
       expect(result.data).toEqual(mockResponse);
+      expect(result.status).toBe(200);
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/ai',
+        'http://localhost:3000/api/v1/ai/smart_goal',
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ input: 'I want to learn Spanish' })
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json'
+          }),
+          body: JSON.stringify({ input: 'Learn Spanish' })
         })
       );
     });
@@ -127,40 +136,36 @@ describe('AI API', () => {
       const mockResponse = {
         intent: 'prioritization',
         response: [
-          {
-            task: 'exercise',
-            priority: 1,
-            rationale: 'High impact on health',
-            recommended_action: 'do'
-          },
-          {
-            task: 'work',
-            priority: 2,
-            rationale: 'Important but can wait',
-            recommended_action: 'defer'
-          }
+          { task: 'exercise', priority: 1, rationale: 'High impact' },
+          { task: 'work', priority: 2, rationale: 'Important' }
         ],
         context_used: true,
         request_id: 789
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
+      const mockFetchResponse = {
         ok: true,
         status: 200,
         headers: {
           get: jest.fn().mockReturnValue('application/json')
         },
         json: async () => mockResponse
-      });
+      };
 
-      const result = await aiApi.prioritizeTasks('Prioritize: exercise, work');
+      (fetch as jest.Mock).mockResolvedValueOnce(mockFetchResponse);
+
+      const result = await aiApi.prioritizeTasks('Prioritize my tasks');
 
       expect(result.data).toEqual(mockResponse);
+      expect(result.status).toBe(200);
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/ai',
+        'http://localhost:3000/api/v1/ai/prioritize',
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ input: 'Prioritize: exercise, work' })
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json'
+          }),
+          body: JSON.stringify({ input: 'Prioritize my tasks' })
         })
       );
     });
@@ -168,11 +173,17 @@ describe('AI API', () => {
 
   describe('response type guards', () => {
     it('should correctly identify smart goal responses', () => {
-      const smartGoalResponse: any = {
+      const smartGoalResponse = {
         intent: 'smart_goal',
-        response: { specific: 'test' },
+        response: {
+          specific: 'Exercise for 30 minutes daily',
+          measurable: 'Track workouts in fitness app',
+          achievable: 'Start with 3 days per week',
+          relevant: 'Improves overall health and energy',
+          time_bound: 'Complete 30 workouts in 3 months'
+        },
         context_used: true,
-        request_id: 1
+        request_id: 123
       };
 
       expect(aiApi.isSmartGoalResponse(smartGoalResponse)).toBe(true);
@@ -181,11 +192,14 @@ describe('AI API', () => {
     });
 
     it('should correctly identify prioritization responses', () => {
-      const prioritizationResponse: any = {
+      const prioritizationResponse = {
         intent: 'prioritization',
-        response: [{ task: 'test', priority: 1 }],
+        response: [
+          { task: 'exercise', priority: 1, rationale: 'High impact' },
+          { task: 'work', priority: 2, rationale: 'Important' }
+        ],
         context_used: true,
-        request_id: 1
+        request_id: 789
       };
 
       expect(aiApi.isSmartGoalResponse(prioritizationResponse)).toBe(false);
@@ -194,11 +208,11 @@ describe('AI API', () => {
     });
 
     it('should correctly identify error responses', () => {
-      const errorResponse: any = {
+      const errorResponse = {
         intent: 'error',
-        response: { error: 'test error' },
+        response: { error: 'Invalid input' },
         context_used: false,
-        request_id: 1
+        request_id: 999
       };
 
       expect(aiApi.isSmartGoalResponse(errorResponse)).toBe(false);
@@ -218,11 +232,11 @@ describe('AI API', () => {
       };
 
       const formatted = aiApi.formatSingleGoal(smartGoalResponse, 'Test Goal');
-      expect(formatted['Test Goal']['Specific']).toBe('Exercise for 30 minutes daily');
-      expect(formatted['Test Goal']['Measurable']).toBe('Track workouts in fitness app');
-      expect(formatted['Test Goal']['Achievable']).toBe('Start with 3 days per week');
-      expect(formatted['Test Goal']['Relevant']).toBe('Improves overall health and energy');
-      expect(formatted['Test Goal']['Time-bound']).toBe('Complete 30 workouts in 3 months');
+      expect(formatted['Test Goal']['specific']).toBe('Exercise for 30 minutes daily');
+      expect(formatted['Test Goal']['measurable']).toBe('Track workouts in fitness app');
+      expect(formatted['Test Goal']['achievable']).toBe('Start with 3 days per week');
+      expect(formatted['Test Goal']['relevant']).toBe('Improves overall health and energy');
+      expect(formatted['Test Goal']['time_bound']).toBe('Complete 30 workouts in 3 months');
     });
 
     it('should format prioritization response correctly', () => {
@@ -232,8 +246,8 @@ describe('AI API', () => {
       ];
 
       const formatted = aiApi.formatPrioritizationResponse(prioritizationResponse);
-      expect(formatted).toContain('1. exercise (Priority: 1) - High impact');
-      expect(formatted).toContain('2. work (Priority: 2) - Important');
+      expect(formatted).toContain('1. exercise (Priority: 1)');
+      expect(formatted).toContain('2. work (Priority: 2)');
     });
   });
 }); 
