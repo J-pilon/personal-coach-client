@@ -4,11 +4,11 @@
  * This module provides a comprehensive JWT token management system for the client-side
  * application. It follows the Token Authorization pattern with the following features:
  * 
- * 1. **TokenManager**: Singleton class that handles token storage, validation, and refresh
- * 2. **Automatic Token Validation**: Checks token expiration and validity before each request
- * 3. **Token Refresh**: Automatically refreshes tokens that are expiring soon
+ * 1. **TokenManager**: Singleton class that handles token storage and validation
+ * 2. **Automatic Token Validation**: Checks token expiration before each request
+ * 3. **No Token Refresh**: Uses JTI revocation strategy - tokens are not refreshed
  * 4. **Centralized Authentication**: All API requests use the same authentication system
- * 5. **Error Handling**: Proper handling of 401/403 responses with automatic token cleanup
+ * 5. **Error Handling**: Proper handling of 401 responses with automatic token cleanup
  * 
  * Usage:
  * - All API calls automatically include JWT tokens via getAuthHeaders()
@@ -23,13 +23,29 @@
  *   "scp": "api_v1_user",
  *   "aud": null,
  *   "iat": 1753906404,  // issued at
- *   "exp": 1753908204   // expiration time
+ *   "exp": 1753908204   // expiration time (8 hours)
  * }
  */
 
 import * as SecureStore from 'expo-secure-store';
 
 const API_BASE_URL = 'http://localhost:3000/api/v1';
+
+// Profile interface for stored profile data
+export interface Profile {
+  id: number;
+  first_name?: string;
+  last_name?: string;
+  work_role?: string;
+  education?: string;
+  desires?: string;
+  limiting_beliefs?: string;
+  onboarding_status: 'incomplete' | 'complete';
+  onboarding_completed_at?: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+}
 
 // JWT Token interface
 interface JWTPayload {
@@ -44,7 +60,6 @@ interface JWTPayload {
 // Token validation and management
 export class TokenManager {
   private static instance: TokenManager;
-  private tokenRefreshPromise: Promise<string> | null = null;
 
   static getInstance(): TokenManager {
     if (!TokenManager.instance) {
@@ -86,76 +101,29 @@ export class TokenManager {
     return payload.exp < currentTime;
   }
 
-  // Check if token will expire soon (within 5 minutes)
-  private isTokenExpiringSoon(token: string): boolean {
-    const payload = this.decodeToken(token);
-    if (!payload) return true;
-    
-    const currentTime = Math.floor(Date.now() / 1000);
-    const fiveMinutes = 5 * 60;
-    return payload.exp < (currentTime + fiveMinutes);
-  }
 
-  // Get valid token with refresh logic
+
+  // Get valid token with expiration check only
   async getValidToken(): Promise<string | null> {
-    const token = await SecureStore.getItemAsync('auth_token');
-    if (!token) return null;
+    try {
+      const token = await SecureStore.getItemAsync('auth_token');
+      
+      if (!token) {
+        return null;
+      }
 
-    // If token is expired, clear it and return null
-    if (this.isTokenExpired(token)) {
-      await this.clearToken();
+      // Check if token is expired
+      if (this.isTokenExpired(token)) {
+        console.log('Token is expired, clearing...');
+        await this.clearToken();
+        return null;
+      }
+
+      return token;
+    } catch (error) {
+      console.error('Error getting valid token:', error);
       return null;
     }
-
-    // If token is expiring soon, try to refresh it
-    if (this.isTokenExpiringSoon(token)) {
-      return this.refreshToken(token);
-    }
-
-    return token;
-  }
-
-  // Refresh token (placeholder for future implementation)
-  private async refreshToken(currentToken: string): Promise<string> {
-    // Prevent multiple simultaneous refresh attempts
-    if (this.tokenRefreshPromise) {
-      return this.tokenRefreshPromise;
-    }
-
-    this.tokenRefreshPromise = this.performTokenRefresh(currentToken);
-    
-    try {
-      const newToken = await this.tokenRefreshPromise;
-      return newToken;
-    } finally {
-      this.tokenRefreshPromise = null;
-    }
-  }
-
-  // Perform actual token refresh
-  private async performTokenRefresh(currentToken: string): Promise<string> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${currentToken}`,
-        },
-      });
-
-      if (response.ok) {
-        const newToken = response.headers.get('Authorization')?.replace('Bearer ', '');
-        if (newToken) {
-          await SecureStore.setItemAsync('auth_token', newToken);
-          return newToken;
-        }
-      }
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-    }
-
-    // If refresh fails, return current token (it might still be valid)
-    return currentToken;
   }
 
   // Clear stored token
@@ -196,16 +164,10 @@ export const apiRequest = async (
     },
   });
 
-  // Handle 401 Unauthorized - token might be invalid
+  // Handle 401 Unauthorized - token is invalid or expired
   if (response.status === 401) {
     await tokenManager.clearToken();
     throw new Error('Authentication failed. Please sign in again.');
-  }
-
-  // Handle 403 Forbidden - token might be expired
-  if (response.status === 403) {
-    await tokenManager.clearToken();
-    throw new Error('Access denied. Please sign in again.');
   }
 
   if (!response.ok) {
@@ -232,6 +194,20 @@ export const isAuthenticated = async (): Promise<boolean> => {
   const tokenManager = TokenManager.getInstance();
   const token = await tokenManager.getValidToken();
   return !!token;
+};
+
+// Helper function to get stored profile data from SecureStore
+export const getStoredProfile = async (): Promise<Profile | null> => {
+  try {
+    const storedProfile = await SecureStore.getItemAsync('auth_profile');
+    if (!storedProfile) {
+      return null;
+    }
+    return JSON.parse(storedProfile);
+  } catch (error) {
+    console.error('Error getting stored profile:', error);
+    return null;
+  }
 };
 
 // Debug utility functions
