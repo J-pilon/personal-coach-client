@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import * as usersApi from '../../api/users';
+import { AuthProvider } from '../../hooks/useAuth';
 import { useCompleteOnboarding, useProfile, useUpdateProfile } from '../../hooks/useUser';
 
 // Mock the API module
@@ -37,7 +38,9 @@ describe('useUser Hooks', () => {
   });
 
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>{children}</AuthProvider>
+    </QueryClientProvider>
   );
 
   describe('useProfile', () => {

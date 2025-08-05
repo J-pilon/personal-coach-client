@@ -84,7 +84,6 @@ describe('useAiSuggestedTasks', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-User-ID': '1',
         },
         body: JSON.stringify({ profile_id: 1 }),
       }
@@ -288,7 +287,6 @@ describe('useAiSuggestedTasks', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-User-ID': '1',
         },
         body: JSON.stringify({ profile_id: 123 }),
       }
