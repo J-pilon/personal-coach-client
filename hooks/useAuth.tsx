@@ -9,8 +9,24 @@ interface User {
   updated_at: string;
 }
 
+interface Profile {
+  id: number;
+  first_name?: string;
+  last_name?: string;
+  work_role?: string;
+  education?: string;
+  desires?: string;
+  limiting_beliefs?: string;
+  onboarding_status: 'incomplete' | 'complete';
+  onboarding_completed_at?: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
 interface AuthContextType {
   user: User | null;
+  profile: Profile | null;
   token: string | null;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
@@ -33,6 +49,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const tokenManager = TokenManager.getInstance();
@@ -45,10 +62,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const storedToken = await tokenManager.getValidToken();
       const storedUser = await SecureStore.getItemAsync('auth_user');
+      const storedProfile = await SecureStore.getItemAsync('auth_profile');
 
       if (storedToken && storedUser) {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
+        if (storedProfile) {
+          setProfile(JSON.parse(storedProfile));
+        }
       }
     } catch (error) {
       console.error('Error loading stored auth:', error);
@@ -57,14 +78,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const storeAuth = async (newToken: string, newUser: User) => {
+  const storeAuth = async (newToken: string, newUser: User, newProfile: Profile) => {
     try {
       await tokenManager.storeToken(newToken);
       // Ensure newUser is properly stringified before storing
       const userString = typeof newUser === 'string' ? newUser : JSON.stringify(newUser);
+      const profileString = typeof newProfile === 'string' ? newProfile : JSON.stringify(newProfile);
       await SecureStore.setItemAsync('auth_user', userString);
+      await SecureStore.setItemAsync('auth_profile', profileString);
       setToken(newToken);
       setUser(newUser);
+      setProfile(newProfile);
     } catch (error) {
       console.error('Error storing auth:', error);
       throw error;
@@ -75,8 +99,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await tokenManager.clearToken();
       await SecureStore.deleteItemAsync('auth_user');
+      await SecureStore.deleteItemAsync('auth_profile');
       setToken(null);
       setUser(null);
+      setProfile(null);
     } catch (error) {
       console.error('Error clearing auth:', error);
       throw error;
@@ -118,13 +144,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error('No authentication token received');
       }
 
-      // Extract the user object from the correct path in the response
-      const userData = data.status?.data?.user || data.data?.user || data.user;
-      if (!userData) {
+      // Extract the user and profile objects from the response
+      const userData = data.status?.data?.user;
+      const profileData = data.status?.data?.profile;
+
+      if (!userData || !profileData) {
         throw new Error('Invalid response format from server');
       }
 
-      await storeAuth(authToken, userData);
+      await storeAuth(authToken, userData, profileData);
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
@@ -155,13 +183,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error('No authentication token received');
       }
 
-      // Extract the user object from the correct path in the response
-      const userData = data.status?.data?.user || data.data?.user || data.user;
-      if (!userData) {
+      // Extract the user and profile objects from the response
+      const userData = data.status?.data?.user;
+      const profileData = data.status?.data?.profile;
+
+      if (!userData || !profileData) {
         throw new Error('Invalid response format from server');
       }
 
-      await storeAuth(authToken, userData);
+      await storeAuth(authToken, userData, profileData);
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
@@ -189,6 +219,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const value = {
     user,
+    profile,
     token,
     isLoading,
     signIn,
