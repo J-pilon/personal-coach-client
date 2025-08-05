@@ -1,15 +1,24 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import * as usersApi from '../../api/users';
+import { UsersAPI } from '../../api/users';
 import { AuthProvider } from '../../hooks/useAuth';
 import { useCompleteOnboarding, useProfile, useUpdateProfile } from '../../hooks/useUser';
 
 // Mock the API module
 jest.mock('../../api/users', () => ({
-  getProfile: jest.fn(),
-  updateProfile: jest.fn(),
-  completeOnboarding: jest.fn(),
+  UsersAPI: jest.fn().mockImplementation(() => ({
+    getCurrentUser: jest.fn(),
+    getProfile: jest.fn(),
+    updateProfile: jest.fn(),
+    completeOnboarding: jest.fn(),
+  })),
+}));
+
+// Mock the AuthProvider to avoid async initialization
+jest.mock('../../hooks/useAuth', () => ({
+  AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useAuth: jest.fn(),
 }));
 
 // Mock React Query hooks
@@ -21,6 +30,7 @@ jest.mock('@tanstack/react-query', () => ({
 
 const mockUseQuery = require('@tanstack/react-query').useQuery;
 const mockUseMutation = require('@tanstack/react-query').useMutation;
+const mockUseAuth = require('../../hooks/useAuth').useAuth;
 
 describe('useUser Hooks', () => {
   let queryClient: QueryClient;
@@ -35,6 +45,26 @@ describe('useUser Hooks', () => {
 
     // Reset all mocks
     jest.clearAllMocks();
+
+    // Mock useAuth to return a profile
+    mockUseAuth.mockReturnValue({
+      user: { id: 1, email: 'test@example.com' },
+      profile: {
+        id: 1,
+        first_name: 'John',
+        last_name: 'Doe',
+        work_role: 'Software Engineer',
+        education: 'Bachelor of Science',
+        desires: 'I want to become a senior developer',
+        limiting_beliefs: 'I am not good enough',
+        onboarding_status: 'complete',
+        onboarding_completed_at: '2024-01-01T00:00:00Z',
+        user_id: 1,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+      },
+      isLoading: false,
+    });
   });
 
   const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -139,7 +169,7 @@ describe('useUser Hooks', () => {
 
     it('calls updateProfile API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockUpdateProfile = usersApi.updateProfile as jest.MockedFunction<typeof usersApi.updateProfile>;
+      const mockUpdateProfile = UsersAPI.prototype.updateProfile;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,
@@ -187,7 +217,7 @@ describe('useUser Hooks', () => {
 
     it('calls completeOnboarding API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockCompleteOnboarding = usersApi.completeOnboarding as jest.MockedFunction<typeof usersApi.completeOnboarding>;
+      const mockCompleteOnboarding = UsersAPI.prototype.completeOnboarding;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,

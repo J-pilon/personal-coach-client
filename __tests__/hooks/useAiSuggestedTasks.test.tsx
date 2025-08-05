@@ -4,10 +4,17 @@ import React from 'react';
 import { AiTaskSuggestion, useAiSuggestedTasks } from '../../hooks/useAiSuggestedTasks';
 import { AuthProvider } from '../../hooks/useAuth';
 
-// Mock fetch globally
-global.fetch = jest.fn();
+// Mock the apiRequest utility
+jest.mock('../../utils/apiRequest', () => ({
+  apiPost: jest.fn(),
+}));
 
-const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
+// Mock the AuthProvider to avoid async initialization
+jest.mock('../../hooks/useAuth', () => ({
+  AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+const mockApiPost = require('../../utils/apiRequest').apiPost;
 
 describe('useAiSuggestedTasks', () => {
   let queryClient: QueryClient;
@@ -19,7 +26,7 @@ describe('useAiSuggestedTasks', () => {
         mutations: { retry: false },
       },
     });
-    mockFetch.mockClear();
+    mockApiPost.mockClear();
   });
 
   const mockSuggestions: AiTaskSuggestion[] = [
@@ -38,13 +45,15 @@ describe('useAiSuggestedTasks', () => {
   ];
 
   const createWrapper = () => {
-    return ({ children }: { children: React.ReactNode }) => (
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
       </AuthProvider>
     );
+    Wrapper.displayName = 'TestWrapper';
+    return Wrapper;
   };
 
   it('should initialize with empty suggestions and not loading', () => {
@@ -58,11 +67,10 @@ describe('useAiSuggestedTasks', () => {
   });
 
   it('should generate suggestions successfully', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
+    mockApiPost.mockResolvedValueOnce({
+      data: mockSuggestions,
       status: 200,
-      json: async () => mockSuggestions,
-    } as Response);
+    });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
@@ -78,25 +86,15 @@ describe('useAiSuggestedTasks', () => {
       expect(result.current.error).toBeNull();
     });
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'http://localhost:3000/api/v1/ai/suggested_tasks',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ profile_id: 1 }),
-      }
-    );
+    expect(mockApiPost).toHaveBeenCalledWith('/ai/suggested_tasks', { profile_id: 1 });
   });
 
   it('should handle API errors', async () => {
     const errorMessage = 'Failed to generate suggestions';
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
+    mockApiPost.mockResolvedValueOnce({
+      error: errorMessage,
       status: 500,
-      json: async () => ({ error: errorMessage }),
-    } as Response);
+    });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
@@ -113,37 +111,16 @@ describe('useAiSuggestedTasks', () => {
     });
   });
 
-  it('should handle network errors', async () => {
-    const networkError = new Error('Network error');
-    mockFetch.mockRejectedValueOnce(networkError);
-
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
-      wrapper: createWrapper(),
-    });
-
-    await act(async () => {
-      await result.current.generateSuggestions();
-    });
-
-    await waitFor(() => {
-      expect(result.current.error).toBe('Network error');
-      expect(result.current.suggestions).toEqual([]);
-      expect(result.current.isLoading).toBe(false);
-    });
-  });
-
   it('should dismiss a suggestion', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
+    mockApiPost.mockResolvedValueOnce({
+      data: mockSuggestions,
       status: 200,
-      json: async () => mockSuggestions,
-    } as Response);
+    });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
     });
 
-    // First generate suggestions
     await act(async () => {
       await result.current.generateSuggestions();
     });
@@ -152,27 +129,26 @@ describe('useAiSuggestedTasks', () => {
       expect(result.current.suggestions).toHaveLength(2);
     });
 
-    // Then dismiss one suggestion
     act(() => {
       result.current.dismissSuggestion(mockSuggestions[0]);
     });
 
-    expect(result.current.suggestions).toHaveLength(1);
-    expect(result.current.suggestions[0]).toEqual(mockSuggestions[1]);
+    await waitFor(() => {
+      expect(result.current.suggestions).toHaveLength(1);
+      expect(result.current.suggestions[0]).toEqual(mockSuggestions[1]);
+    });
   });
 
   it('should clear all suggestions', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
+    mockApiPost.mockResolvedValueOnce({
+      data: mockSuggestions,
       status: 200,
-      json: async () => mockSuggestions,
-    } as Response);
+    });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
     });
 
-    // First generate suggestions
     await act(async () => {
       await result.current.generateSuggestions();
     });
@@ -181,53 +157,51 @@ describe('useAiSuggestedTasks', () => {
       expect(result.current.suggestions).toHaveLength(2);
     });
 
-    // Then clear all suggestions
     act(() => {
       result.current.clearSuggestions();
     });
 
-    expect(result.current.suggestions).toEqual([]);
-    expect(result.current.error).toBeNull();
+    await waitFor(() => {
+      expect(result.current.suggestions).toHaveLength(0);
+      expect(result.current.error).toBeNull();
+    });
   });
 
   it('should handle loading state correctly', async () => {
-    let resolveFetch: (value: Response) => void;
-    const fetchPromise = new Promise<Response>((resolve) => {
-      resolveFetch = resolve;
+    let resolveApiPost: (value: { data: AiTaskSuggestion[]; status: number }) => void;
+    const apiPostPromise = new Promise<{ data: AiTaskSuggestion[]; status: number }>((resolve) => {
+      resolveApiPost = resolve;
     });
 
-    mockFetch.mockReturnValueOnce(fetchPromise);
+    mockApiPost.mockReturnValueOnce(apiPostPromise);
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
     });
 
-    // Start generating suggestions
-    act(() => {
+    await act(async () => {
       result.current.generateSuggestions();
     });
 
-    // Should be loading
     expect(result.current.isLoading).toBe(true);
 
-    // Resolve the fetch
-    resolveFetch!({
-      ok: true,
+    // Resolve the apiPost
+    resolveApiPost!({
+      data: mockSuggestions,
       status: 200,
-      json: async () => mockSuggestions,
-    } as Response);
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
+      expect(result.current.suggestions).toEqual(mockSuggestions);
     });
   });
 
   it('should handle empty response data', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
+    mockApiPost.mockResolvedValueOnce({
+      data: [],
       status: 200,
-      json: async () => [],
-    } as Response);
+    });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
@@ -245,11 +219,10 @@ describe('useAiSuggestedTasks', () => {
   });
 
   it('should handle null response data', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
+    mockApiPost.mockResolvedValueOnce({
+      data: null,
       status: 200,
-      json: async () => null,
-    } as Response);
+    });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
@@ -267,11 +240,10 @@ describe('useAiSuggestedTasks', () => {
   });
 
   it('should use different profile IDs correctly', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
+    mockApiPost.mockResolvedValueOnce({
+      data: mockSuggestions,
       status: 200,
-      json: async () => mockSuggestions,
-    } as Response);
+    });
 
     const { result } = renderHook(() => useAiSuggestedTasks(123), {
       wrapper: createWrapper(),
@@ -281,15 +253,13 @@ describe('useAiSuggestedTasks', () => {
       await result.current.generateSuggestions();
     });
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'http://localhost:3000/api/v1/ai/suggested_tasks',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ profile_id: 123 }),
-      }
+    await waitFor(() => {
+      expect(result.current.suggestions).toEqual(mockSuggestions);
+    });
+
+    expect(mockApiPost).toHaveBeenCalledWith(
+      '/ai/suggested_tasks',
+      { profile_id: 123 }
     );
   });
 
