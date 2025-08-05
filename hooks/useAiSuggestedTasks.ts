@@ -1,5 +1,6 @@
-import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useAuth } from './useAuth';
 
 // Interface for AI-generated task suggestions
 export interface AiTaskSuggestion {
@@ -17,13 +18,13 @@ interface AiSuggestedTasksResponse {
 }
 
 // API function to fetch AI suggested tasks
-const fetchAiSuggestedTasks = async (profileId: number): Promise<AiSuggestedTasksResponse> => {
+const fetchAiSuggestedTasks = async (profileId: number, userId: number): Promise<AiSuggestedTasksResponse> => {
   try {
     const response = await fetch('http://localhost:3000/api/v1/ai/suggested_tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-User-ID': '1', // TODO: Get from auth context
+        'X-User-ID': userId.toString(),
       },
       body: JSON.stringify({ profile_id: profileId }),
     });
@@ -50,12 +51,13 @@ const fetchAiSuggestedTasks = async (profileId: number): Promise<AiSuggestedTask
 };
 
 export const useAiSuggestedTasks = (profileId: number) => {
+  const { user } = useAuth();
   const [suggestions, setSuggestions] = useState<AiTaskSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const mutation = useMutation({
-    mutationFn: () => fetchAiSuggestedTasks(profileId),
+    mutationFn: () => fetchAiSuggestedTasks(profileId, user?.id || 1),
     onSuccess: (response) => {
       if (response.error) {
         setError(response.error);

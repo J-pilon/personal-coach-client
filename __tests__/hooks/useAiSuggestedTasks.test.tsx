@@ -1,7 +1,8 @@
-import React from 'react';
-import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAiSuggestedTasks, AiTaskSuggestion } from '../../hooks/useAiSuggestedTasks';
+import { act, renderHook, waitFor } from '@testing-library/react-native';
+import React from 'react';
+import { AiTaskSuggestion, useAiSuggestedTasks } from '../../hooks/useAiSuggestedTasks';
+import { AuthProvider } from '../../hooks/useAuth';
 
 // Mock fetch globally
 global.fetch = jest.fn();
@@ -38,9 +39,11 @@ describe('useAiSuggestedTasks', () => {
 
   const createWrapper = () => {
     return ({ children }: { children: React.ReactNode }) => (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </AuthProvider>
     );
   };
 
