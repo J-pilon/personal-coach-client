@@ -1,7 +1,21 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import PrimaryButton from "./buttons/PrimaryButton";
+
+export interface ProfileDetailsStepProps {
+  profileData: {
+    first_name?: string;
+    last_name?: string;
+    work_role?: string;
+    education?: string;
+    desires?: string;
+    limiting_beliefs?: string;
+  };
+  setProfileData: (data: any) => void;
+  handleSubmit: () => void;
+  isLoading: boolean;
+}
 
 export interface GoalDescriptionStepProps {
   goalDescription: string,
@@ -122,7 +136,7 @@ const AiResponseStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSmar
 
         <PrimaryButton
           title="Looks Good!"
-          onPress={() => setCurrentStepIndex(2)}
+          onPress={() => setCurrentStepIndex(3)}
           icon="arrow-forward"
           className="flex-1"
         />
@@ -196,4 +210,124 @@ const ConfirmationStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSm
   </View>
 );
 
-export { GoalDescriptionStep, AiResponseStep, ConfirmationStep }
+const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoading }: ProfileDetailsStepProps) => (
+  <View className="mb-8">
+    <View className="mb-5">
+      <Text className="mb-2 text-lg font-semibold text-[#F1F5F9]">
+        Tell us about yourself
+      </Text>
+      <Text className="mb-3 text-sm text-[#E6FAFF] opacity-70">
+        Help us provide the best coaching experience by sharing some details about yourself.
+      </Text>
+    </View>
+
+    <View className="">
+      {/* First Name */}
+      <View className="mb-4">
+        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+          First Name *
+        </Text>
+        <TextInput
+          className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800"
+          placeholder="Enter your first name"
+          placeholderTextColor="#708090"
+          value={profileData.first_name || ''}
+          onChangeText={(text) => setProfileData({ ...profileData, first_name: text })}
+        />
+      </View>
+
+      {/* Last Name */}
+      <View className="mb-4">
+        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+          Last Name *
+        </Text>
+        <TextInput
+          className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800"
+          placeholder="Enter your last name"
+          placeholderTextColor="#708090"
+          value={profileData.last_name || ''}
+          onChangeText={(text) => setProfileData({ ...profileData, last_name: text })}
+        />
+      </View>
+
+      {/* Work Role */}
+      <View className="mb-4">
+        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+          Work Role *
+        </Text>
+        <TextInput
+          className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800"
+          placeholder="e.g., Software Engineer, Marketing Manager, Student"
+          placeholderTextColor="#708090"
+          value={profileData.work_role || ''}
+          onChangeText={(text) => setProfileData({ ...profileData, work_role: text })}
+        />
+      </View>
+
+      {/* Education */}
+      <View className="mb-4">
+        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+          Education *
+        </Text>
+        <TextInput
+          className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800"
+          placeholder="e.g., Bachelor's in Computer Science, High School Diploma"
+          placeholderTextColor="#708090"
+          value={profileData.education || ''}
+          onChangeText={(text) => setProfileData({ ...profileData, education: text })}
+        />
+      </View>
+
+      {/* Desires */}
+      <View className="mb-4">
+        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+          Desires (Optional)
+        </Text>
+        <Text className="mb-2 text-xs text-[#708090]">
+          What do you want to achieve? What drives you? This helps us provide better coaching.
+        </Text>
+        <TextInput
+          className="border border-cyan-400 rounded-lg p-3 text-base min-h-[80px] text-[#E6FAFF] bg-slate-800"
+          placeholder="e.g., I want to be financially independent, I want to make a positive impact..."
+          placeholderTextColor="#708090"
+          value={profileData.desires || ''}
+          onChangeText={(text) => setProfileData({ ...profileData, desires: text })}
+          multiline
+          numberOfLines={3}
+          textAlignVertical="top"
+        />
+      </View>
+
+      {/* Limiting Beliefs */}
+      <View className="mb-4">
+        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+          Limiting Beliefs (Optional)
+        </Text>
+        <Text className="mb-2 text-xs text-[#708090]">
+          What holds you back? What do you struggle with? This helps us provide better coaching.
+        </Text>
+        <TextInput
+          className="border border-cyan-400 rounded-lg p-3 text-base min-h-[80px] text-[#E6FAFF] bg-slate-800"
+          placeholder="e.g., I'm not good enough, I don't have enough time..."
+          placeholderTextColor="#708090"
+          value={profileData.limiting_beliefs || ''}
+          onChangeText={(text) => setProfileData({ ...profileData, limiting_beliefs: text })}
+          multiline
+          numberOfLines={3}
+          textAlignVertical="top"
+        />
+      </View>
+    </View>
+
+    <PrimaryButton
+      title="Continue"
+      loadingText="Saving profile..."
+      onPress={handleSubmit}
+      isLoading={isLoading}
+      icon="arrow-forward"
+      className="mt-5"
+    />
+  </View>
+);
+
+export { AiResponseStep, ConfirmationStep, GoalDescriptionStep, ProfileDetailsStep };
