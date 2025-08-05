@@ -1,6 +1,5 @@
 // API client for Rails server users and profiles endpoints
-// Base URL for the Rails server API
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+import { apiGet, apiPatch, type ApiResponse } from '../utils/apiRequest';
 
 // User interface for authentication
 export interface User {
@@ -43,29 +42,21 @@ export interface ProfileUpdateData {
   onboarding_status?: 'incomplete' | 'complete';
 }
 
-// Get current user (authenticated)
-export const getCurrentUser = async (): Promise<UserResponse> => {
-  const { apiRequest } = await import('../utils/api');
-  return apiRequest('/me');
-};
+// Users API class
+export class UsersAPI {
+  async getCurrentUser(): Promise<ApiResponse<UserResponse>> {
+    return apiGet<UserResponse>('/me');
+  }
 
-// Profile functions (authenticated)
-export const getProfile = async (profileId: number): Promise<Profile> => {
-  const { apiRequest } = await import('../utils/api');
-  return apiRequest(`/profiles/${profileId}`);
-};
+  async getProfile(profileId: number): Promise<ApiResponse<Profile>> {
+    return apiGet<Profile>(`/profiles/${profileId}`);
+  }
 
-export const updateProfile = async (profileId: number, data: ProfileUpdateData): Promise<Profile> => {
-  const { apiRequest } = await import('../utils/api');
-  return apiRequest(`/profiles/${profileId}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ profile: data }),
-  });
-};
+  async updateProfile(profileId: number, data: ProfileUpdateData): Promise<ApiResponse<Profile>> {
+    return apiPatch<Profile>(`/profiles/${profileId}`, { profile: data });
+  }
 
-export const completeOnboarding = async (profileId: number): Promise<Profile> => {
-  const { apiRequest } = await import('../utils/api');
-  return apiRequest(`/profiles/${profileId}/complete_onboarding`, {
-    method: 'PATCH',
-  });
-}; 
+  async completeOnboarding(profileId: number): Promise<ApiResponse<Profile>> {
+    return apiPatch<Profile>(`/profiles/${profileId}/complete_onboarding`);
+  }
+} 

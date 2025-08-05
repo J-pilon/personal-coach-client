@@ -1,6 +1,5 @@
 // API client for Rails server smart goals endpoints
-// Base URL for the Rails server API
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+import { apiDelete, apiGet, apiPatch, apiPost, type ApiResponse } from '../utils/apiRequest';
 
 export interface SmartGoal {
   id?: number;
@@ -45,35 +44,44 @@ export interface UpdateSmartGoalParams {
   target_date?: string;
 }
 
-export const getSmartGoals = async (): Promise<SmartGoal[]> => {
-  const { apiRequest } = await import('../utils/api');
-  return apiRequest('/smart_goals');
-};
+// Smart Goals API class
+export class SmartGoalsAPI {
+  async getAllSmartGoals(): Promise<ApiResponse<SmartGoal[]>> {
+    return apiGet<SmartGoal[]>('/smart_goals');
+  }
 
-export const createSmartGoal = async (data: CreateSmartGoalParams): Promise<SmartGoal> => {
-  const { apiRequest } = await import('../utils/api');
-  return apiRequest('/smart_goals', {
-    method: 'POST',
-    body: JSON.stringify({ smart_goal: data }),
-  });
-};
+  async getSmartGoal(id: number): Promise<ApiResponse<SmartGoal>> {
+    return apiGet<SmartGoal>(`/smart_goals/${id}`);
+  }
 
-export const createMultipleSmartGoals = async (goals: CreateSmartGoalParams[]): Promise<SmartGoal[]> => {
-  const promises = goals.map(goal => createSmartGoal(goal));
-  return Promise.all(promises);
-};
+  async createSmartGoal(data: CreateSmartGoalParams): Promise<ApiResponse<SmartGoal>> {
+    return apiPost<SmartGoal>('/smart_goals', { smart_goal: data });
+  }
 
-export const updateSmartGoal = async (id: number, data: UpdateSmartGoalParams): Promise<SmartGoal> => {
-  const { apiRequest } = await import('../utils/api');
-  return apiRequest(`/smart_goals/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ smart_goal: data }),
-  });
-};
+  async createMultipleSmartGoals(goals: CreateSmartGoalParams[]): Promise<ApiResponse<SmartGoal[]>> {
+    const promises = goals.map(goal => this.createSmartGoal(goal));
+    const results = await Promise.all(promises);
+    
+    // Check if any requests failed
+    const failedResults = results.filter(result => result.error);
+    if (failedResults.length > 0) {
+      return {
+        error: `Failed to create ${failedResults.length} goals`,
+        status: 400,
+      };
+    }
+    
+    return {
+      data: results.map(result => result.data!).filter(Boolean),
+      status: 200,
+    };
+  }
 
-export const deleteSmartGoal = async (id: number): Promise<void> => {
-  const { apiRequest } = await import('../utils/api');
-  return apiRequest(`/smart_goals/${id}`, {
-    method: 'DELETE',
-  });
-}; 
+  async updateSmartGoal(id: number, data: UpdateSmartGoalParams): Promise<ApiResponse<SmartGoal>> {
+    return apiPatch<SmartGoal>(`/smart_goals/${id}`, { smart_goal: data });
+  }
+
+  async deleteSmartGoal(id: number): Promise<ApiResponse<void>> {
+    return apiDelete<void>(`/smart_goals/${id}`);
+  }
+} 

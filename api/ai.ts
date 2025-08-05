@@ -1,9 +1,5 @@
 // API client for Rails server AI endpoints
-// Base URL for the Rails server API
-const API_BASE_URL = 'http://localhost:3000/api/v1';
-
-// Import auth headers function
-import { getAuthHeaders } from '../utils/api';
+import { apiPost, type ApiResponse } from '../utils/apiRequest';
 
 // AI response interfaces
 export interface AiResponse {
@@ -66,143 +62,57 @@ export interface AiRequestParams {
   input: string;
 }
 
-// API response wrapper
-interface ApiResponse<T> {
-  data?: T;
-  error?: string;
-  status: number;
-}
-
-// Generic API request function
-async function apiRequest<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-  try {
-    const url = `${API_BASE_URL}${endpoint}`;
-    
-    // Get auth headers
-    const headers = await getAuthHeaders();
-    
-    const response = await fetch(url, {
-      headers: {
-        ...headers,
-        ...options.headers,
-      },
-      ...options,
-    });
-
-    // Check if response has content and is JSON
-    const contentType = response.headers.get('content-type');
-    const hasContent = contentType && contentType.includes('application/json');
-    
-    let data: any = undefined;
-    
-    if (hasContent) {
-      try {
-        data = await response.json();
-      } catch (parseError) {
-        console.log("**** JSON PARSE ERROR: ", parseError);
-        return {
-          error: 'Invalid JSON response from server',
-          status: response.status,
-        };
-      }
-    }
-
-    if (!response.ok) {
-      return {
-        error: data?.error || `HTTP ${response.status}: ${response.statusText}`,
-        status: response.status,
-      };
-    }
-
-    return {
-      data,
-      status: response.status,
-    };
-  } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : 'Network error',
-      status: 0,
-    };
-  }
-}
-
-// Standalone helper function for formatting single goals
-export const formatSingleGoal = (goal: any, period: string): Record<string, Record<string, string>> => {
-  return {
-    [period]: {
-      'Specific': goal.specific || '',
-      'Measurable': goal.measurable || '',
-      'Achievable': goal.achievable || '',
-      'Relevant': goal.relevant || '',
-      'Time-bound': goal.time_bound || ''
-    }
-  };
-};
-
-// AI API functions
-export const aiApi = {
-  // Process AI request
+// AI API class
+export class AIAPI {
   async processAiRequest(params: AiRequestParams): Promise<ApiResponse<AiResponse>> {
-    return apiRequest<AiResponse>('/ai', {
-      method: 'POST',
-      body: JSON.stringify(params),
-    });
-  },
+    return apiPost<AiResponse>('/ai/process', params);
+  }
 
-  // Helper function to process smart goal request
   async createSmartGoal(input: string): Promise<ApiResponse<AiResponse>> {
-    return this.processAiRequest({ input });
-  },
+    return apiPost<AiResponse>('/ai/smart_goal', { input });
+  }
 
-  // Helper function to process prioritization request
   async prioritizeTasks(input: string): Promise<ApiResponse<AiResponse>> {
-    return this.processAiRequest({ input });
-  },
+    return apiPost<AiResponse>('/ai/prioritize', { input });
+  }
 
-  // Helper function to check if response is a smart goal
+  // Type guards for response validation
   isSmartGoalResponse(response: AiResponse): response is AiResponse & { response: SmartGoalResponse } {
     return response.intent === 'smart_goal';
-  },
+  }
 
-  // Helper function to check if response is prioritization
   isPrioritizationResponse(response: AiResponse): response is AiResponse & { response: PrioritizationResponse } {
     return response.intent === 'prioritization';
-  },
+  }
 
-  // Helper function to check if response is an error
   isErrorResponse(response: AiResponse): response is AiResponse & { response: ErrorResponse } {
     return response.intent === 'error';
-  },
+  }
 
+  // Helper methods for formatting responses
   formatSingleGoal(goal: any, period: string): Record<string, Record<string, string>> {
     return {
       [period]: {
-        'Specific': goal.specific || '',
-        'Measurable': goal.measurable || '',
-        'Achievable': goal.achievable || '',
-        'Relevant': goal.relevant || '',
-        'Time-bound': goal.time_bound || ''
-      }
+        specific: goal.specific || '',
+        measurable: goal.measurable || '',
+        achievable: goal.achievable || '',
+        relevant: goal.relevant || '',
+        time_bound: goal.time_bound || '',
+      },
     };
-  },
+  }
 
-  // Helper function to format multi-period SMART goal response
   formatMultiPeriodSmartGoalResponse(response: MultiPeriodSmartGoalResponse): Record<string, Record<string, string>> {
     return {
-      ...formatSingleGoal(response.one_month, '1 Month Goal'),
-      ...formatSingleGoal(response.three_months, '3 Month Goal'),
-      ...formatSingleGoal(response.six_months, '6 Month Goal')
+      one_month: response.one_month,
+      three_months: response.three_months,
+      six_months: response.six_months,
     };
-  },
+  }
 
-  // Helper function to format prioritization response
   formatPrioritizationResponse(response: PrioritizationResponse): string {
     return response
-      .sort((a, b) => a.priority - b.priority)
-      .map((item, index) => `${index + 1}. ${item.task} (Priority: ${item.priority})${item.rationale ? ` - ${item.rationale}` : ''}`)
+      .map((item, index) => `${index + 1}. ${item.task} (Priority: ${item.priority})`)
       .join('\n');
-  },
-}; 
+  }
+} 
