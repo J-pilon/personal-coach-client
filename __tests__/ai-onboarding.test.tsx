@@ -7,6 +7,9 @@ jest.mock('@/hooks/useUser', () => ({
   useCompleteOnboarding: () => ({
     mutateAsync: jest.fn().mockResolvedValue({}),
   }),
+  useUpdateProfile: () => ({
+    mutateAsync: jest.fn().mockResolvedValue({}),
+  }),
 }));
 
 jest.mock('@/hooks/useSmartGoals', () => ({
@@ -49,22 +52,25 @@ describe('AiOnboardingWizard', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the goal description step initially', () => {
-    const { getByText, getByPlaceholderText } = render(
+  it('renders the profile details step initially', () => {
+    const { getByTestId } = render(
       <AiOnboardingWizard onComplete={mockOnComplete} />
     );
 
-    expect(getByText('What do you want to achieve?')).toBeTruthy();
-    expect(getByText('Describe what you want to accomplish. We\'ll create goals for 1 month, 3 months, and 6 months!')).toBeTruthy();
-    expect(getByPlaceholderText('e.g., I want to improve my fitness and run a marathon, or learn web development and build my own website...')).toBeTruthy();
+    expect(getByTestId('profile-step-title')).toBeTruthy();
+    expect(getByTestId('profile-step-subtitle')).toBeTruthy();
+    expect(getByTestId('first-name-input')).toBeTruthy();
+    expect(getByTestId('last-name-input')).toBeTruthy();
+    expect(getByTestId('work-role-input')).toBeTruthy();
+    expect(getByTestId('education-input')).toBeTruthy();
   });
 
-  it('shows validation error when submitting empty goal description', async () => {
-    const { getByText } = render(
+  it('shows validation error when submitting empty profile details', async () => {
+    const { getByTestId } = render(
       <AiOnboardingWizard onComplete={mockOnComplete} />
     );
 
-    const submitButton = getByText('Generate SMART Goal');
+    const submitButton = getByTestId('profile-continue-button');
     fireEvent.press(submitButton);
 
     // Note: Alert.alert is not easily testable in React Native Testing Library
@@ -76,32 +82,86 @@ describe('AiOnboardingWizard', () => {
       <AiOnboardingWizard onComplete={mockOnComplete} />
     );
 
-    expect(getByText('Step 1 of 3')).toBeTruthy();
+    expect(getByText('Step 1 of 4')).toBeTruthy();
   });
 
   it('has correct step titles', () => {
-    const { getByText } = render(
+    const { getByTestId } = render(
       <AiOnboardingWizard onComplete={mockOnComplete} />
     );
 
     // Initial step
-    expect(getByText('What do you want to achieve?')).toBeTruthy();
+    expect(getByTestId('profile-step-title')).toBeTruthy();
   });
 
-  it('renders input field with correct styling', () => {
-    const { getByPlaceholderText } = render(
+  it('renders profile input fields with correct styling', () => {
+    const { getByTestId } = render(
       <AiOnboardingWizard onComplete={mockOnComplete} />
     );
 
-    const input = getByPlaceholderText('e.g., I want to improve my fitness and run a marathon, or learn web development and build my own website...');
-    expect(input).toBeTruthy();
+    const firstNameInput = getByTestId('first-name-input');
+    const lastNameInput = getByTestId('last-name-input');
+    const workRoleInput = getByTestId('work-role-input');
+    const educationInput = getByTestId('education-input');
+
+    expect(firstNameInput).toBeTruthy();
+    expect(lastNameInput).toBeTruthy();
+    expect(workRoleInput).toBeTruthy();
+    expect(educationInput).toBeTruthy();
   });
 
   it('renders submit button with correct text', () => {
-    const { getByText } = render(
+    const { getByTestId } = render(
       <AiOnboardingWizard onComplete={mockOnComplete} />
     );
 
-    expect(getByText('Generate SMART Goal')).toBeTruthy();
+    expect(getByTestId('profile-continue-button')).toBeTruthy();
+  });
+
+  it('renders optional fields with descriptions', () => {
+    const { getByTestId } = render(
+      <AiOnboardingWizard onComplete={mockOnComplete} />
+    );
+
+    // Check for optional field labels
+    expect(getByTestId('desires-label')).toBeTruthy();
+    expect(getByTestId('limiting-beliefs-label')).toBeTruthy();
+
+    // Check for descriptions
+    expect(getByTestId('desires-description')).toBeTruthy();
+    expect(getByTestId('limiting-beliefs-description')).toBeTruthy();
+
+    // Check for input fields
+    expect(getByTestId('desires-input')).toBeTruthy();
+    expect(getByTestId('limiting-beliefs-input')).toBeTruthy();
+  });
+
+  it('allows user input in form fields', () => {
+    const { getByTestId } = render(
+      <AiOnboardingWizard onComplete={mockOnComplete} />
+    );
+
+    const firstNameInput = getByTestId('first-name-input');
+    const lastNameInput = getByTestId('last-name-input');
+    const workRoleInput = getByTestId('work-role-input');
+    const educationInput = getByTestId('education-input');
+    const desiresInput = getByTestId('desires-input');
+    const limitingBeliefsInput = getByTestId('limiting-beliefs-input');
+
+    // Test that all input fields are present and can be interacted with
+    expect(firstNameInput).toBeTruthy();
+    expect(lastNameInput).toBeTruthy();
+    expect(workRoleInput).toBeTruthy();
+    expect(educationInput).toBeTruthy();
+    expect(desiresInput).toBeTruthy();
+    expect(limitingBeliefsInput).toBeTruthy();
+
+    // Test that we can type in the fields (this would be tested in integration tests)
+    fireEvent.changeText(firstNameInput, 'John');
+    fireEvent.changeText(lastNameInput, 'Doe');
+    fireEvent.changeText(workRoleInput, 'Software Engineer');
+    fireEvent.changeText(educationInput, 'Bachelor\'s in Computer Science');
+    fireEvent.changeText(desiresInput, 'I want to be financially independent');
+    fireEvent.changeText(limitingBeliefsInput, 'I don\'t have enough time');
   });
 }); 

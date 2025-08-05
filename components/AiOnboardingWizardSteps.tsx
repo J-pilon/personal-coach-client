@@ -213,10 +213,10 @@ const ConfirmationStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSm
 const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoading }: ProfileDetailsStepProps) => (
   <View className="mb-8">
     <View className="mb-5">
-      <Text className="mb-2 text-lg font-semibold text-[#F1F5F9]">
+      <Text testID="profile-step-title" className="mb-2 text-lg font-semibold text-[#F1F5F9]">
         Tell us about yourself
       </Text>
-      <Text className="mb-3 text-sm text-[#E6FAFF] opacity-70">
+      <Text testID="profile-step-subtitle" className="mb-3 text-sm text-[#E6FAFF] opacity-70">
         Help us provide the best coaching experience by sharing some details about yourself.
       </Text>
     </View>
@@ -224,10 +224,11 @@ const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoadi
     <View className="">
       {/* First Name */}
       <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+        <Text testID="first-name-label" className="mb-2 text-sm font-medium text-[#E6FAFF]">
           First Name *
         </Text>
         <TextInput
+          testID="first-name-input"
           className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800"
           placeholder="Enter your first name"
           placeholderTextColor="#708090"
@@ -238,10 +239,11 @@ const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoadi
 
       {/* Last Name */}
       <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+        <Text testID="last-name-label" className="mb-2 text-sm font-medium text-[#E6FAFF]">
           Last Name *
         </Text>
         <TextInput
+          testID="last-name-input"
           className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800"
           placeholder="Enter your last name"
           placeholderTextColor="#708090"
@@ -252,10 +254,11 @@ const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoadi
 
       {/* Work Role */}
       <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+        <Text testID="work-role-label" className="mb-2 text-sm font-medium text-[#E6FAFF]">
           Work Role *
         </Text>
         <TextInput
+          testID="work-role-input"
           className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800"
           placeholder="e.g., Software Engineer, Marketing Manager, Student"
           placeholderTextColor="#708090"
@@ -266,10 +269,11 @@ const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoadi
 
       {/* Education */}
       <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+        <Text testID="education-label" className="mb-2 text-sm font-medium text-[#E6FAFF]">
           Education *
         </Text>
         <TextInput
+          testID="education-input"
           className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800"
           placeholder="e.g., Bachelor's in Computer Science, High School Diploma"
           placeholderTextColor="#708090"
@@ -280,13 +284,14 @@ const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoadi
 
       {/* Desires */}
       <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+        <Text testID="desires-label" className="mb-2 text-sm font-medium text-[#E6FAFF]">
           Desires (Optional)
         </Text>
-        <Text className="mb-2 text-xs text-[#708090]">
+        <Text testID="desires-description" className="mb-2 text-xs text-[#708090]">
           What do you want to achieve? What drives you? This helps us provide better coaching.
         </Text>
         <TextInput
+          testID="desires-input"
           className="border border-cyan-400 rounded-lg p-3 text-base min-h-[80px] text-[#E6FAFF] bg-slate-800"
           placeholder="e.g., I want to be financially independent, I want to make a positive impact..."
           placeholderTextColor="#708090"
@@ -300,13 +305,14 @@ const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoadi
 
       {/* Limiting Beliefs */}
       <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+        <Text testID="limiting-beliefs-label" className="mb-2 text-sm font-medium text-[#E6FAFF]">
           Limiting Beliefs (Optional)
         </Text>
-        <Text className="mb-2 text-xs text-[#708090]">
+        <Text testID="limiting-beliefs-description" className="mb-2 text-xs text-[#708090]">
           What holds you back? What do you struggle with? This helps us provide better coaching.
         </Text>
         <TextInput
+          testID="limiting-beliefs-input"
           className="border border-cyan-400 rounded-lg p-3 text-base min-h-[80px] text-[#E6FAFF] bg-slate-800"
           placeholder="e.g., I'm not good enough, I don't have enough time..."
           placeholderTextColor="#708090"
@@ -320,6 +326,7 @@ const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoadi
     </View>
 
     <PrimaryButton
+      testID="profile-continue-button"
       title="Continue"
       loadingText="Saving profile..."
       onPress={handleSubmit}
