@@ -10,7 +10,6 @@ import { Alert, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AiResponseStep, ConfirmationStep, GoalDescriptionStep, ProfileDetailsStep } from './AiOnboardingWizardSteps';
 import ProgressBar from './ProgressBar';
-import SecondaryButton from './buttons/SecondaryButton';
 
 export interface SMARTGoalData {
   title: string;
@@ -30,10 +29,9 @@ export interface OnboardingStep {
 
 export interface OnboardingWizardProps {
   onComplete: () => void;
-  onSkip: () => void;
 }
 
-export default function AiOnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) {
+export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [goalDescription, setGoalDescription] = useState('');
   const [aiResponse, setAiResponse] = useState<any>(null);
@@ -222,13 +220,6 @@ export default function AiOnboardingWizard({ onComplete, onSkip }: OnboardingWiz
           </View>
           <ProgressBar currentStep={currentStepIndex} totalSteps={steps.length} />
           {renderCurrentStep()}
-          <SecondaryButton
-            testID="ai-onboarding-skip-button"
-            title="Skip For Now"
-            loadingText="Skipping onboarding..."
-            onPress={onSkip}
-            isLoading={isLoading}
-          />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

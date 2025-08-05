@@ -1,7 +1,10 @@
+import { setSkippedOnboarding } from '@/utils/handleSkipOnboarding';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import PrimaryButton from "./buttons/PrimaryButton";
+import SecondaryButton from './buttons/SecondaryButton';
 
 export interface ProfileDetailsStepProps {
   profileData: {
@@ -40,6 +43,11 @@ export interface ConfirmationStepProps {
   handleConfirmGoal: () => void
 }
 
+const handleSkippingOnboarding = () => {
+  setSkippedOnboarding()
+  router.replace('/(tabs)')
+}
+
 const GoalDescriptionStep = ({ goalDescription, setGoalDescription, handleSubmit, isLoading }: GoalDescriptionStepProps) => (
   <View className="">
     <View className="mb-5">
@@ -61,14 +69,21 @@ const GoalDescriptionStep = ({ goalDescription, setGoalDescription, handleSubmit
       />
     </View>
 
-    <PrimaryButton
-      title="Generate SMART Goal"
-      loadingText="Generating your SMART goal..."
-      onPress={handleSubmit}
-      isLoading={isLoading}
-      icon="sparkles"
-      className="mt-5"
-    />
+    <View>
+      <PrimaryButton
+        title="Generate SMART Goal"
+        loadingText="Generating your SMART goal..."
+        onPress={handleSubmit}
+        isLoading={isLoading}
+        icon="sparkles"
+        className="mt-5"
+      />
+      <SecondaryButton
+        testID="ai-onboarding-skip-button"
+        title="Skip For Now"
+        onPress={handleSkippingOnboarding}
+      />
+    </View>
   </View>
 );
 
@@ -316,15 +331,22 @@ const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoadi
       </View>
     </View>
 
-    <PrimaryButton
-      testID="profile-continue-button"
-      title="Continue"
-      loadingText="Saving profile..."
-      onPress={handleSubmit}
-      isLoading={isLoading}
-      icon="arrow-forward"
-      className="mt-5"
-    />
+    <View>
+      <PrimaryButton
+        testID="profile-continue-button"
+        title="Continue"
+        loadingText="Saving profile..."
+        onPress={handleSubmit}
+        isLoading={isLoading}
+        icon="arrow-forward"
+        className="mt-5"
+      />
+      <SecondaryButton
+        testID="ai-onboarding-skip-button"
+        title="Skip For Now"
+        onPress={handleSkippingOnboarding}
+      />
+    </View>
   </View>
 );
 
