@@ -104,9 +104,9 @@ export class AIAPI {
 
   formatMultiPeriodSmartGoalResponse(response: MultiPeriodSmartGoalResponse): Record<string, Record<string, string>> {
     return {
-      one_month: response.one_month,
-      three_months: response.three_months,
-      six_months: response.six_months,
+      "1 Month Goal": response.one_month,
+      "3 Month Goal": response.three_months,
+      "6 Month Goal": response.six_months,
     };
   }
 
