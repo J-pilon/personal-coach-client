@@ -1,5 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { tasksApi, Task, CreateTaskParams, UpdateTaskParams } from '@/api/tasks';
+import { CreateTaskParams, TasksAPI, UpdateTaskParams } from '@/api/tasks';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+// Create a singleton instance of TasksAPI
+const tasksApi = new TasksAPI();
 
 export const useTasks = () => {
   return useQuery({
@@ -119,13 +122,13 @@ export const useDeleteTask = () => {
   return useMutation({
     mutationFn: async (id: number) => {
       const response = await tasksApi.deleteTask(id);
-
       if (response.error) {
         throw new Error(response.error);
       }
       return response.data;
     },
     onSuccess: () => {
+      // Invalidate and refetch tasks to update the UI
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });

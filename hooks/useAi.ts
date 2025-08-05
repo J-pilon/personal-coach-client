@@ -1,5 +1,8 @@
+import { AIAPI, AiRequestParams, AiResponse } from '@/api/ai';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { aiApi, AiRequestParams, AiResponse, SmartGoalResponse, PrioritizationResponse } from '@/api/ai';
+
+// Create a singleton instance of AIAPI
+const aiApi = new AIAPI();
 
 // Hook for processing AI requests
 export const useProcessAiRequest = () => {
@@ -100,8 +103,8 @@ export const useAiResponseHelpers = () => {
     isSmartGoalResponse: aiApi.isSmartGoalResponse,
     isPrioritizationResponse: aiApi.isPrioritizationResponse,
     isErrorResponse: aiApi.isErrorResponse,
+    formatSingleGoal: aiApi.formatSingleGoal,
     formatMultiPeriodSmartGoalResponse: aiApi.formatMultiPeriodSmartGoalResponse,
-    formatSingleSmartGoal: aiApi.formatSingleGoal,
     formatPrioritizationResponse: aiApi.formatPrioritizationResponse,
   };
 };
