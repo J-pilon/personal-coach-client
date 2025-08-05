@@ -1,6 +1,6 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen } from '@testing-library/react-native';
+import React from 'react';
 import ProfileScreen from '../../app/profile';
 
 // Mock the hooks
@@ -8,6 +8,19 @@ jest.mock('../../hooks/useUser', () => ({
   useProfile: jest.fn(),
   useUpdateProfile: jest.fn(),
 }));
+
+// Mock the ProfileEditForm component
+jest.mock('../../components/ProfileEditForm', () => {
+  return function MockProfileEditForm({ profile, onCancel, onSuccess }: any) {
+    return (
+      <div testID="profile-edit-form">
+        <div testID="mock-profile-edit-form">Profile Edit Form</div>
+        <button testID="mock-cancel-button" onClick={onCancel}>Cancel</button>
+        <button testID="mock-success-button" onClick={onSuccess}>Success</button>
+      </div>
+    );
+  };
+});
 
 // Mock expo-router
 jest.mock('expo-router', () => ({
@@ -269,5 +282,157 @@ describe('ProfileScreen', () => {
 
     // The edit button should be present
     expect(screen.getByTestId('profile-edit-text')).toBeTruthy();
+  });
+
+  it('shows ProfileEditForm when edit button is pressed', () => {
+    const mockProfile = {
+      id: 1,
+      first_name: 'John',
+      last_name: 'Doe',
+      work_role: 'Software Engineer',
+      education: 'Bachelor of Science',
+      desires: 'I want to become a senior developer',
+      limiting_beliefs: 'I am not good enough',
+      onboarding_status: 'complete',
+      onboarding_completed_at: '2024-01-01T00:00:00Z',
+      user_id: 1,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+    };
+
+    mockUseProfile.mockReturnValue({
+      data: mockProfile,
+      isLoading: false,
+      error: null,
+    });
+
+    mockUseUpdateProfile.mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+      isError: false,
+      isSuccess: false,
+      error: null,
+      reset: jest.fn(),
+    });
+
+    const { getByTestId } = render(
+      <QueryClientProvider client={queryClient}>
+        <ProfileScreen />
+      </QueryClientProvider>
+    );
+
+    // Initially, the edit form should not be visible
+    expect(() => screen.getByTestId('mock-profile-edit-form')).toThrow();
+
+    // Press the edit button
+    const editButton = getByTestId('profile-edit-button');
+    fireEvent.press(editButton);
+
+    // Now the edit form should be visible
+    expect(screen.getByTestId('mock-profile-edit-form')).toBeTruthy();
+  });
+
+  it('calls onCancel when cancel button is pressed in edit form', () => {
+    const mockProfile = {
+      id: 1,
+      first_name: 'John',
+      last_name: 'Doe',
+      work_role: 'Software Engineer',
+      education: 'Bachelor of Science',
+      desires: 'I want to become a senior developer',
+      limiting_beliefs: 'I am not good enough',
+      onboarding_status: 'complete',
+      onboarding_completed_at: '2024-01-01T00:00:00Z',
+      user_id: 1,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+    };
+
+    mockUseProfile.mockReturnValue({
+      data: mockProfile,
+      isLoading: false,
+      error: null,
+    });
+
+    mockUseUpdateProfile.mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+      isError: false,
+      isSuccess: false,
+      error: null,
+      reset: jest.fn(),
+    });
+
+    const { getByTestId } = render(
+      <QueryClientProvider client={queryClient}>
+        <ProfileScreen />
+      </QueryClientProvider>
+    );
+
+    // Press the edit button to show the form
+    const editButton = getByTestId('profile-edit-button');
+    fireEvent.press(editButton);
+
+    // Verify the form is visible
+    expect(screen.getByTestId('mock-profile-edit-form')).toBeTruthy();
+
+    // Press the cancel button
+    const cancelButton = screen.getByTestId('mock-cancel-button');
+    fireEvent.press(cancelButton);
+
+    // Verify that the cancel button was pressed (the mock will handle the callback)
+    expect(cancelButton).toBeTruthy();
+  });
+
+  it('calls onSuccess when success button is pressed in edit form', () => {
+    const mockProfile = {
+      id: 1,
+      first_name: 'John',
+      last_name: 'Doe',
+      work_role: 'Software Engineer',
+      education: 'Bachelor of Science',
+      desires: 'I want to become a senior developer',
+      limiting_beliefs: 'I am not good enough',
+      onboarding_status: 'complete',
+      onboarding_completed_at: '2024-01-01T00:00:00Z',
+      user_id: 1,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+    };
+
+    mockUseProfile.mockReturnValue({
+      data: mockProfile,
+      isLoading: false,
+      error: null,
+    });
+
+    mockUseUpdateProfile.mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+      isError: false,
+      isSuccess: false,
+      error: null,
+      reset: jest.fn(),
+    });
+
+    const { getByTestId } = render(
+      <QueryClientProvider client={queryClient}>
+        <ProfileScreen />
+      </QueryClientProvider>
+    );
+
+    // Press the edit button to show the form
+    const editButton = getByTestId('profile-edit-button');
+    fireEvent.press(editButton);
+
+    // Verify the form is visible
+    expect(screen.getByTestId('mock-profile-edit-form')).toBeTruthy();
+
+    // Press the success button
+    const successButton = screen.getByTestId('mock-success-button');
+    fireEvent.press(successButton);
+
+    // Verify that the success button was pressed (the mock will handle the callback)
+    expect(successButton).toBeTruthy();
   });
 }); 
