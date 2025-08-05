@@ -41,7 +41,7 @@ export interface ConfirmationStepProps {
 }
 
 const GoalDescriptionStep = ({ goalDescription, setGoalDescription, handleSubmit, isLoading }: GoalDescriptionStepProps) => (
-  <View className="mb-8">
+  <View className="">
     <View className="mb-5">
       <Text className="mb-2 text-lg font-semibold text-[#F1F5F9]">
         Describe what you want to achieve
@@ -84,7 +84,7 @@ const AiResponseStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSmar
   }
 
   return (
-    <View className="mb-8">
+    <View className="">
       <View className="p-5 rounded-xl border border-cyan-400 bg-slate-800">
         <View className="flex-row items-center mb-4">
           <Ionicons name="checkmark-circle" size={24} color="#33CFFF" />
@@ -146,7 +146,7 @@ const AiResponseStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSmar
 };
 
 const ConfirmationStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSmartGoalResponse, handleEditGoal, handleConfirmGoal }: ConfirmationStepProps) => (
-  <View className="mb-8">
+  <View className="">
     <View className="items-center mb-5">
       <View className="items-center mb-4">
         <Ionicons name="checkmark-circle" size={32} color="#33CFFF" />
@@ -211,16 +211,7 @@ const ConfirmationStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSm
 );
 
 const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoading }: ProfileDetailsStepProps) => (
-  <View className="mb-8">
-    <View className="mb-5">
-      <Text testID="profile-step-title" className="mb-2 text-lg font-semibold text-[#F1F5F9]">
-        Tell us about yourself
-      </Text>
-      <Text testID="profile-step-subtitle" className="mb-3 text-sm text-[#E6FAFF] opacity-70">
-        Help us provide the best coaching experience by sharing some details about yourself.
-      </Text>
-    </View>
-
+  <View className="">
     <View className="">
       {/* First Name */}
       <View className="mb-4">
