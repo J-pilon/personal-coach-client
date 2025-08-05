@@ -67,8 +67,9 @@ export const useCompleteOnboarding = (profileId?: number) => {
       }
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    onSuccess: (updatedProfile) => {
+      // Immediately update the cache with the new profile data
+      queryClient.setQueryData(['profile', currentProfileId], updatedProfile);
     },
   });
 }; 
