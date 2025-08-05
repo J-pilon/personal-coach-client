@@ -49,7 +49,7 @@ describe('AI API', () => {
       expect(result.data).toEqual(mockResponse);
       expect(result.status).toBe(200);
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/ai/process',
+        'http://localhost:3000/api/v1/process',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -119,7 +119,7 @@ describe('AI API', () => {
       expect(result.data).toEqual(mockResponse);
       expect(result.status).toBe(200);
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/ai/smart_goal',
+        'http://localhost:3000/api/v1/ai',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -159,7 +159,7 @@ describe('AI API', () => {
       expect(result.data).toEqual(mockResponse);
       expect(result.status).toBe(200);
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/ai/prioritize',
+        'http://localhost:3000/api/v1/prioritize',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
