@@ -145,8 +145,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Extract the user and profile objects from the response
-      const userData = data.status?.data?.user;
-      const profileData = data.status?.data?.profile;
+      const userData = data.data?.user;
+      const profileData = data.data?.profile;
 
       if (!userData || !profileData) {
         throw new Error('Invalid response format from server');
@@ -177,6 +177,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       const data = await response.json();
+
+      console.log('====================================');
+      console.log(data, "data");
+      console.log('====================================');
+
       const authToken = response.headers.get('Authorization')?.replace('Bearer ', '');
 
       if (!authToken) {
@@ -184,8 +189,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Extract the user and profile objects from the response
-      const userData = data.status?.data?.user;
-      const profileData = data.status?.data?.profile;
+      const userData = data.data?.user;
+      const profileData = data.data?.profile;
 
       if (!userData || !profileData) {
         throw new Error('Invalid response format from server');
