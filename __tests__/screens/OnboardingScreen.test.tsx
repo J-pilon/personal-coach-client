@@ -1,6 +1,6 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen } from '@testing-library/react-native';
+import React from 'react';
 import OnboardingScreen from '../../app/onboarding';
 
 // Mock expo-router
@@ -20,9 +20,14 @@ jest.mock('expo-router', () => ({
 jest.mock('../../components/AiOnboardingWizard', () => {
   const React = require('react');
   const { Pressable, Text } = require('react-native');
+  const { router } = require('expo-router');
   return function MockAiOnboardingWizard({ onComplete }: { onComplete: () => void }) {
+    const handleComplete = () => {
+      onComplete();
+      router.replace('/(tabs)');
+    };
     return (
-      <Pressable onPress={onComplete} testID="onboarding-wizard">
+      <Pressable onPress={handleComplete} testID="onboarding-wizard">
         <Text>Complete Onboarding</Text>
       </Pressable>
     );
