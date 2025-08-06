@@ -53,12 +53,15 @@ describe('AiOnboardingWizard', () => {
   });
 
   it('renders the profile details step initially', () => {
-    const { getByTestId } = render(
+    const { getByText, getByTestId } = render(
       <AiOnboardingWizard onComplete={mockOnComplete} />
     );
 
-    expect(getByTestId('profile-step-title')).toBeTruthy();
-    expect(getByTestId('profile-step-subtitle')).toBeTruthy();
+    // Check for title and subtitle by text content
+    expect(getByText('Tell us about yourself')).toBeTruthy();
+    expect(getByText('Help us provide the best coaching experience by sharing some details about yourself.')).toBeTruthy();
+
+    // Check for form inputs
     expect(getByTestId('first-name-input')).toBeTruthy();
     expect(getByTestId('last-name-input')).toBeTruthy();
     expect(getByTestId('work-role-input')).toBeTruthy();
@@ -86,12 +89,12 @@ describe('AiOnboardingWizard', () => {
   });
 
   it('has correct step titles', () => {
-    const { getByTestId } = render(
+    const { getByText } = render(
       <AiOnboardingWizard onComplete={mockOnComplete} />
     );
 
-    // Initial step
-    expect(getByTestId('profile-step-title')).toBeTruthy();
+    // Initial step should show the profile details title
+    expect(getByText('Tell us about yourself')).toBeTruthy();
   });
 
   it('renders profile input fields with correct styling', () => {
