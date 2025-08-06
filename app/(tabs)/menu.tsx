@@ -67,20 +67,19 @@ export default function MenuScreen() {
     //   },
     // },
     {
-      id: 'help',
-      title: 'Help & Support',
-      icon: 'help-circle-outline',
-      onPress: () => {
-        // TODO: Navigate to help screen
-        console.log('Help pressed');
-      },
-    },
-    {
       id: 'about',
       title: 'How to Use',
       icon: 'information-circle-outline',
       onPress: () => {
         router.push('/about');
+      },
+    },
+    {
+      id: 'help',
+      title: 'Support & Feeback',
+      icon: 'help-circle-outline',
+      onPress: () => {
+        router.push('/support-feedback');
       },
     },
     {

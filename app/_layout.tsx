@@ -102,6 +102,13 @@ function AppContent() {
                 headerTitle: "How to Use",
                 headerBackTitle: "Menu"
               }} />
+            <Stack.Screen
+              name="support-feedback/index"
+              options={{
+                headerShown: true,
+                headerTitle: "Support & Feedback",
+                headerBackTitle: "Menu"
+              }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />

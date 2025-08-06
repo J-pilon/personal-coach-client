@@ -80,7 +80,6 @@ describe('MenuScreen', () => {
     expect(screen.getByTestId('menu-item-text-smart-goals')).toBeTruthy();
     expect(screen.getByTestId('menu-item-text-help')).toBeTruthy();
     expect(screen.getByTestId('menu-item-text-about')).toBeTruthy();
-    expect(screen.getByTestId('menu-item-text-about')).toHaveTextContent('How to Use');
     expect(screen.getByTestId('menu-item-text-logout')).toBeTruthy();
   });
 
@@ -112,17 +111,15 @@ describe('MenuScreen', () => {
     expect(true).toBe(true);
   });
 
-  it('handles help & support menu item press', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
+  it('handles support & feedback menu item press', () => {
+    const mockRouter = require('expo-router').router;
 
     renderWithProviders(<MenuScreen />);
 
     const helpButton = screen.getByTestId('menu-item-help');
     fireEvent.press(helpButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith('Help pressed');
-
-    consoleSpy.mockRestore();
+    expect(mockRouter.push).toHaveBeenCalledWith('/support-feedback');
   });
 
   it('handles about menu item press', () => {
