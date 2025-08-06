@@ -113,7 +113,7 @@ export default function SettingsScreen() {
           </Text>
         </View>
         <Text className="text-[#E6FAFF] text-center">
-          {usageInfo?.remaining || 3} requests remaining today
+          {usageInfo?.remaining} requests remaining today
         </Text>
       </View>
     );
