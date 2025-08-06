@@ -1,4 +1,4 @@
-import { AIAPI } from '../api/ai';
+import { AIAPI, type AiResponse } from '../api/ai';
 
 // Mock fetch globally
 global.fetch = jest.fn();
@@ -49,7 +49,7 @@ describe('AI API', () => {
       expect(result.data).toEqual(mockResponse);
       expect(result.status).toBe(200);
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/process',
+        'http://localhost:3000/api/v1/ai/proxy',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -119,7 +119,7 @@ describe('AI API', () => {
       expect(result.data).toEqual(mockResponse);
       expect(result.status).toBe(200);
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/ai',
+        'http://localhost:3000/api/v1/ai/proxy',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -159,7 +159,7 @@ describe('AI API', () => {
       expect(result.data).toEqual(mockResponse);
       expect(result.status).toBe(200);
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/v1/prioritize',
+        'http://localhost:3000/api/v1/ai/proxy',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -173,7 +173,7 @@ describe('AI API', () => {
 
   describe('response type guards', () => {
     it('should correctly identify smart goal responses', () => {
-      const smartGoalResponse = {
+      const smartGoalResponse: AiResponse = {
         intent: 'smart_goal',
         response: {
           specific: 'Exercise for 30 minutes daily',
@@ -192,7 +192,7 @@ describe('AI API', () => {
     });
 
     it('should correctly identify prioritization responses', () => {
-      const prioritizationResponse = {
+      const prioritizationResponse: AiResponse = {
         intent: 'prioritization',
         response: [
           { task: 'exercise', priority: 1, rationale: 'High impact' },
@@ -208,7 +208,7 @@ describe('AI API', () => {
     });
 
     it('should correctly identify error responses', () => {
-      const errorResponse = {
+      const errorResponse: AiResponse = {
         intent: 'error',
         response: { error: 'Invalid input' },
         context_used: false,

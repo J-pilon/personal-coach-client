@@ -109,6 +109,13 @@ function AppContent() {
                 headerTitle: "Support & Feedback",
                 headerBackTitle: "Menu"
               }} />
+            <Stack.Screen
+              name="settings/index"
+              options={{
+                headerShown: true,
+                headerTitle: "Settings",
+                headerBackTitle: "Menu"
+              }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />

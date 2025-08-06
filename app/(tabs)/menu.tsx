@@ -57,15 +57,14 @@ export default function MenuScreen() {
         router.push('/smartGoals');
       },
     },
-    // {
-    //   id: 'settings',
-    //   title: 'Settings',
-    //   icon: 'settings-outline',
-    //   onPress: () => {
-    //     // TODO: Navigate to settings screen
-    //     console.log('Settings pressed');
-    //   },
-    // },
+    {
+      id: 'settings',
+      title: 'Settings',
+      icon: 'settings-outline',
+      onPress: () => {
+        router.push('/settings' as any);
+      },
+    },
     {
       id: 'about',
       title: 'How to Use',

@@ -22,6 +22,12 @@ jest.mock('expo-router', () => ({
 // Mock @expo/vector-icons
 jest.mock('@expo/vector-icons/FontAwesome', () => 'FontAwesome');
 
+// Mock react-native-css-interop
+jest.mock('react-native-css-interop', () => ({
+  __esModule: true,
+  default: {},
+}));
+
 // Global test setup
 global.console = {
   ...console,
