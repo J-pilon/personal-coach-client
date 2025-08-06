@@ -3,22 +3,41 @@ import SecondaryButton from '@/components/buttons/SecondaryButton';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Text, TextInput, View } from 'react-native';
 import { useAiSettings } from '../../hooks/useAiSettings';
 
 export default function SettingsScreen() {
   const {
-    apiKey,
     setApiKey,
     clearApiKey,
+    getStoredApiKey,
     usageInfo,
     isLoading,
     error
   } = useAiSettings();
 
-  const [inputKey, setInputKey] = useState(apiKey || '');
+  const [inputKey, setInputKey] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [storedApiKey, setStoredApiKey] = useState<string | null>(null);
+  const [isLoadingApiKey, setIsLoadingApiKey] = useState(false);
+
+  useEffect(() => {
+    const loadApiKey = async () => {
+      try {
+        setIsLoadingApiKey(true);
+        const apiKey = await getStoredApiKey();
+        setStoredApiKey(apiKey);
+        setInputKey(apiKey || '');
+      } catch (error) {
+        console.error('Error loading API key:', error);
+      } finally {
+        setIsLoadingApiKey(false);
+      }
+    };
+
+    loadApiKey();
+  }, []);
 
   const handleSaveKey = async () => {
     if (!inputKey.trim()) {
@@ -28,6 +47,7 @@ export default function SettingsScreen() {
 
     try {
       await setApiKey(inputKey.trim());
+      setStoredApiKey(inputKey.trim());
       setIsEditing(false);
       Alert.alert('Success', 'Your API key has been saved securely');
     } catch (error) {
@@ -47,6 +67,7 @@ export default function SettingsScreen() {
           onPress: async () => {
             try {
               await clearApiKey();
+              setStoredApiKey(null);
               setInputKey('');
               Alert.alert('Success', 'API key cleared');
             } catch (error) {
@@ -100,7 +121,7 @@ export default function SettingsScreen() {
 
   return (
     <LinearGradient>
-      <ScrollView contentContainerStyle={{ paddingTop: 16 }}>
+      <ScrollView contentContainerStyle={{ paddingTop: 32, marginHorizontal: 16 }}>
         {renderUsageInfo()}
 
         {/* AI Features Explanation */}
@@ -128,7 +149,7 @@ export default function SettingsScreen() {
             <Text className="text-[#E6FAFF] text-sm mb-2 font-medium">
               How to get your key:
             </Text>
-            <View className="p-2 bg-transparent rounded-md border border-cyan-400">
+            <View className="p-2 bg-transparent rounded-xl border border-cyan-400">
               <Text className="text-sm text-cyan-400">1. Go to https://platform.openai.com/account/api-keys</Text>
               <Text className="text-sm text-cyan-400">2. Log in or create a free OpenAI account</Text>
               <Text className="text-sm text-cyan-400">3. Click "Create new secret key"</Text>
@@ -137,14 +158,20 @@ export default function SettingsScreen() {
             </View>
           </View>
 
-          {isEditing ? (
+          {isLoadingApiKey ? (
+            <View className="bg-[#154FA6] rounded-xl p-4">
+              <Text className="text-sm text-center text-white">
+                Loading...
+              </Text>
+            </View>
+          ) : isEditing ? (
             <View className="">
               <TextInput
                 value={inputKey}
                 onChangeText={setInputKey}
                 placeholder="Paste your OpenAI API key here"
-                placeholderTextColor="#708090"
-                className="bg-[#154FA6] mb-4 rounded-xl p-4 text-[#F1F5F9] text-sm"
+                placeholderTextColor="#fff"
+                className="bg-[#154FA6] mb-4 rounded-xl p-4 text-white text-sm border border-cyan-400"
                 secureTextEntry
                 testID="settings-api-key-input"
               />
@@ -159,7 +186,7 @@ export default function SettingsScreen() {
                   title="Cancel"
                   onPress={() => {
                     setIsEditing(false);
-                    setInputKey(apiKey || '');
+                    setInputKey(storedApiKey || '');
                   }}
                   testID="settings-cancel-button"
                 />
@@ -167,37 +194,38 @@ export default function SettingsScreen() {
             </View>
           ) : (
             <View className="space-y-3">
-              {apiKey ? (
+              {storedApiKey ? (
                 <View className="bg-[#154FA6] rounded-xl p-4">
                   <Text className="text-[#22d3ee] text-sm font-medium">
                     Key saved ✓
                   </Text>
-                  <Text className="text-[#708090] text-xs mt-1">
+                  <Text className="mt-1 text-xs text-white">
                     Your API key is securely stored
                   </Text>
                 </View>
               ) : (
-                <View className="bg-[#154FA6] rounded-xl p-4 mb-4">
-                  <Text className="text-[#708090] text-sm">
+                <View className="bg-[#154FA6] rounded-xl p-4 mb-4 border border-cyan-400">
+                  <Text className="text-sm text-white">
                     No API key saved
                   </Text>
                 </View>
               )}
 
-              <View className="flex-row space-x-3">
+              <View className="">
                 <PrimaryButton
-                  title={apiKey ? "Change Key" : "Add Key"}
+                  title={storedApiKey ? "Change Key" : "Add Key"}
                   onPress={() => setIsEditing(true)}
                   className="flex-1"
                   testID="settings-add-key-button"
                 />
-                {apiKey && (
-                  <SecondaryButton
-                    title="Clear Key"
-                    onPress={handleClearKey}
-                    className="flex-1"
-                    testID="settings-clear-key-button"
-                  />
+                {storedApiKey && (
+                  <View className='mt-2'>
+                    <SecondaryButton
+                      title="Clear Key"
+                      onPress={handleClearKey}
+                      testID="settings-clear-key-button"
+                    />
+                  </View>
                 )}
               </View>
             </View>

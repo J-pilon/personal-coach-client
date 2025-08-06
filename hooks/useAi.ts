@@ -1,16 +1,24 @@
 import { AIAPI, AiRequestParams, AiResponse } from '@/api/ai';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAiSettings } from './useAiSettings';
 
 // Create a singleton instance of AIAPI
 const aiApi = new AIAPI();
 
-// Hook for processing AI requests
+// Hook for processing AI requests with user API key support
 export const useProcessAiRequest = () => {
   const queryClient = useQueryClient();
+  const { getStoredApiKey } = useAiSettings();
   
   return useMutation({
     mutationFn: async (params: AiRequestParams) => {
-      const response = await aiApi.processAiRequest(params);
+      const userKey = await getStoredApiKey();
+      
+      const response = await aiApi.processAiRequest({
+        ...params,
+        user_provided_key: userKey || null,
+      });
+      
       if (response.error) {
         throw new Error(response.error);
       }
@@ -26,6 +34,9 @@ export const useProcessAiRequest = () => {
       } else if (data.intent === 'prioritization') {
         queryClient.invalidateQueries({ queryKey: ['tasks'] });
       }
+      
+      // Refetch usage info after successful request
+      queryClient.invalidateQueries({ queryKey: ['ai-usage'] });
     },
   });
 };
@@ -33,9 +44,12 @@ export const useProcessAiRequest = () => {
 // Hook for creating smart goals via AI
 export const useCreateSmartGoal = () => {
   const queryClient = useQueryClient();
+  const { getStoredApiKey } = useAiSettings();
   
   return useMutation({
     mutationFn: async (input: string) => {
+      const userKey = await getStoredApiKey();
+      
       const response = await aiApi.createSmartGoal(input);
       if (response.error) {
         throw new Error(response.error);
@@ -48,6 +62,8 @@ export const useCreateSmartGoal = () => {
     onSuccess: (data: AiResponse) => {
       // Invalidate smart goals queries
       queryClient.invalidateQueries({ queryKey: ['smartGoals'] });
+      // Refetch usage info after successful request
+      queryClient.invalidateQueries({ queryKey: ['ai-usage'] });
     },
   });
 };
@@ -55,9 +71,12 @@ export const useCreateSmartGoal = () => {
 // Hook for prioritizing tasks via AI
 export const usePrioritizeTasks = () => {
   const queryClient = useQueryClient();
+  const { getStoredApiKey } = useAiSettings();
   
   return useMutation({
     mutationFn: async (input: string) => {
+      const userKey = await getStoredApiKey();
+      
       const response = await aiApi.prioritizeTasks(input);
       if (response.error) {
         throw new Error(response.error);
@@ -70,6 +89,8 @@ export const usePrioritizeTasks = () => {
     onSuccess: (data: AiResponse) => {
       // Invalidate tasks queries
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      // Refetch usage info after successful request
+      queryClient.invalidateQueries({ queryKey: ['ai-usage'] });
     },
   });
 };

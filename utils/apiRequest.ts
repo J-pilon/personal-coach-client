@@ -73,6 +73,9 @@ export const apiRequest = async <T = any>(
     if (hasContent) {
       try {
         responseData = await response.json();
+        console.log('====================================');
+        console.log(responseData, "apiRequest file");
+        console.log('====================================');
       } catch (parseError) {
         console.error('JSON parse error:', parseError);
         return {
