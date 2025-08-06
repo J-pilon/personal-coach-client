@@ -1,12 +1,13 @@
-import React from 'react';
-import { View, Text, Pressable } from 'react-native';
-import ScrollView from '@/components/util/ScrollView';
-import { useProfile, useUpdateProfile } from '@/hooks/useUser';
+import ProfileEditForm from '@/components/ProfileEditForm';
 import LinearGradient from '@/components/ui/LinearGradient';
+import ScrollView from '@/components/util/ScrollView';
+import { useProfile } from '@/hooks/useUser';
+import React, { useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
 
 export default function ProfileScreen() {
   const { data: profile, isLoading, error } = useProfile();
-  const updateProfile = useUpdateProfile();
+  const [editing, setEditing] = useState(false);
 
   if (isLoading) {
     return (
@@ -24,6 +25,18 @@ export default function ProfileScreen() {
           {error instanceof Error ? error.message : 'Unknown error occurred'}
         </Text>
       </LinearGradient>
+    );
+  }
+
+
+
+  if (editing && profile) {
+    return (
+      <ProfileEditForm
+        profile={profile}
+        onCancel={() => setEditing(false)}
+        onSuccess={() => setEditing(false)}
+      />
     );
   }
 
@@ -99,10 +112,7 @@ export default function ProfileScreen() {
 
         <Pressable
           className="px-8 py-4 bg-cyan-400 rounded-2xl shadow-md"
-          onPress={() => {
-            // TODO: Navigate to edit profile screen
-            console.log('Edit profile pressed');
-          }}
+          onPress={() => setEditing(true)}
           testID="profile-edit-button"
         >
           <Text className="text-[#021A40] font-semibold text-lg text-center" testID="profile-edit-text">Edit Profile</Text>

@@ -1,16 +1,17 @@
+import { ProfileUpdateData } from '@/api/users';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useAiResponseHelpers, useCreateSmartGoal } from '@/hooks/useAi';
 import { useCreateMultipleSmartGoals } from '@/hooks/useSmartGoals';
-import { useCompleteOnboarding } from '@/hooks/useUser';
+import { useCompleteOnboarding, useUpdateProfile } from '@/hooks/useUser';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AiResponseStep, ConfirmationStep, GoalDescriptionStep } from './AiOnboardingWizardSteps';
+import { AiResponseStep, ConfirmationStep, GoalDescriptionStep, ProfileDetailsStep } from './AiOnboardingWizardSteps';
 import ProgressBar from './ProgressBar';
 
-interface SMARTGoalData {
+export interface SMARTGoalData {
   title: string;
   specific: string;
   measurable: string;
@@ -20,13 +21,13 @@ interface SMARTGoalData {
   timeframe: '1_month' | '3_months' | '6_months';
 }
 
-interface OnboardingStep {
-  id: 'goal-description' | 'ai-response' | 'confirmation';
+export interface OnboardingStep {
+  id: 'profile-details' | 'goal-description' | 'ai-response' | 'confirmation';
   title: string;
   subtitle: string;
 }
 
-interface OnboardingWizardProps {
+export interface OnboardingWizardProps {
   onComplete: () => void;
 }
 
@@ -35,13 +36,27 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
   const [goalDescription, setGoalDescription] = useState('');
   const [aiResponse, setAiResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [profileData, setProfileData] = useState<ProfileUpdateData>({
+    first_name: '',
+    last_name: '',
+    work_role: '',
+    education: '',
+    desires: '',
+    limiting_beliefs: ''
+  });
 
   const createSmartGoal = useCreateSmartGoal();
   const createMultipleSmartGoals = useCreateMultipleSmartGoals();
+  const updateProfile = useUpdateProfile();
   const completeOnboarding = useCompleteOnboarding()
   const { isSmartGoalResponse, formatMultiPeriodSmartGoalResponse } = useAiResponseHelpers();
 
   const steps: OnboardingStep[] = [
+    {
+      id: 'profile-details',
+      title: 'Tell us about yourself',
+      subtitle: 'Help us provide the best coaching experience by sharing some details about yourself.'
+    },
     {
       id: 'goal-description',
       title: 'What do you want to achieve?',
@@ -61,6 +76,23 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
 
   const currentStep = steps[currentStepIndex];
 
+  const handleSubmitProfileDetails = async () => {
+    if (!profileData.first_name?.trim() || !profileData.last_name?.trim() || !profileData.work_role?.trim() || !profileData.education?.trim()) {
+      Alert.alert('Missing Information', 'Please fill in all required fields (First Name, Last Name, Work Role, and Education).');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await updateProfile.mutateAsync(profileData);
+      setCurrentStepIndex(1);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update your profile details. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmitGoalDescription = async () => {
     if (!goalDescription.trim()) {
       Alert.alert('Missing Description', 'Please describe what you want to achieve.');
@@ -71,7 +103,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
     try {
       const result = await createSmartGoal.mutateAsync(goalDescription.trim());
       setAiResponse(result);
-      setCurrentStepIndex(1);
+      setCurrentStepIndex(2);
     } catch (error) {
       Alert.alert('Error', 'Failed to generate your SMART goal. Please try again.');
     } finally {
@@ -127,11 +159,20 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
   };
 
   const handleEditGoal = () => {
-    setCurrentStepIndex(0);
+    setCurrentStepIndex(1);
   };
 
   const renderCurrentStep = () => {
     switch (currentStep.id) {
+      case 'profile-details':
+        return (
+          <ProfileDetailsStep
+            profileData={profileData}
+            setProfileData={setProfileData}
+            handleSubmit={handleSubmitProfileDetails}
+            isLoading={false}
+          />
+        );
       case 'goal-description':
         return (
           <GoalDescriptionStep
