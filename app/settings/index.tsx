@@ -98,7 +98,7 @@ export default function SettingsScreen() {
             </Text>
           </View>
           <Text className="text-[#E6FAFF] text-center">
-            Unlimited AI requests
+            Unlimited requests
           </Text>
         </View>
       );
@@ -173,14 +173,14 @@ export default function SettingsScreen() {
                 placeholderTextColor="#fff"
                 className="bg-[#154FA6] mb-4 rounded-xl p-4 text-white text-sm border border-cyan-400"
                 secureTextEntry
-                testID="settings-api-key-input"
+                testID="api-key-input"
               />
               <View className="">
                 <PrimaryButton
                   title="Save Key"
                   onPress={handleSaveKey}
                   className="flex-1 mb-2"
-                  testID="settings-save-key-button"
+                  testID="save-key-button"
                 />
                 <SecondaryButton
                   title="Cancel"
@@ -188,7 +188,7 @@ export default function SettingsScreen() {
                     setIsEditing(false);
                     setInputKey(storedApiKey || '');
                   }}
-                  testID="settings-cancel-button"
+                  testID="cancel-button"
                 />
               </View>
             </View>
@@ -216,14 +216,14 @@ export default function SettingsScreen() {
                   title={storedApiKey ? "Change Key" : "Add Key"}
                   onPress={() => setIsEditing(true)}
                   className="flex-1"
-                  testID="settings-add-key-button"
+                  testID={storedApiKey ? "change-key-button" : "add-key-button"}
                 />
                 {storedApiKey && (
                   <View className='mt-2'>
                     <SecondaryButton
                       title="Clear Key"
                       onPress={handleClearKey}
-                      testID="settings-clear-key-button"
+                      testID="clear-key-button"
                     />
                   </View>
                 )}
@@ -236,7 +236,7 @@ export default function SettingsScreen() {
         {error && (
           <View className="p-4 mb-4 rounded-xl border bg-red-500/20 border-red-500/30">
             <Text className="text-sm text-center text-red-300">
-              {error}
+              Error: {error}
             </Text>
           </View>
         )}
