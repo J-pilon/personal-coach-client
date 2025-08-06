@@ -44,6 +44,18 @@ describe('useAiSuggestedTasks', () => {
     },
   ];
 
+  const mockUsageInfo = {
+    using_own_key: false,
+    remaining: 2,
+    total_limit: 3,
+    reset_time: '2024-01-01T00:00:00Z',
+  };
+
+  const mockResponse = {
+    suggestions: mockSuggestions,
+    usage_info: mockUsageInfo,
+  };
+
   const createWrapper = () => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <AuthProvider>
@@ -68,7 +80,7 @@ describe('useAiSuggestedTasks', () => {
 
   it('should generate suggestions successfully', async () => {
     mockApiPost.mockResolvedValueOnce({
-      data: mockSuggestions,
+      data: mockResponse,
       status: 200,
     });
 
@@ -82,6 +94,7 @@ describe('useAiSuggestedTasks', () => {
 
     await waitFor(() => {
       expect(result.current.suggestions).toEqual(mockSuggestions);
+      expect(result.current.usageInfo).toEqual(mockUsageInfo);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
     });
@@ -107,13 +120,14 @@ describe('useAiSuggestedTasks', () => {
     await waitFor(() => {
       expect(result.current.error).toBe(errorMessage);
       expect(result.current.suggestions).toEqual([]);
+      expect(result.current.usageInfo).toBeNull();
       expect(result.current.isLoading).toBe(false);
     });
   });
 
   it('should dismiss a suggestion', async () => {
     mockApiPost.mockResolvedValueOnce({
-      data: mockSuggestions,
+      data: mockResponse,
       status: 200,
     });
 
@@ -141,7 +155,7 @@ describe('useAiSuggestedTasks', () => {
 
   it('should clear all suggestions', async () => {
     mockApiPost.mockResolvedValueOnce({
-      data: mockSuggestions,
+      data: mockResponse,
       status: 200,
     });
 
@@ -163,13 +177,14 @@ describe('useAiSuggestedTasks', () => {
 
     await waitFor(() => {
       expect(result.current.suggestions).toHaveLength(0);
+      expect(result.current.usageInfo).toBeNull();
       expect(result.current.error).toBeNull();
     });
   });
 
   it('should handle loading state correctly', async () => {
-    let resolveApiPost: (value: { data: AiTaskSuggestion[]; status: number }) => void;
-    const apiPostPromise = new Promise<{ data: AiTaskSuggestion[]; status: number }>((resolve) => {
+    let resolveApiPost: (value: { data: any; status: number }) => void;
+    const apiPostPromise = new Promise<{ data: any; status: number }>((resolve) => {
       resolveApiPost = resolve;
     });
 
@@ -187,19 +202,20 @@ describe('useAiSuggestedTasks', () => {
 
     // Resolve the apiPost
     resolveApiPost!({
-      data: mockSuggestions,
+      data: mockResponse,
       status: 200,
     });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
       expect(result.current.suggestions).toEqual(mockSuggestions);
+      expect(result.current.usageInfo).toEqual(mockUsageInfo);
     });
   });
 
   it('should handle empty response data', async () => {
     mockApiPost.mockResolvedValueOnce({
-      data: [],
+      data: { suggestions: [], usage_info: mockUsageInfo },
       status: 200,
     });
 
@@ -213,6 +229,7 @@ describe('useAiSuggestedTasks', () => {
 
     await waitFor(() => {
       expect(result.current.suggestions).toEqual([]);
+      expect(result.current.usageInfo).toEqual(mockUsageInfo);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
     });
@@ -234,6 +251,7 @@ describe('useAiSuggestedTasks', () => {
 
     await waitFor(() => {
       expect(result.current.suggestions).toEqual([]);
+      expect(result.current.usageInfo).toBeNull();
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
     });
@@ -241,7 +259,7 @@ describe('useAiSuggestedTasks', () => {
 
   it('should use different profile IDs correctly', async () => {
     mockApiPost.mockResolvedValueOnce({
-      data: mockSuggestions,
+      data: mockResponse,
       status: 200,
     });
 
@@ -255,6 +273,7 @@ describe('useAiSuggestedTasks', () => {
 
     await waitFor(() => {
       expect(result.current.suggestions).toEqual(mockSuggestions);
+      expect(result.current.usageInfo).toEqual(mockUsageInfo);
     });
 
     expect(mockApiPost).toHaveBeenCalledWith(
