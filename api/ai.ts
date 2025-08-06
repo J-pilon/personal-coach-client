@@ -60,20 +60,21 @@ export interface ErrorResponse {
 // AI request parameters
 export interface AiRequestParams {
   input: string;
+  user_provided_key?: string | null;
 }
 
 // AI API class
 export class AIAPI {
   async processAiRequest(params: AiRequestParams): Promise<ApiResponse<AiResponse>> {
-    return apiPost<AiResponse>('/process', params);
+    return apiPost<AiResponse>('/ai/proxy', params);
   }
 
   async createSmartGoal(input: string): Promise<ApiResponse<AiResponse>> {
-    return apiPost<AiResponse>('/ai', { input });
+    return apiPost<AiResponse>('/ai/proxy', { input });
   }
 
   async prioritizeTasks(input: string): Promise<ApiResponse<AiResponse>> {
-    return apiPost<AiResponse>('/prioritize', { input });
+    return apiPost<AiResponse>('/ai/proxy', { input });
   }
 
   // Type guards for response validation
