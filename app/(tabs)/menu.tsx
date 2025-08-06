@@ -57,15 +57,15 @@ export default function MenuScreen() {
         router.push('/smartGoals');
       },
     },
-    {
-      id: 'settings',
-      title: 'Settings',
-      icon: 'settings-outline',
-      onPress: () => {
-        // TODO: Navigate to settings screen
-        console.log('Settings pressed');
-      },
-    },
+    // {
+    //   id: 'settings',
+    //   title: 'Settings',
+    //   icon: 'settings-outline',
+    //   onPress: () => {
+    //     // TODO: Navigate to settings screen
+    //     console.log('Settings pressed');
+    //   },
+    // },
     {
       id: 'help',
       title: 'Help & Support',
@@ -77,11 +77,10 @@ export default function MenuScreen() {
     },
     {
       id: 'about',
-      title: 'About',
+      title: 'How to Use',
       icon: 'information-circle-outline',
       onPress: () => {
-        // TODO: Navigate to about screen
-        console.log('About pressed');
+        router.push('/about');
       },
     },
     {
