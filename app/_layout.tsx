@@ -2,16 +2,15 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import '../global.css';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
 import SplashScreen from '@/components/SplashScreen';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -95,6 +94,13 @@ function AppContent() {
                 headerShown: true,
                 headerTitle: "New Task",
                 headerBackTitle: "Tasks"
+              }} />
+            <Stack.Screen
+              name="about/index"
+              options={{
+                headerShown: true,
+                headerTitle: "How to Use",
+                headerBackTitle: "Menu"
               }} />
             <Stack.Screen name="+not-found" />
           </Stack>
