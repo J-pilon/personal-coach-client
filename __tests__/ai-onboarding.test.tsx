@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 import AiOnboardingWizard from '../components/AiOnboardingWizard';
@@ -45,6 +46,26 @@ jest.mock('expo-router', () => ({
   },
 }));
 
+// Create a wrapper component with QueryClientProvider
+const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  });
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+};
+
 describe('AiOnboardingWizard', () => {
   const mockOnComplete = jest.fn();
 
@@ -54,7 +75,9 @@ describe('AiOnboardingWizard', () => {
 
   it('renders the profile details step initially', () => {
     const { getByText, getByTestId } = render(
-      <AiOnboardingWizard onComplete={mockOnComplete} />
+      <TestWrapper>
+        <AiOnboardingWizard onComplete={mockOnComplete} />
+      </TestWrapper>
     );
 
     // Check for title and subtitle by text content
@@ -70,7 +93,9 @@ describe('AiOnboardingWizard', () => {
 
   it('shows validation error when submitting empty profile details', async () => {
     const { getByTestId } = render(
-      <AiOnboardingWizard onComplete={mockOnComplete} />
+      <TestWrapper>
+        <AiOnboardingWizard onComplete={mockOnComplete} />
+      </TestWrapper>
     );
 
     const submitButton = getByTestId('profile-continue-button');
@@ -82,7 +107,9 @@ describe('AiOnboardingWizard', () => {
 
   it('shows progress bar with correct step count', () => {
     const { getByText } = render(
-      <AiOnboardingWizard onComplete={mockOnComplete} />
+      <TestWrapper>
+        <AiOnboardingWizard onComplete={mockOnComplete} />
+      </TestWrapper>
     );
 
     expect(getByText('Step 1 of 4')).toBeTruthy();
@@ -90,7 +117,9 @@ describe('AiOnboardingWizard', () => {
 
   it('has correct step titles', () => {
     const { getByText } = render(
-      <AiOnboardingWizard onComplete={mockOnComplete} />
+      <TestWrapper>
+        <AiOnboardingWizard onComplete={mockOnComplete} />
+      </TestWrapper>
     );
 
     // Initial step should show the profile details title
@@ -99,7 +128,9 @@ describe('AiOnboardingWizard', () => {
 
   it('renders profile input fields with correct styling', () => {
     const { getByTestId } = render(
-      <AiOnboardingWizard onComplete={mockOnComplete} />
+      <TestWrapper>
+        <AiOnboardingWizard onComplete={mockOnComplete} />
+      </TestWrapper>
     );
 
     const firstNameInput = getByTestId('first-name-input');
@@ -115,7 +146,9 @@ describe('AiOnboardingWizard', () => {
 
   it('renders submit button with correct text', () => {
     const { getByTestId } = render(
-      <AiOnboardingWizard onComplete={mockOnComplete} />
+      <TestWrapper>
+        <AiOnboardingWizard onComplete={mockOnComplete} />
+      </TestWrapper>
     );
 
     expect(getByTestId('profile-continue-button')).toBeTruthy();
@@ -123,7 +156,9 @@ describe('AiOnboardingWizard', () => {
 
   it('renders optional fields with descriptions', () => {
     const { getByTestId } = render(
-      <AiOnboardingWizard onComplete={mockOnComplete} />
+      <TestWrapper>
+        <AiOnboardingWizard onComplete={mockOnComplete} />
+      </TestWrapper>
     );
 
     // Check for optional field labels
@@ -141,7 +176,9 @@ describe('AiOnboardingWizard', () => {
 
   it('allows user input in form fields', () => {
     const { getByTestId } = render(
-      <AiOnboardingWizard onComplete={mockOnComplete} />
+      <TestWrapper>
+        <AiOnboardingWizard onComplete={mockOnComplete} />
+      </TestWrapper>
     );
 
     const firstNameInput = getByTestId('first-name-input');
