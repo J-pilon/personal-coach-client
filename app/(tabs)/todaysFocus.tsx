@@ -9,7 +9,7 @@ import { AiTaskSuggestion, useAiSuggestedTasks } from '@/hooks/useAiSuggestedTas
 import { useAuth } from '@/hooks/useAuth';
 import { useCreateTask, useIncompleteTasks } from '@/hooks/useTasks';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
 export default function TodaysFocusScreen() {
@@ -32,7 +32,12 @@ export default function TodaysFocusScreen() {
     error: aiError,
     generateSuggestions,
     dismissSuggestion,
+    clearSuggestions
   } = useAiSuggestedTasks(profile.id);
+
+  useEffect(() => {
+    clearSuggestions()
+  }, [])
 
   // Sort tasks by priority (highest first)
   const sortedTasks = [...incompleteTasks].sort((a, b) => {

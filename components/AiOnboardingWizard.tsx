@@ -1,11 +1,12 @@
 import { ProfileUpdateData } from '@/api/users';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
-import { useAiResponseHelpers, useCreateSmartGoal } from '@/hooks/useAi';
+import { useAiResponseHelpers } from '@/hooks/useAi';
+import { useAiProxy } from '@/hooks/useAiProxy';
 import { useCreateMultipleSmartGoals } from '@/hooks/useSmartGoals';
 import { useCompleteOnboarding, useUpdateProfile } from '@/hooks/useUser';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AiResponseStep, ConfirmationStep, GoalDescriptionStep, ProfileDetailsStep } from './AiOnboardingWizardSteps';
@@ -45,11 +46,18 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
     limiting_beliefs: ''
   });
 
-  const createSmartGoal = useCreateSmartGoal();
+  const aiProxy = useAiProxy();
   const createMultipleSmartGoals = useCreateMultipleSmartGoals();
   const updateProfile = useUpdateProfile();
   const completeOnboarding = useCompleteOnboarding()
   const { isSmartGoalResponse, formatMultiPeriodSmartGoalResponse } = useAiResponseHelpers();
+
+  // Handle completed job results
+  useEffect(() => {
+    if (aiProxy.isJobComplete && aiProxy.jobStatus?.result) {
+      setAiResponse(aiProxy.jobStatus.result);
+    }
+  }, [aiProxy.isJobComplete, aiProxy.jobStatus]);
 
   const steps: OnboardingStep[] = [
     {
@@ -99,15 +107,11 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
       return;
     }
 
-    setIsLoading(true);
     try {
-      const result = await createSmartGoal.mutateAsync(goalDescription.trim());
-      setAiResponse(result);
+      await aiProxy.mutateAsync(goalDescription.trim());
       setCurrentStepIndex(2);
     } catch (error) {
       Alert.alert('Error', 'Failed to generate your SMART goal. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -179,7 +183,10 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
             goalDescription={goalDescription}
             setGoalDescription={setGoalDescription}
             handleSubmit={handleSubmitGoalDescription}
-            isLoading={isLoading}
+            isLoading={aiProxy.isLoading}
+            progress={aiProxy.progress}
+            isJobComplete={aiProxy.isJobComplete}
+            isJobFailed={aiProxy.isJobFailed}
           />
         );
       case 'ai-response':

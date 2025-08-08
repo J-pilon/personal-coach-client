@@ -24,7 +24,10 @@ export interface GoalDescriptionStepProps {
   goalDescription: string,
   setGoalDescription: (text: string) => void,
   handleSubmit: () => void,
-  isLoading: boolean
+  isLoading: boolean,
+  progress?: number,
+  isJobComplete?: boolean,
+  isJobFailed?: boolean
 }
 
 export interface AiResponseStepProps {
@@ -48,7 +51,7 @@ const handleSkippingOnboarding = () => {
   router.replace('/(tabs)')
 }
 
-const GoalDescriptionStep = ({ goalDescription, setGoalDescription, handleSubmit, isLoading }: GoalDescriptionStepProps) => (
+const GoalDescriptionStep = ({ goalDescription, setGoalDescription, handleSubmit, isLoading, progress = 0, isJobComplete = false, isJobFailed = false }: GoalDescriptionStepProps) => (
   <View className="">
     <View className="mb-5">
       <Text className="mb-2 text-lg font-semibold text-[#F1F5F9]">
@@ -71,13 +74,18 @@ const GoalDescriptionStep = ({ goalDescription, setGoalDescription, handleSubmit
 
     <View>
       <PrimaryButton
-        title="Generate SMART Goal"
+        title={isLoading ? `Processing... ${progress}%` : "Generate SMART Goals"}
         loadingText="Generating your SMART goal..."
         onPress={handleSubmit}
         isLoading={isLoading}
         icon="sparkles"
         className="mt-5"
       />
+      {isJobFailed && (
+        <Text className="mt-2 text-sm text-red-400">
+          Failed to generate goals. Please try again.
+        </Text>
+      )}
       <SecondaryButton
         testID="ai-onboarding-skip-button"
         title="Skip For Now"
