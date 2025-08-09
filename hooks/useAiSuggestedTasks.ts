@@ -84,12 +84,15 @@ export const useAiSuggestedTasks = (profileId: number) => {
   useEffect(() => {
     const status = jobStatus.data?.status;
     const result = jobStatus.data?.result;
+
+    console.log('====================================');
+    console.log(jobStatus, "jobStatus");
+    console.log(result, "result");
+    console.log('====================================');
     
     if (status === 'complete' && result) {
       try {
-        const parsedResult = JSON.parse(result)
-
-        setSuggestions(parsedResult);
+        setSuggestions(result);
         setError(null);
         
         queryClient.invalidateQueries({ queryKey: ['tasks'] });

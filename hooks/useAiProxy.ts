@@ -26,7 +26,6 @@ export const useAiProxy = () => {
   
   // Poll for job status
   const jobStatus = useJobStatus(jobId);
-  
   const mutation = useMutation({
     mutationFn: async (input: string) => {
       const userApiKey = await getStoredApiKey();
@@ -45,6 +44,11 @@ export const useAiProxy = () => {
         throw new Error('No data received from server');
       }
 
+      // Update usage info in cache
+      if (response.data.usage_info) {
+        queryClient.setQueryData(['ai-usage'], response.data.usage_info);
+      }
+
       // Step 2: Start polling for the job result
       setJobId(response.data.job_id);
       return response.data;
@@ -53,23 +57,24 @@ export const useAiProxy = () => {
 
   // Step 3: Handle the completed result
   useEffect(() => {
-    if (jobStatus.data?.status === 'completed' && jobStatus.data?.result) {
-      const result = jobStatus.data.result;
-      
-      // Invalidate relevant queries based on the intent
-      if (result.intent === 'smart_goal') {
-        queryClient.invalidateQueries({ queryKey: ['smartGoals'] });
-      } else if (result.intent === 'prioritization') {
-        queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    if (jobStatus.data?.status === 'complete' && jobStatus.data?.result) {
+      try {
+        const result = jobStatus.data.result;
+        
+        // Invalidate relevant queries based on the intent
+        if (result.intent === 'smart_goal') {
+          queryClient.invalidateQueries({ queryKey: ['smartGoals'] });
+        } else if (result.intent === 'prioritization') {
+          queryClient.invalidateQueries({ queryKey: ['tasks'] });
+        }
+        
+        // Clear the job ID to stop polling
+        setJobId(null);
+      } catch (error) {
+        console.error('Failed to parse AI proxy result:', error);
+        // Clear the job ID to stop polling on error
+        setJobId(null);
       }
-      
-      // Update usage info in cache
-      if (result.usage_info) {
-        queryClient.setQueryData(['ai-usage'], result.usage_info);
-      }
-      
-      // Clear the job ID to stop polling
-      setJobId(null);
     }
   }, [jobStatus.data, queryClient]);
 
@@ -80,7 +85,7 @@ export const useAiProxy = () => {
     error: mutation.error || jobStatus.error,
     // Expose job progress for UI feedback
     progress: jobStatus.data?.progress || 0,
-    isJobComplete: jobStatus.data?.status === 'completed',
+    isJobComplete: jobStatus.data?.status === 'complete',
     isJobFailed: jobStatus.data?.status === 'failed',
   };
 }; 
