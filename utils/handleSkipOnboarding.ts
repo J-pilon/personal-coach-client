@@ -15,6 +15,15 @@ export const setSkippedOnboarding = async (): Promise<void> => {
   }
 };
 
+export const clearSkippedOnboarding = async (): Promise<void> => {
+  try {
+    await SecureStore.deleteItemAsync(SKIPPED_ONBOARDING_KEY);
+    console.log('Cleared skipped onboarding timestamp')
+  } catch (error) {
+    console.error('Error clearing skipped onboarding timestamp:', error);
+  }
+}
+
 /**
  * Checks if the current datetime is 24 hours past the skipped_onboarding_at datetime
  * @returns true if 24 hours have passed since skip, false otherwise
