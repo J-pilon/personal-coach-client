@@ -36,6 +36,7 @@ export interface AiResponseStepProps {
   formatMultiPeriodSmartGoalResponse: (response: any) => Record<string, Record<string, string>>,
   handleEditGoal: () => void,
   setCurrentStepIndex: (index: number) => void
+  isLoading: boolean
 }
 
 export interface ConfirmationStepProps {
@@ -95,7 +96,15 @@ const GoalDescriptionStep = ({ goalDescription, setGoalDescription, handleSubmit
   </View>
 );
 
-const AiResponseStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSmartGoalResponse, handleEditGoal, setCurrentStepIndex }: AiResponseStepProps) => {
+const AiResponseStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSmartGoalResponse, handleEditGoal, setCurrentStepIndex, isLoading }: AiResponseStepProps) => {
+  if (isLoading) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    )
+  }
+
   if (!aiResponse || !isSmartGoalResponse(aiResponse)) {
     return (
       <View className="mb-8">

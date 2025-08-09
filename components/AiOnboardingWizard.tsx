@@ -30,10 +30,11 @@ export interface OnboardingStep {
 
 export interface OnboardingWizardProps {
   onComplete: () => void;
+  onSkip: () => void;
 }
 
 export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState(1);
   const [goalDescription, setGoalDescription] = useState('');
   const [aiResponse, setAiResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,6 +57,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
   useEffect(() => {
     if (aiProxy.isJobComplete && aiProxy.jobStatus?.result) {
       setAiResponse(aiProxy.jobStatus.result);
+      setIsLoading(false)
     }
   }, [aiProxy.isJobComplete, aiProxy.jobStatus]);
 
@@ -108,6 +110,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
     }
 
     try {
+      setIsLoading(true)
       await aiProxy.mutateAsync(goalDescription.trim());
       setCurrentStepIndex(2);
     } catch (error) {
@@ -194,6 +197,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
           <AiResponseStep
             aiResponse={aiResponse}
             isSmartGoalResponse={isSmartGoalResponse}
+            isLoading={isLoading}
             formatMultiPeriodSmartGoalResponse={formatMultiPeriodSmartGoalResponse}
             handleEditGoal={handleEditGoal}
             setCurrentStepIndex={setCurrentStepIndex}
