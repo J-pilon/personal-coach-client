@@ -117,10 +117,10 @@ describe('SettingsScreen', () => {
         refetchUsage: mockRefetchUsage,
       });
 
-      const { getByText } = renderWithQueryClient(<SettingsScreen />);
+      const { getByTestId } = renderWithQueryClient(<SettingsScreen />);
 
       await waitFor(() => {
-        expect(getByText('Loading usage info...')).toBeTruthy();
+        expect(getByTestId('usage-info-skeleton')).toBeTruthy();
       });
     });
   });

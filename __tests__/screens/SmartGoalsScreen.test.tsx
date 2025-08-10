@@ -1,6 +1,6 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen } from '@testing-library/react-native';
+import React from 'react';
 import { Alert } from 'react-native';
 import SmartGoalsScreen from '../../app/smartGoals';
 
@@ -78,7 +78,7 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByTestId('smart-goals-loading-text')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-profile-loading-text')).toBeTruthy();
   });
 
   it('renders onboarding prompt when onboarding is incomplete', () => {
@@ -167,7 +167,7 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByTestId('smart-goals-loading-goals-text')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-loading')).toBeTruthy();
   });
 
   it('renders error state when goals fail to load', () => {
