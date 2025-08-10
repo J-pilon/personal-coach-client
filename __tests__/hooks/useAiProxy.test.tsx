@@ -75,6 +75,7 @@ describe('useAiProxy', () => {
     expect(mockApiPost).toHaveBeenCalledWith('/ai/proxy', {
       input: 'Test input',
       user_provided_key: 'test-api-key',
+      intent: 'smart_goal'
     });
 
     // Wait for the job ID to be set and useJobStatus to be called with it
