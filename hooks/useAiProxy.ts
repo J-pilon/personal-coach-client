@@ -34,6 +34,7 @@ export const useAiProxy = () => {
       const response = await apiPost<JobQueuedResponse>('/ai/proxy', {
         input,
         user_provided_key: userApiKey || null,
+        intent: "smart_goal"
       });
 
       if (response.error) {
