@@ -158,7 +158,17 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: jest.fn(),
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
+
+
 
     // Mock useAuth to return a profile
     mockUseAuth.mockReturnValue({
@@ -166,9 +176,6 @@ describe('TodaysFocusScreen', () => {
       profile: mockProfile,
       isLoading: false,
     });
-
-    // Reset all mocks
-    jest.clearAllMocks();
   });
 
   const renderTodaysFocusScreen = () => {
@@ -288,6 +295,14 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: mockGenerateSuggestions,
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();
@@ -307,6 +322,14 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: jest.fn(),
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();
@@ -321,6 +344,14 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: jest.fn(),
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();
@@ -347,6 +378,14 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: jest.fn(),
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();
@@ -382,6 +421,14 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: jest.fn(),
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();
@@ -408,6 +455,14 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: jest.fn(),
       dismissSuggestion: mockDismissSuggestion,
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();
@@ -427,6 +482,14 @@ describe('TodaysFocusScreen', () => {
       error: aiError,
       generateSuggestions: jest.fn(),
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();
@@ -447,6 +510,14 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: jest.fn(),
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();
@@ -472,6 +543,14 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: jest.fn(),
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();
@@ -492,6 +571,14 @@ describe('TodaysFocusScreen', () => {
       error: null,
       generateSuggestions: mockGenerateSuggestions,
       dismissSuggestion: jest.fn(),
+      clearSuggestions: jest.fn(),
+      addToToday: jest.fn(),
+      addForLater: jest.fn(),
+      usageInfo: null,
+      jobStatus: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false,
     });
 
     renderTodaysFocusScreen();

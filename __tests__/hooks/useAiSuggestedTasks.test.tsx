@@ -9,12 +9,25 @@ jest.mock('../../utils/apiRequest', () => ({
   apiPost: jest.fn(),
 }));
 
+// Mock the useJobStatus hook
+jest.mock('../../hooks/useJobStatus', () => ({
+  useJobStatus: jest.fn(),
+}));
+
+// Mock the useAiSettings hook
+jest.mock('../../hooks/useAiSettings', () => ({
+  useAiSettings: () => ({
+    getStoredApiKey: jest.fn().mockResolvedValue('test-api-key'),
+  }),
+}));
+
 // Mock the AuthProvider to avoid async initialization
 jest.mock('../../hooks/useAuth', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 const mockApiPost = require('../../utils/apiRequest').apiPost;
+const mockUseJobStatus = require('../../hooks/useJobStatus').useJobStatus;
 
 describe('useAiSuggestedTasks', () => {
   let queryClient: QueryClient;
@@ -27,6 +40,7 @@ describe('useAiSuggestedTasks', () => {
       },
     });
     mockApiPost.mockClear();
+    mockUseJobStatus.mockClear();
   });
 
   const mockSuggestions: AiTaskSuggestion[] = [
@@ -51,9 +65,18 @@ describe('useAiSuggestedTasks', () => {
     reset_time: '2024-01-01T00:00:00Z',
   };
 
-  const mockResponse = {
-    suggestions: mockSuggestions,
+  const mockJobQueuedResponse = {
+    message: 'AI request queued for processing',
+    job_id: 'job-123',
+    status: 'queued',
     usage_info: mockUsageInfo,
+  };
+
+  const mockJobCompletedResponse = {
+    job_id: 'job-123',
+    status: 'complete',
+    progress: 100,
+    result: mockSuggestions,
   };
 
   const createWrapper = () => {
@@ -69,6 +92,12 @@ describe('useAiSuggestedTasks', () => {
   };
 
   it('should initialize with empty suggestions and not loading', () => {
+    mockUseJobStatus.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+    });
+
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
     });
@@ -79,10 +108,23 @@ describe('useAiSuggestedTasks', () => {
   });
 
   it('should generate suggestions successfully', async () => {
+    // Mock successful job queuing
     mockApiPost.mockResolvedValueOnce({
-      data: mockResponse,
-      status: 200,
+      data: mockJobQueuedResponse,
     });
+
+    // Mock job status polling - initially called with null, then with job ID
+    mockUseJobStatus
+      .mockReturnValueOnce({
+        data: null,
+        isLoading: false,
+        error: null,
+      })
+      .mockReturnValue({
+        data: mockJobCompletedResponse,
+        isLoading: false,
+        error: null,
+      });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
@@ -92,21 +134,30 @@ describe('useAiSuggestedTasks', () => {
       await result.current.generateSuggestions();
     });
 
+    expect(mockApiPost).toHaveBeenCalledWith('/ai/suggested_tasks', {
+      profile_id: 1,
+      user_provided_key: 'test-api-key',
+    });
+
+    // Wait for the job to complete and suggestions to be set
     await waitFor(() => {
       expect(result.current.suggestions).toEqual(mockSuggestions);
       expect(result.current.usageInfo).toEqual(mockUsageInfo);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
     });
-
-    expect(mockApiPost).toHaveBeenCalledWith('/ai/suggested_tasks', { profile_id: 1 });
   });
 
   it('should handle API errors', async () => {
     const errorMessage = 'Failed to generate suggestions';
     mockApiPost.mockResolvedValueOnce({
       error: errorMessage,
-      status: 500,
+    });
+
+    mockUseJobStatus.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
     });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
@@ -126,9 +177,16 @@ describe('useAiSuggestedTasks', () => {
   });
 
   it('should dismiss a suggestion', async () => {
+    // Mock successful job queuing
     mockApiPost.mockResolvedValueOnce({
-      data: mockResponse,
-      status: 200,
+      data: mockJobQueuedResponse,
+    });
+
+    // Mock job status with completed result
+    mockUseJobStatus.mockReturnValue({
+      data: mockJobCompletedResponse,
+      isLoading: false,
+      error: null,
     });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
@@ -154,9 +212,16 @@ describe('useAiSuggestedTasks', () => {
   });
 
   it('should clear all suggestions', async () => {
+    // Mock successful job queuing
     mockApiPost.mockResolvedValueOnce({
-      data: mockResponse,
-      status: 200,
+      data: mockJobQueuedResponse,
+    });
+
+    // Mock job status with completed result
+    mockUseJobStatus.mockReturnValue({
+      data: mockJobCompletedResponse,
+      isLoading: false,
+      error: null,
     });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
@@ -183,12 +248,18 @@ describe('useAiSuggestedTasks', () => {
   });
 
   it('should handle loading state correctly', async () => {
-    let resolveApiPost: (value: { data: any; status: number }) => void;
-    const apiPostPromise = new Promise<{ data: any; status: number }>((resolve) => {
+    let resolveApiPost: (value: { data: any }) => void;
+    const apiPostPromise = new Promise<{ data: any }>((resolve) => {
       resolveApiPost = resolve;
     });
 
     mockApiPost.mockReturnValueOnce(apiPostPromise);
+
+    mockUseJobStatus.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+    });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
@@ -200,10 +271,16 @@ describe('useAiSuggestedTasks', () => {
 
     expect(result.current.isLoading).toBe(true);
 
-    // Resolve the apiPost
+    // Resolve the apiPost with job queued response
     resolveApiPost!({
-      data: mockResponse,
-      status: 200,
+      data: mockJobQueuedResponse,
+    });
+
+    // Mock job completion
+    mockUseJobStatus.mockReturnValue({
+      data: mockJobCompletedResponse,
+      isLoading: false,
+      error: null,
     });
 
     await waitFor(() => {
@@ -213,11 +290,28 @@ describe('useAiSuggestedTasks', () => {
     });
   });
 
-  it('should handle empty response data', async () => {
+  it('should handle job failure', async () => {
+    // Mock successful job queuing
     mockApiPost.mockResolvedValueOnce({
-      data: { suggestions: [], usage_info: mockUsageInfo },
-      status: 200,
+      data: mockJobQueuedResponse,
     });
+
+    // Mock job status - first call with null, then with failed result
+    mockUseJobStatus
+      .mockReturnValueOnce({
+        data: null,
+        isLoading: false,
+        error: null,
+      })
+      .mockReturnValue({
+        data: {
+          job_id: 'job-123',
+          status: 'failed',
+          progress: 0,
+        },
+        isLoading: false,
+        error: null,
+      });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
@@ -228,39 +322,42 @@ describe('useAiSuggestedTasks', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.suggestions).toEqual([]);
-      expect(result.current.usageInfo).toEqual(mockUsageInfo);
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.error).toBeNull();
+      expect(result.current.error).toBe('Failed to generate task suggestions');
+      expect(result.current.isJobFailed).toBe(true);
     });
   });
 
-  it('should handle null response data', async () => {
-    mockApiPost.mockResolvedValueOnce({
-      data: null,
-      status: 200,
+  it('should expose progress and status information', () => {
+    mockUseJobStatus.mockReturnValue({
+      data: {
+        job_id: 'job-123',
+        status: 'working',
+        progress: 50,
+      },
+      isLoading: false,
+      error: null,
     });
 
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
     });
 
-    await act(async () => {
-      await result.current.generateSuggestions();
-    });
-
-    await waitFor(() => {
-      expect(result.current.suggestions).toEqual([]);
-      expect(result.current.usageInfo).toBeNull();
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.error).toBeNull();
-    });
+    expect(result.current.progress).toBe(50);
+    expect(result.current.isJobComplete).toBe(false);
+    expect(result.current.isJobFailed).toBe(false);
   });
 
   it('should use different profile IDs correctly', async () => {
+    // Mock successful job queuing
     mockApiPost.mockResolvedValueOnce({
-      data: mockResponse,
-      status: 200,
+      data: mockJobQueuedResponse,
+    });
+
+    // Mock job status with completed result
+    mockUseJobStatus.mockReturnValue({
+      data: mockJobCompletedResponse,
+      isLoading: false,
+      error: null,
     });
 
     const { result } = renderHook(() => useAiSuggestedTasks(123), {
@@ -278,11 +375,20 @@ describe('useAiSuggestedTasks', () => {
 
     expect(mockApiPost).toHaveBeenCalledWith(
       '/ai/suggested_tasks',
-      { profile_id: 123 }
+      {
+        profile_id: 123,
+        user_provided_key: 'test-api-key',
+      }
     );
   });
 
   it('should handle addToToday and addForLater methods', () => {
+    mockUseJobStatus.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+    });
+
     const { result } = renderHook(() => useAiSuggestedTasks(1), {
       wrapper: createWrapper(),
     });

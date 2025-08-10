@@ -1,6 +1,8 @@
-import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
-import { apiPost, type ApiResponse } from '../utils/apiRequest';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { apiPost } from '../utils/apiRequest';
+import { useAiSettings } from './useAiSettings';
+import { useJobStatus } from './useJobStatus';
 
 // Interface for AI-generated task suggestions
 export interface AiTaskSuggestion {
@@ -24,33 +26,86 @@ export interface SuggestedTasksResponse {
   usage_info: UsageInfo;
 }
 
+// Interface for job queued response
+interface JobQueuedResponse {
+  message: string;
+  job_id: string;
+  status: 'queued';
+  usage_info: any;
+}
+
 export const useAiSuggestedTasks = (profileId: number) => {
+  const [jobId, setJobId] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<AiTaskSuggestion[]>([]);
   const [usageInfo, setUsageInfo] = useState<UsageInfo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const { getStoredApiKey } = useAiSettings();
+  const queryClient = useQueryClient();
+  const jobStatus = useJobStatus(jobId);
 
   const mutation = useMutation({
-    mutationFn: () => apiPost<SuggestedTasksResponse>('/ai/suggested_tasks', { profile_id: profileId }),
-    onSuccess: (response: ApiResponse<SuggestedTasksResponse>) => {
+    mutationFn: async () => {
+      const userApiKey = await getStoredApiKey();
+      
+      // Step 1: Queue the job
+      const response = await apiPost<JobQueuedResponse>('/ai/suggested_tasks', { 
+        profile_id: profileId,
+        user_provided_key: userApiKey || null,
+      });
+
       if (response.error) {
-        setError(response.error);
-      } else {
-        setSuggestions(response.data?.suggestions || []);
-        setUsageInfo(response.data?.usage_info || null);
-        setError(null);
+        throw new Error(response.error);
       }
+
+      if (!response.data) {
+        throw new Error('No data received from server');
+      }
+
+      // Step 2: Start polling for the job result and store usage info
+      setJobId(response.data.job_id);
+      setUsageInfo(response.data.usage_info);
+      return response.data;
     },
     onError: (error) => {
       setError(error instanceof Error ? error.message : 'Failed to fetch suggestions');
+      setIsLoading(false);
     },
+    onSuccess: () => {},
   });
+
+  // Step 3: Handle the completed result
+  useEffect(() => {
+    const status = jobStatus.data?.status;
+    const result = jobStatus.data?.result;
+    
+    if (status === 'complete' && result) {
+      try {
+        setSuggestions(result);
+        setError(null);
+        
+        queryClient.invalidateQueries({ queryKey: ['tasks'] });
+        
+        // Clear the job ID to stop polling
+        setJobId(null);
+      } catch (error) {
+        console.error('Failed to parse task suggestions result:', error);
+        setError('Failed to parse task suggestions');
+        setJobId(null);
+      } finally {
+        setIsLoading(false)
+      }
+    } else if (status === 'failed') {
+      setError('Failed to generate task suggestions');
+      setJobId(null);
+    }
+  }, [jobStatus.data, queryClient]);
 
   const generateSuggestions = async () => {
     setIsLoading(true);
     setError(null);
-    await mutation.mutateAsync();
-    setIsLoading(false);
+    mutation.mutate();
   };
 
   const addToToday = (suggestion: AiTaskSuggestion) => {
@@ -76,8 +131,12 @@ export const useAiSuggestedTasks = (profileId: number) => {
   return {
     suggestions,
     usageInfo,
-    isLoading: isLoading || mutation.isPending,
-    error,
+    jobStatus: jobStatus.data,
+    isLoading: isLoading || mutation.isPending || (jobStatus.isLoading && !!jobId),
+    error: error || mutation.error || jobStatus.error,
+    progress: jobStatus.data?.progress || 0,
+    isJobComplete: jobStatus.data?.status === 'complete',
+    isJobFailed: jobStatus.data?.status === 'failed',
     generateSuggestions,
     addToToday,
     addForLater,

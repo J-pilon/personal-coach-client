@@ -1,12 +1,12 @@
-import LinearGradient from '@/components/ui/LinearGradient';
-import { ThemedText } from '@/components/ThemedText';
 import AddTaskButton from '@/components/AddTaskButton';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import React, { useState } from 'react';
-import { Pressable, Text, View, ActivityIndicator, Alert } from 'react-native';
+import { LoadingSpinner } from '@/components/loading';
+import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useTasks, useToggleTaskCompletion } from '@/hooks/useTasks';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 export default function HomeScreen() {
   const { data: tasks = [], isLoading, error, refetch } = useTasks();
@@ -45,8 +45,12 @@ export default function HomeScreen() {
   if (isLoading) {
     return (
       <LinearGradient>
-        <ActivityIndicator size="large" color="#154FA6" />
-        <Text className="text-[#F1F5F9] mt-4 text-lg" testID="home-loading-text">Loading tasks...</Text>
+        <LoadingSpinner
+          size="large"
+          text="Loading tasks..."
+          variant="fullscreen"
+          testID="home-loading"
+        />
       </LinearGradient>
     );
   }

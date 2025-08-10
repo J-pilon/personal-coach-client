@@ -84,7 +84,7 @@ describe('SettingsScreen', () => {
   };
 
   describe('Rendering', () => {
-    it('should render usage info section', () => {
+    it('should render usage info section', async () => {
       mockUseAiSettings.mockReturnValue({
         setApiKey: mockSetApiKey,
         clearApiKey: mockClearApiKey,
@@ -100,11 +100,13 @@ describe('SettingsScreen', () => {
 
       const { getByText } = renderWithQueryClient(<SettingsScreen />);
 
-      expect(getByText('Using demo key')).toBeTruthy();
-      expect(getByText('3 requests remaining today')).toBeTruthy();
+      await waitFor(() => {
+        expect(getByText('Using demo key')).toBeTruthy();
+        expect(getByText('3 requests remaining today')).toBeTruthy();
+      });
     });
 
-    it('should render loading state', () => {
+    it('should render loading state', async () => {
       mockUseAiSettings.mockReturnValue({
         setApiKey: mockSetApiKey,
         clearApiKey: mockClearApiKey,
@@ -115,14 +117,16 @@ describe('SettingsScreen', () => {
         refetchUsage: mockRefetchUsage,
       });
 
-      const { getByText } = renderWithQueryClient(<SettingsScreen />);
+      const { getByTestId } = renderWithQueryClient(<SettingsScreen />);
 
-      expect(getByText('Loading usage info...')).toBeTruthy();
+      await waitFor(() => {
+        expect(getByTestId('usage-info-skeleton')).toBeTruthy();
+      });
     });
   });
 
   describe('Usage Info Display', () => {
-    it('should show demo key usage info', () => {
+    it('should show demo key usage info', async () => {
       mockUseAiSettings.mockReturnValue({
         setApiKey: mockSetApiKey,
         clearApiKey: mockClearApiKey,
@@ -138,11 +142,13 @@ describe('SettingsScreen', () => {
 
       const { getByText } = renderWithQueryClient(<SettingsScreen />);
 
-      expect(getByText('Using demo key')).toBeTruthy();
-      expect(getByText('2 requests remaining today')).toBeTruthy();
+      await waitFor(() => {
+        expect(getByText('Using demo key')).toBeTruthy();
+        expect(getByText('2 requests remaining today')).toBeTruthy();
+      });
     });
 
-    it('should show own key usage info', () => {
+    it('should show own key usage info', async () => {
       mockUseAiSettings.mockReturnValue({
         setApiKey: mockSetApiKey,
         clearApiKey: mockClearApiKey,
@@ -158,8 +164,10 @@ describe('SettingsScreen', () => {
 
       const { getByText } = renderWithQueryClient(<SettingsScreen />);
 
-      expect(getByText('Using your own key')).toBeTruthy();
-      expect(getByText('Unlimited requests')).toBeTruthy();
+      await waitFor(() => {
+        expect(getByText('Using your own key')).toBeTruthy();
+        expect(getByText('Unlimited requests')).toBeTruthy();
+      });
     });
   });
 
@@ -204,7 +212,7 @@ describe('SettingsScreen', () => {
       mockGetStoredApiKey.mockResolvedValue(undefined);
       mockSetApiKey.mockResolvedValue(undefined);
 
-      const { getByTestId, getByText } = renderWithQueryClient(<SettingsScreen />);
+      const { getByTestId } = renderWithQueryClient(<SettingsScreen />);
 
       // Wait for component to load and enter edit mode
       await waitFor(() => {
@@ -287,7 +295,7 @@ describe('SettingsScreen', () => {
   });
 
   describe('Error Handling', () => {
-    it('should display error message when there is an error', () => {
+    it('should display error message when there is an error', async () => {
       mockUseAiSettings.mockReturnValue({
         setApiKey: mockSetApiKey,
         clearApiKey: mockClearApiKey,
@@ -300,7 +308,9 @@ describe('SettingsScreen', () => {
 
       const { getByText } = renderWithQueryClient(<SettingsScreen />);
 
-      expect(getByText('Error: Failed to load usage info')).toBeTruthy();
+      await waitFor(() => {
+        expect(getByText('Error: Failed to load usage info')).toBeTruthy();
+      });
     });
 
     it('should handle API key save error', async () => {
