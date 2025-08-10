@@ -90,6 +90,7 @@ export const useCreateTask = () => {
     onSuccess: () => {
       // Invalidate and refetch tasks to update the UI
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['incompleteTasks'] });
     },
   });
 };
