@@ -2,6 +2,7 @@ import { Task } from '@/api/tasks';
 import { AiTaskCard } from '@/components/AiTaskCard';
 import PrimaryButton from '@/components/buttons/PrimaryButton';
 import { FocusModeScreen } from '@/components/FocusModeScreen';
+import { LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { Colors } from '@/constants/Colors';
@@ -39,12 +40,20 @@ export default function TodaysFocusScreen() {
     clearSuggestions()
   }, [])
 
-  // Sort tasks by priority (highest first)
-  const sortedTasks = [...incompleteTasks].sort((a, b) => {
-    const priorityA = a.priority || 0;
-    const priorityB = b.priority || 0;
-    return priorityB - priorityA;
-  });
+  const sortSelectedTasks = (): Task[] => {
+    const combinedTasks = [...selectedTasks, ...incompleteTasks];
+
+    // Remove duplicates based on task ID
+    const uniqueTasks = combinedTasks.filter((task, index, self) =>
+      index === self.findIndex(t => t.id === task.id)
+    );
+
+    return uniqueTasks.sort((a, b) => {
+      const priorityA = a.priority || 0;
+      const priorityB = b.priority || 0;
+      return priorityB - priorityA;
+    });
+  };
 
   const handleAssistMe = async () => {
     if (!profile?.id) {
@@ -92,12 +101,6 @@ export default function TodaysFocusScreen() {
   };
 
   const handleAddForLater = async (suggestion: AiTaskSuggestion) => {
-    // Create a unique key for this suggestion to track loading state
-    const suggestionKey = `${suggestion.title}-${suggestion.description}`;
-
-    // Set loading state for this suggestion
-    setLoadingSuggestions(prev => new Set(prev).add(suggestionKey));
-
     try {
       await createTaskMutation.mutateAsync({
         title: suggestion.title,
@@ -108,13 +111,6 @@ export default function TodaysFocusScreen() {
       dismissSuggestion(suggestion);
     } catch {
       Alert.alert('Error', 'Failed to save task for later');
-    } finally {
-      // Clear loading state for this suggestion
-      setLoadingSuggestions(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(suggestionKey);
-        return newSet;
-      });
     }
   };
 
@@ -199,7 +195,7 @@ export default function TodaysFocusScreen() {
       {aiError && (
         <View className="p-3 mx-5 mb-4 rounded-lg border bg-red-500/10 border-red-500/30" testID="todays-focus-ai-error">
           <Text className="text-sm text-red-400">
-            {aiError}
+            {typeof aiError === 'string' ? aiError : aiError.message}
           </Text>
         </View>
       )}
@@ -207,7 +203,23 @@ export default function TodaysFocusScreen() {
       {/* Task List */}
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* AI Suggestions */}
-        {aiSuggestions.length > 0 && (
+        {aiLoading && (
+          <View className="mb-6">
+            <Text className="mx-5 mb-3 text-xl font-bold text-slate-100" testID="todays-focus-ai-suggestions-title">
+              AI Suggestions
+            </Text>
+            <View className="p-6 mx-5 rounded-xl border border-white/10 bg-white/5">
+              <LoadingSpinner
+                size="medium"
+                text="Generating AI suggestions..."
+                variant="inline"
+                testID="todays-focus-ai-loading"
+              />
+            </View>
+          </View>
+        )}
+
+        {!aiLoading && aiSuggestions.length > 0 && (
           <View className="mb-6">
             <Text className="mx-5 mb-3 text-xl font-bold text-slate-100" testID="todays-focus-ai-suggestions-title">
               AI Suggestions
@@ -230,7 +242,7 @@ export default function TodaysFocusScreen() {
             Your Tasks ({selectedTasks.length} selected)
           </Text>
 
-          {sortedTasks.length === 0 && aiSuggestions.length === 0 ? (
+          {incompleteTasks.length === 0 && aiSuggestions.length === 0 ? (
             <View className="items-center px-5 py-10" testID="todays-focus-empty-state">
               <Ionicons name="checkmark-circle-outline" size={48} color={Colors.text.muted} />
               <Text className="mt-4 mb-2 text-lg text-slate-100" testID="todays-focus-empty-state-title">
@@ -241,7 +253,7 @@ export default function TodaysFocusScreen() {
               </Text>
             </View>
           ) : (
-            sortedTasks.map((task) => (
+            sortSelectedTasks().map((task) => (
               <TouchableOpacity
                 key={task.id}
                 className={`flex-row bg-white/5 mx-5 my-1.5 p-4 rounded-xl border ${isTaskSelected(task) ? 'border-cyan-400 bg-cyan-400/10' : 'border-white/10'}`}

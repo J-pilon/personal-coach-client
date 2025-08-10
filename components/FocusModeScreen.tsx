@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StatusBar, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
 
+import { Task } from '@/api/tasks';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { Colors } from '@/constants/Colors';
-import { Task } from '@/api/tasks';
 import { useUpdateTask } from '@/hooks/useTasks';
 
 interface FocusModeScreenProps {
@@ -22,7 +22,7 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
 
   const currentTask = tasksToComplete[currentTaskIndex];
   const progress = completedTasks.length;
-  const totalTasks = tasksToComplete.length;
+  const totalTasks = selectedTasks.length;
   const progressPercentage = totalTasks > 0 ? (progress / totalTasks) * 100 : 0;
 
   useEffect(() => {
@@ -43,10 +43,14 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
         taskData: { completed: true }
       });
 
-      setCompletedTasks(prev => [...prev, currentTask.id!]);
-      setTasksToComplete(prev => prev.filter(task => task.id !== currentTask.id));
+      const newCompletedTasks = [...completedTasks, currentTask.id!];
+      const newTasksToComplete = tasksToComplete.filter(task => task.id !== currentTask.id);
+      setCompletedTasks(newCompletedTasks);
+      setTasksToComplete(newTasksToComplete);
+
+      // Pass the updated values to moveToNextTask
+      moveToNextTask(newTasksToComplete, currentTaskIndex);
       onComplete(currentTask.id);
-      moveToNextTask();
     } catch (error) {
       console.error('Failed to complete task:', error);
     }
@@ -60,18 +64,20 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
   };
 
   const handleSkip = () => {
-    // Move to next task (skipped tasks are not counted as completed)
     moveToNextTask();
   };
 
-  const moveToNextTask = () => {
-    const nextIndex = currentTaskIndex + 1;
-    if (nextIndex < tasksToComplete.length) {
+  const moveToNextTask = (updatedTasksToComplete?: Task[], currentIndex?: number) => {
+    const tasks = updatedTasksToComplete || tasksToComplete;
+    const index = currentIndex ?? currentTaskIndex;
+    const nextIndex = index + 1;
+
+    if (nextIndex < tasks.length) {
       setCurrentTaskIndex(nextIndex);
-    } else if (nextIndex === tasksToComplete.length) {
-      setCurrentTaskIndex(0)
+    } else if (tasks.length > 0 && nextIndex === tasks.length) {
+      setCurrentTaskIndex(0);
     } else {
-      // All tasks completed or skipped - set currentTaskIndex to -1 to show completion screen
+      // All tasks completed or skipped
       setCurrentTaskIndex(-1);
     }
   };
