@@ -34,7 +34,7 @@ export interface OnboardingWizardProps {
 }
 
 export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(1);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [goalDescription, setGoalDescription] = useState('');
   const [aiResponse, setAiResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);

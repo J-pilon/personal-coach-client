@@ -43,9 +43,6 @@ export const useAiSuggestedTasks = (profileId: number) => {
   
   const { getStoredApiKey } = useAiSettings();
   const queryClient = useQueryClient();
-  
-  // Poll for job status
-  // {"job_id": "37864baf796c69350b01e3ce", "message": null, "progress": 0, "result": null, "status": "complete", "updated_at": null}
   const jobStatus = useJobStatus(jobId);
 
   const mutation = useMutation({
@@ -75,20 +72,13 @@ export const useAiSuggestedTasks = (profileId: number) => {
       setError(error instanceof Error ? error.message : 'Failed to fetch suggestions');
       setIsLoading(false);
     },
-    onSuccess: () => {
-      setIsLoading(false);
-    },
+    onSuccess: () => {},
   });
 
   // Step 3: Handle the completed result
   useEffect(() => {
     const status = jobStatus.data?.status;
     const result = jobStatus.data?.result;
-
-    console.log('====================================');
-    console.log(jobStatus, "jobStatus");
-    console.log(result, "result");
-    console.log('====================================');
     
     if (status === 'complete' && result) {
       try {
@@ -103,6 +93,8 @@ export const useAiSuggestedTasks = (profileId: number) => {
         console.error('Failed to parse task suggestions result:', error);
         setError('Failed to parse task suggestions');
         setJobId(null);
+      } finally {
+        setIsLoading(false)
       }
     } else if (status === 'failed') {
       setError('Failed to generate task suggestions');
