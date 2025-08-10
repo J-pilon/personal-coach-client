@@ -1,3 +1,4 @@
+import { LoadingSkeleton, LoadingSpinner } from '@/components/loading';
 import { setSkippedOnboarding } from '@/utils/handleSkipOnboarding';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -97,15 +98,7 @@ const GoalDescriptionStep = ({ goalDescription, setGoalDescription, handleSubmit
 );
 
 const AiResponseStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSmartGoalResponse, handleEditGoal, setCurrentStepIndex, isLoading }: AiResponseStepProps) => {
-  if (isLoading) {
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    )
-  }
-
-  if (!aiResponse || !isSmartGoalResponse(aiResponse)) {
+  if (!isLoading && (!aiResponse || !isSmartGoalResponse(aiResponse))) {
     return (
       <View className="mb-8">
         <Text className="mt-5 text-base text-center text-red-400">
@@ -126,31 +119,51 @@ const AiResponseStep = ({ aiResponse, isSmartGoalResponse, formatMultiPeriodSmar
         </View>
 
         <View className="p-4 mb-4 rounded-lg bg-slate-700">
-          {Object.entries(formatMultiPeriodSmartGoalResponse(aiResponse.response)).map(([goalTitle, goalDetails]) => (
-            <View key={goalTitle} className="mb-4 last:mb-0">
-              <Text className="mb-2 text-lg font-semibold text-cyan-400">
-                {goalTitle}
-              </Text>
-              {Object.entries(goalDetails).map(([detailKey, detailValue]) => (
-                <View key={detailKey} className="mb-2">
-                  <Text className="text-sm font-medium text-slate-300">
-                    {detailKey}:
-                  </Text>
-                  <Text className="text-sm text-[#E6FAFF] ml-2">
-                    {detailValue}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          ))}
+          {isLoading ? (
+            <LoadingSpinner
+              size="medium"
+              text="Generating SMART goals..."
+              variant="inline"
+              testID="ai-onboarding-wizard-steps-ai-response-step"
+            />
+          ) : (
+            Object.entries(formatMultiPeriodSmartGoalResponse(aiResponse.response)).map(([goalTitle, goalDetails]) => (
+              <View key={goalTitle} className="mb-4 last:mb-0">
+                <Text className="mb-2 text-lg font-semibold text-cyan-400">
+                  {goalTitle}
+                </Text>
+                {Object.entries(goalDetails).map(([detailKey, detailValue]) => (
+                  <View key={detailKey} className="mb-2">
+                    <Text className="text-sm font-medium text-slate-300">
+                      {detailKey}:
+                    </Text>
+                    <Text className="text-sm text-[#E6FAFF] ml-2">
+                      {detailValue}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )))}
         </View>
 
         <View className="pt-3 border-t border-slate-600">
           <Text className="mb-1 text-xs text-slate-400">
-            Context used: {aiResponse.context_used ? 'Yes' : 'No'}
+            {isLoading ? (
+              <LoadingSkeleton
+                type="text"
+                count={2}
+                height={20}
+                testID="context-used-skeleton"
+              />) : <Text>Context used: {aiResponse.context_used ? 'Yes' : 'No'}</Text>}
           </Text>
           <Text className="mb-1 text-xs text-slate-400">
-            Request ID: {aiResponse.request_id}
+            {isLoading ? (
+              <LoadingSkeleton
+                type="text"
+                count={2}
+                height={20}
+                testID="request-id-skeleton"
+              />) : <Text>Request ID: {aiResponse.request_id}</Text>}
           </Text>
         </View>
       </View>

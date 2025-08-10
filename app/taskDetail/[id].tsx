@@ -1,10 +1,11 @@
 import { UpdateTaskParams } from '@/api/tasks';
+import { LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useDeleteTask, useTask, useUpdateTask } from '@/hooks/useTasks';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 
 export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -98,8 +99,12 @@ export default function TaskDetailScreen() {
   if (isLoading) {
     return (
       <LinearGradient>
-        <ActivityIndicator size="large" color="#33CFFF" />
-        <Text className="text-[#F1F5F9] mt-4 text-lg" testID="task-detail-loading-text">Loading task...</Text>
+        <LoadingSpinner
+          size="large"
+          text="Loading task..."
+          variant="fullscreen"
+          testID="task-detail-loading"
+        />
       </LinearGradient>
     );
   }

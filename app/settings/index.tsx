@@ -1,5 +1,6 @@
 import PrimaryButton from '@/components/buttons/PrimaryButton';
 import SecondaryButton from '@/components/buttons/SecondaryButton';
+import { LoadingSkeleton, LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { Ionicons } from '@expo/vector-icons';
@@ -83,7 +84,12 @@ export default function SettingsScreen() {
     if (isLoading) {
       return (
         <View className="bg-[#2B42B6] rounded-2xl p-4 mb-4">
-          <Text className="text-[#F1F5F9] text-center">Loading usage info...</Text>
+          <LoadingSkeleton
+            type="text"
+            count={2}
+            height={20}
+            testID="usage-info-skeleton"
+          />
         </View>
       );
     }
@@ -160,9 +166,12 @@ export default function SettingsScreen() {
 
           {isLoadingApiKey ? (
             <View className="bg-[#154FA6] rounded-xl p-4">
-              <Text className="text-sm text-center text-white">
-                Loading...
-              </Text>
+              <LoadingSpinner
+                size="small"
+                text="Loading..."
+                variant="inline"
+                testID="api-key-loading"
+              />
             </View>
           ) : isEditing ? (
             <View className="">

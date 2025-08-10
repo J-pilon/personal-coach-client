@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, Alert } from 'react-native';
+import AiOnboardingWizard from '@/components/AiOnboardingWizard';
+import { LoadingSpinner } from '@/components/loading';
+import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSmartGoals } from '@/hooks/useSmartGoals';
 import { useProfile } from '@/hooks/useUser';
 import { Ionicons } from '@expo/vector-icons';
-import AiOnboardingWizard from '@/components/AiOnboardingWizard';
-import LinearGradient from '@/components/ui/LinearGradient';
+import React, { useState } from 'react';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 export default function SmartGoalsScreen() {
   const { data: profile, isLoading: profileLoading } = useProfile();
@@ -33,7 +33,12 @@ export default function SmartGoalsScreen() {
   if (profileLoading) {
     return (
       <LinearGradient>
-        <Text className="text-[#F1F5F9] text-lg" testID="smart-goals-loading-text">Loading...</Text>
+        <LoadingSpinner
+          size="large"
+          text="Loading profile..."
+          variant="fullscreen"
+          testID="smart-goals-profile-loading"
+        />
       </LinearGradient>
     );
   }
@@ -103,7 +108,12 @@ export default function SmartGoalsScreen() {
   if (goalsLoading) {
     return (
       <LinearGradient>
-        <Text className="text-[#F1F5F9] text-lg" testID="smart-goals-loading-goals-text">Loading goals...</Text>
+        <LoadingSpinner
+          size="large"
+          text="Loading goals..."
+          variant="fullscreen"
+          testID="smart-goals-loading"
+        />
       </LinearGradient>
     );
   }
