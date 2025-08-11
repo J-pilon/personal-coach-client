@@ -116,6 +116,13 @@ function AppContent() {
                 headerTitle: "Settings",
                 headerBackTitle: "Menu"
               }} />
+            <Stack.Screen
+              name="addGoal/index"
+              options={{
+                headerShown: true,
+                headerTitle: "New Goal",
+                headerBackTitle: "SMART Goals"
+              }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />

@@ -13,18 +13,6 @@ jest.mock('../../hooks/useUser', () => ({
   useProfile: jest.fn(),
 }));
 
-// Mock expo-router
-jest.mock('expo-router', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-    back: jest.fn(),
-  }),
-  router: {
-    push: jest.fn(),
-    back: jest.fn(),
-  },
-}));
-
 // Mock Alert
 jest.spyOn(Alert, 'alert').mockImplementation(() => { });
 
@@ -43,6 +31,10 @@ jest.mock('../../components/AiOnboardingWizard', () => {
 
 const mockUseSmartGoals = require('../../hooks/useSmartGoals').useSmartGoals;
 const mockUseProfile = require('../../hooks/useUser').useProfile;
+
+// Get the mock router from the jest setup
+const mockRouter = require('expo-router').router;
+const mockPush = mockRouter.push;
 
 describe('SmartGoalsScreen', () => {
   let queryClient: QueryClient;
@@ -344,7 +336,7 @@ describe('SmartGoalsScreen', () => {
     const addButton = screen.getByTestId('smart-goals-add-button');
     fireEvent.press(addButton);
 
-    expect(Alert.alert).toHaveBeenCalledWith('Add Goal', 'Add goal functionality coming soon!');
+    expect(mockPush).toHaveBeenCalledWith('/addGoal');
   });
 
   it('handles onboarding wizard completion', () => {

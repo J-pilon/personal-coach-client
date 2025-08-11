@@ -5,6 +5,7 @@ import ScrollView from '@/components/util/ScrollView';
 import { useSmartGoals } from '@/hooks/useSmartGoals';
 import { useProfile } from '@/hooks/useUser';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
@@ -23,7 +24,7 @@ export default function SmartGoalsScreen() {
   };
 
   if (showWizard) {
-    return <AiOnboardingWizard onComplete={handleOnboardingComplete} />;
+    return <AiOnboardingWizard onComplete={handleOnboardingComplete} onSkip={() => setShowWizard(false)} />;
   }
 
   // Check if onboarding is incomplete
@@ -224,10 +225,7 @@ export default function SmartGoalsScreen() {
 
         <Pressable
           className="flex-row justify-center items-center px-6 py-4 mb-8 bg-cyan-400 rounded-2xl shadow-lg"
-          onPress={() => {
-            // TODO: Navigate to add goal screen
-            Alert.alert('Add Goal', 'Add goal functionality coming soon!');
-          }}
+          onPress={() => router.push('/addGoal')}
           testID="smart-goals-add-button"
         >
           <Ionicons name="add" size={24} color="#021A40" />

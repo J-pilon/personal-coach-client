@@ -111,6 +111,7 @@ export default function SignupScreen() {
                   onChangeText={setPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  secureTextEntry
                   style={{
                     shadowColor: '#274B8E',
                     shadowOpacity: 0.10,
@@ -132,6 +133,7 @@ export default function SignupScreen() {
                   onChangeText={setPasswordConfirmation}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  secureTextEntry
                   style={{
                     shadowColor: '#274B8E',
                     shadowOpacity: 0.10,

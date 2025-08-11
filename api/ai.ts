@@ -3,7 +3,7 @@ import { apiPost, type ApiResponse } from '../utils/apiRequest';
 
 // AI response interfaces
 export interface AiResponse {
-  intent: 'smart_goal' | 'prioritization' | 'error';
+  intent: 'smart_goal' | 'single_smart_goal' | 'prioritization' | 'error';
   response: any; // This can be different based on intent
   context_used: boolean;
   request_id: number;
@@ -60,6 +60,8 @@ export interface ErrorResponse {
 // AI request parameters
 export interface AiRequestParams {
   input: string;
+  timeframe?: string;
+  intent: string;
   user_provided_key?: string | null;
 }
 
@@ -80,6 +82,10 @@ export class AIAPI {
   // Type guards for response validation
   isSmartGoalResponse(response: AiResponse): response is AiResponse & { response: SmartGoalResponse } {
     return response.intent === 'smart_goal';
+  }
+
+  isSingleSmartGoalResponse(response: AiResponse): response is AiResponse & { response: SmartGoalResponse } {
+    return response.intent === 'single_smart_goal';
   }
 
   isPrioritizationResponse(response: AiResponse): response is AiResponse & { response: PrioritizationResponse } {

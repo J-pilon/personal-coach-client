@@ -135,7 +135,6 @@ describe('useAiSuggestedTasks', () => {
     });
 
     expect(mockApiPost).toHaveBeenCalledWith('/ai/suggested_tasks', {
-      profile_id: 1,
       user_provided_key: 'test-api-key',
     });
 
@@ -376,7 +375,6 @@ describe('useAiSuggestedTasks', () => {
     expect(mockApiPost).toHaveBeenCalledWith(
       '/ai/suggested_tasks',
       {
-        profile_id: 123,
         user_provided_key: 'test-api-key',
       }
     );
