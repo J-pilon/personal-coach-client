@@ -34,7 +34,7 @@ export default function TodaysFocusScreen() {
     generateSuggestions,
     dismissSuggestion,
     clearSuggestions
-  } = useAiSuggestedTasks(profile.id);
+  } = useAiSuggestedTasks();
 
   useEffect(() => {
     clearSuggestions()

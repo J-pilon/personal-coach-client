@@ -3,7 +3,9 @@ import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useUpdateProfile } from '@/hooks/useUser';
 import React, { useState } from 'react';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Text, TextInput, View } from 'react-native';
+import PrimaryButton from './buttons/PrimaryButton';
+import SecondaryButton from './buttons/SecondaryButton';
 
 interface ProfileEditFormProps {
   profile: {
@@ -139,25 +141,22 @@ export default function ProfileEditForm({ profile, onCancel, onSuccess }: Profil
           </View>
         </View>
 
-        <View className="flex-row mb-8 space-x-4">
-          <Pressable
-            className="flex-1 px-8 py-4 bg-gray-600 rounded-2xl shadow-md"
-            onPress={handleCancel}
-            testID="profile-edit-cancel-button"
-          >
-            <Text className="text-[#F1F5F9] font-semibold text-lg text-center" testID="profile-edit-cancel-text">Cancel</Text>
-          </Pressable>
+        <View className="gap-4">
 
-          <Pressable
-            className="flex-1 px-8 py-4 bg-cyan-400 rounded-2xl shadow-md"
+          <PrimaryButton
+            title='Save Changes'
             onPress={handleSubmit}
+            isLoading={updateProfile.isPending}
+            loadingText='Saving...'
+            testID='profile-edit-save-button'
             disabled={updateProfile.isPending}
-            testID="profile-edit-save-button"
-          >
-            <Text className="text-[#021A40] font-semibold text-lg text-center" testID="profile-edit-save-text">
-              {updateProfile.isPending ? 'Saving...' : 'Save Changes'}
-            </Text>
-          </Pressable>
+          />
+
+          <SecondaryButton
+            title='Cancel'
+            onPress={handleCancel}
+            testID='profile-edit-cancel-button'
+          />
         </View>
       </ScrollView>
     </LinearGradient>

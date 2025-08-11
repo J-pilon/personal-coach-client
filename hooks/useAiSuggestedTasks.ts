@@ -34,7 +34,7 @@ interface JobQueuedResponse {
   usage_info: any;
 }
 
-export const useAiSuggestedTasks = (profileId: number) => {
+export const useAiSuggestedTasks = () => {
   const [jobId, setJobId] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<AiTaskSuggestion[]>([]);
   const [usageInfo, setUsageInfo] = useState<UsageInfo | null>(null);
@@ -51,7 +51,6 @@ export const useAiSuggestedTasks = (profileId: number) => {
       
       // Step 1: Queue the job
       const response = await apiPost<JobQueuedResponse>('/ai/suggested_tasks', { 
-        profile_id: profileId,
         user_provided_key: userApiKey || null,
       });
 

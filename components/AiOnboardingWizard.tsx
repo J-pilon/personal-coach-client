@@ -111,7 +111,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
 
     try {
       setIsLoading(true)
-      await aiProxy.mutateAsync(goalDescription.trim());
+      await aiProxy.processAiRequest(goalDescription.trim());
       setCurrentStepIndex(2);
     } catch (error) {
       Alert.alert('Error', 'Failed to generate your SMART goal. Please try again.');
