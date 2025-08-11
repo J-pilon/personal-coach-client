@@ -14,13 +14,14 @@ jest.mock('../../hooks/useUser', () => ({
 }));
 
 // Mock expo-router
+const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({
-    push: jest.fn(),
+    push: mockPush,
     back: jest.fn(),
   }),
   router: {
-    push: jest.fn(),
+    push: mockPush,
     back: jest.fn(),
   },
 }));
@@ -344,7 +345,7 @@ describe('SmartGoalsScreen', () => {
     const addButton = screen.getByTestId('smart-goals-add-button');
     fireEvent.press(addButton);
 
-    expect(Alert.alert).toHaveBeenCalledWith('Add Goal', 'Add goal functionality coming soon!');
+    expect(mockPush).toHaveBeenCalledWith('/addGoal');
   });
 
   it('handles onboarding wizard completion', () => {
