@@ -1,18 +1,16 @@
 // Mock expo-router
+const mockRouter = {
+  push: jest.fn(),
+  back: jest.fn(),
+  replace: jest.fn(),
+  setParams: jest.fn(),
+};
+
 jest.mock('expo-router', () => ({
-  router: {
-    push: jest.fn(),
-    back: jest.fn(),
-    replace: jest.fn(),
-    setParams: jest.fn(),
-  },
+  __esModule: true,
+  router: mockRouter,
   useLocalSearchParams: jest.fn(() => ({})),
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-    back: jest.fn(),
-    replace: jest.fn(),
-    setParams: jest.fn(),
-  })),
+  useRouter: jest.fn(() => mockRouter),
   Link: ({ children, href, ...props }) => {
     const MockLink = require('react-native').Pressable;
     return require('react').createElement(MockLink, { onPress: () => jest.fn(), ...props }, children);

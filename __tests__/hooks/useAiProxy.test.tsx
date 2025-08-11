@@ -1,6 +1,6 @@
 import { useAiProxy } from '@/hooks/useAiProxy';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react-native';
+import { act, renderHook, waitFor } from '@testing-library/react-native';
 
 // Mock the apiRequest functions
 jest.mock('@/utils/apiRequest', () => ({
@@ -54,7 +54,7 @@ describe('useAiProxy', () => {
       .mockReturnValue({
         data: {
           job_id: 'job-123',
-          status: 'completed',
+          status: 'complete',
           progress: 100,
           result: {
             intent: 'smart_goal',
@@ -69,13 +69,19 @@ describe('useAiProxy', () => {
 
     const { result } = renderHook(() => useAiProxy(), { wrapper });
 
-    // Trigger the mutation
-    await result.current.mutateAsync('Test input');
+    // Trigger the mutation and wait for it to complete
+    await act(async () => {
+      await result.current.processAiRequest('Test input');
+    });
 
-    expect(mockApiPost).toHaveBeenCalledWith('/ai/proxy', {
-      input: 'Test input',
-      user_provided_key: 'test-api-key',
-      intent: 'smart_goal'
+    // Wait for the API call to be made
+    await waitFor(() => {
+      expect(mockApiPost).toHaveBeenCalledWith('/ai/proxy', {
+        input: 'Test input',
+        timeframe: null,
+        user_provided_key: 'test-api-key',
+        intent: 'smart_goal'
+      });
     });
 
     // Wait for the job ID to be set and useJobStatus to be called with it
@@ -93,7 +99,9 @@ describe('useAiProxy', () => {
     const { result } = renderHook(() => useAiProxy(), { wrapper });
 
     try {
-      await result.current.mutateAsync('Test input');
+      await act(async () => {
+        await result.current.processAiRequest('Test input');
+      });
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
       expect((error as Error).message).toBe('Rate limit exceeded');
@@ -120,7 +128,7 @@ describe('useAiProxy', () => {
     mockUseJobStatus.mockReturnValue({
       data: {
         job_id: 'job-123',
-        status: 'completed',
+        status: 'complete',
         progress: 100,
         result: {
           intent: 'smart_goal',
@@ -136,8 +144,10 @@ describe('useAiProxy', () => {
 
     const { result } = renderHook(() => useAiProxy(), { wrapper });
 
-    // Trigger the mutation
-    await result.current.mutateAsync('Test input');
+    // Trigger the mutation and wait for it to complete
+    await act(async () => {
+      await result.current.processAiRequest('Test input');
+    });
 
     // Wait for the effect to run and verify useJobStatus was called with the job ID
     await waitFor(() => {
@@ -166,7 +176,9 @@ describe('useAiProxy', () => {
 
     const { result } = renderHook(() => useAiProxy(), { wrapper });
 
-    await result.current.mutateAsync('Test input');
+    await act(async () => {
+      await result.current.processAiRequest('Test input');
+    });
 
     expect(result.current.isJobFailed).toBe(true);
     expect(result.current.error).toBeDefined();

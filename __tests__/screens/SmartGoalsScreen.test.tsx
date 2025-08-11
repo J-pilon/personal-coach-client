@@ -13,19 +13,6 @@ jest.mock('../../hooks/useUser', () => ({
   useProfile: jest.fn(),
 }));
 
-// Mock expo-router
-const mockPush = jest.fn();
-jest.mock('expo-router', () => ({
-  useRouter: () => ({
-    push: mockPush,
-    back: jest.fn(),
-  }),
-  router: {
-    push: mockPush,
-    back: jest.fn(),
-  },
-}));
-
 // Mock Alert
 jest.spyOn(Alert, 'alert').mockImplementation(() => { });
 
@@ -44,6 +31,10 @@ jest.mock('../../components/AiOnboardingWizard', () => {
 
 const mockUseSmartGoals = require('../../hooks/useSmartGoals').useSmartGoals;
 const mockUseProfile = require('../../hooks/useUser').useProfile;
+
+// Get the mock router from the jest setup
+const mockRouter = require('expo-router').router;
+const mockPush = mockRouter.push;
 
 describe('SmartGoalsScreen', () => {
   let queryClient: QueryClient;

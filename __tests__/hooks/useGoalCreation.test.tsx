@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { useAiProxy } from '../../hooks/useAiProxy';
 import { useGoalCreation } from '../../hooks/useGoalCreation';
@@ -26,11 +26,32 @@ describe('useGoalCreation', () => {
     mockUseAiProxy.mockReturnValue({
       processAiRequest: mockProcessAiRequest,
       isLoading: false,
-      aiResponse: null
+      aiResponse: null,
+      usageInfo: null,
+      jobStatus: null,
+      error: null,
+      progress: 0,
+      isJobComplete: false,
+      isJobFailed: false
     });
 
     mockUseCreateSmartGoal.mockReturnValue({
-      mutateAsync: mockCreateSmartGoal
+      mutateAsync: mockCreateSmartGoal,
+      data: undefined,
+      error: null,
+      variables: undefined,
+      isError: false,
+      isSuccess: false,
+      isPending: false,
+      isIdle: true,
+      status: 'idle',
+      context: undefined,
+      failureCount: 0,
+      failureReason: null,
+      isPaused: false,
+      submittedAt: 0,
+      reset: jest.fn(),
+      mutate: jest.fn()
     });
 
     // Mock Alert.alert
@@ -159,7 +180,13 @@ describe('useGoalCreation', () => {
       mockUseAiProxy.mockReturnValue({
         processAiRequest: mockProcessAiRequest,
         isLoading: false,
-        aiResponse: mockAiResponse
+        aiResponse: mockAiResponse,
+        usageInfo: null,
+        jobStatus: null,
+        error: null,
+        progress: 0,
+        isJobComplete: false,
+        isJobFailed: false
       });
 
       const { result } = renderHook(() => useGoalCreation());
