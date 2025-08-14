@@ -257,7 +257,7 @@ describe('SmartGoalsScreen', () => {
     expect(screen.getByTestId('smart-goals-timeframe-6_months')).toBeTruthy();
     expect(screen.getByTestId('smart-goals-goal-title-1')).toBeTruthy();
     expect(screen.getByTestId('smart-goals-goal-title-2')).toBeTruthy();
-    expect(screen.getByTestId('smart-goals-add-text')).toBeTruthy();
+    expect(screen.getByTestId('primary-button-text')).toBeTruthy();
   });
 
   it('renders empty state for timeframe with no goals', () => {

@@ -202,7 +202,7 @@ describe('ProfileEditForm', () => {
       />
     );
 
-    const saveText = getByTestId('profile-edit-save-text');
+    const saveText = getByTestId('primary-button-text');
 
     // Check that the text shows "Saving..." when pending
     expect(saveText.props.children).toBe('Saving...');

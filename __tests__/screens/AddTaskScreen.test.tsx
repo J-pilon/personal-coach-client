@@ -1,9 +1,8 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import React from 'react';
 import { Alert } from 'react-native';
 import AddTaskScreen from '../../app/addTask';
-import * as api from '../../api/tasks';
 
 // Mock the API module
 jest.mock('../../api/tasks');
@@ -67,7 +66,7 @@ describe('AddTaskScreen', () => {
 
     expect(screen.getByTestId('add-task-task-name-input')).toBeTruthy();
     expect(screen.getByTestId('add-task-task-description-input')).toBeTruthy();
-    expect(screen.getByTestId('add-task-add-button-text')).toBeTruthy();
+    expect(screen.getByTestId('primary-button-text')).toBeTruthy();
   });
 
   it('handles form submission with valid data', async () => {
@@ -90,7 +89,7 @@ describe('AddTaskScreen', () => {
 
     const titleInput = screen.getByTestId('add-task-task-name-input');
     const descriptionInput = screen.getByTestId('add-task-task-description-input');
-    const submitButton = screen.getByTestId('add-button');
+    const submitButton = screen.getByTestId('add-task-add-button');
 
     fireEvent.changeText(titleInput, 'Test Task');
     fireEvent.changeText(descriptionInput, 'Test Description');
@@ -131,7 +130,7 @@ describe('AddTaskScreen', () => {
       </QueryClientProvider>
     );
 
-    const submitButton = screen.getByTestId('add-button');
+    const submitButton = screen.getByTestId('add-task-add-button');
     fireEvent.press(submitButton);
 
     // The button should be disabled when title is empty
@@ -157,8 +156,8 @@ describe('AddTaskScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByTestId('add-task-add-button-text')).toBeTruthy();
-    expect(screen.getByTestId('add-button').props.accessibilityState?.disabled).toBe(true);
+    expect(screen.getByTestId('primary-button-text')).toBeTruthy();
+    expect(screen.getByTestId('add-task-add-button').props.accessibilityState?.disabled).toBe(true);
   });
 
   it('shows error state when submission fails', () => {
@@ -204,7 +203,7 @@ describe('AddTaskScreen', () => {
     );
 
     const titleInput = screen.getByTestId('add-task-task-name-input');
-    const submitButton = screen.getByTestId('add-button');
+    const submitButton = screen.getByTestId('add-task-add-button');
 
     fireEvent.changeText(titleInput, 'Test Task');
     fireEvent.press(submitButton);
