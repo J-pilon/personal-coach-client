@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import SecondaryButton from '../../components/buttons/SecondaryButton';
 import { GoalDescriptionInput } from '../../components/goals/GoalDescriptionInput';
@@ -40,7 +41,14 @@ export default function AddGoalScreen() {
   if (!isLoading && aiResponse) {
     return (
       <LinearGradient>
-        <ScrollView className="flex-1 px-6 pt-16">
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            padding: 20,
+            paddingBottom: 40
+          }}
+        >
           {/* Header */}
           <View className="flex-row items-center mb-8">
             <Text className="text-2xl font-semibold text-[#F1F5F9]">
@@ -55,7 +63,7 @@ export default function AddGoalScreen() {
           />
 
           {/* Action Buttons */}
-          <View className="mb-8 space-y-4">
+          <View className="gap-4 mb-8">
             <PrimaryButton
               onPress={handleConfirmGoal}
               title="Confirm & Save Goal"
@@ -64,6 +72,7 @@ export default function AddGoalScreen() {
             <SecondaryButton
               onPress={handleEditGoal}
               title="Edit Goal"
+              className='border border-cyan-400'
               testID="edit-goal-button"
             />
             <SecondaryButton
@@ -73,60 +82,76 @@ export default function AddGoalScreen() {
             />
           </View>
         </ScrollView>
-      </LinearGradient>
+      </LinearGradient >
     );
   }
 
   return (
     <LinearGradient>
-      <ScrollView className="flex-1 px-6 pt-16">
-        {/* Header */}
-        <View className="mb-8">
-          <View className="flex-row items-center mb-6">
-            <Text className="text-2xl font-semibold text-[#F1F5F9]">
-              Create New Goal
-            </Text>
-          </View>
-
-          <View className="p-6 bg-[#2B42B6] rounded-2xl shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
-            <View className="flex-row items-center mb-3">
-              <View className="p-2 mr-3 bg-cyan-400 rounded-full">
-                <Ionicons name="flag" size={20} color="#021A40" />
-              </View>
-              <Text className="text-[#F1F5F9] text-base font-semibold">
-                Let&apos;s create a SMART goal together
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            padding: 20,
+            paddingBottom: 40
+          }}
+        >
+          <View className="mb-8">
+            <View className="flex-row items-center mb-6">
+              <Text className="text-2xl font-semibold text-[#F1F5F9]">
+                Create New Goal
               </Text>
             </View>
-            <Text className="text-[#E6FAFF] text-sm leading-5">
-              Describe what you want to achieve and we&apos;ll help you break it down into specific, measurable, achievable, relevant, and time-bound objectives.
-            </Text>
+
+            <View className="p-6 bg-[#2B42B6] rounded-2xl shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
+              <View className="flex-row items-center mb-3">
+                <View className="p-2 mr-3 bg-cyan-400 rounded-full">
+                  <Ionicons name="flag" size={20} color="#021A40" />
+                </View>
+                <Text className="text-[#F1F5F9] text-base font-semibold">
+                  Let&apos;s create a SMART goal together
+                </Text>
+              </View>
+              <Text className="text-[#E6FAFF] text-sm leading-5">
+                Describe what you want to achieve and we&apos;ll help you break it down into specific, measurable, achievable, relevant, and time-bound objectives.
+              </Text>
+            </View>
           </View>
-        </View>
 
-        {/* Goal Description Input */}
-        <GoalDescriptionInput
-          value={goalDescription}
-          onChangeText={setGoalDescription}
-          testID="add-goal-description-input"
-        />
-
-        {/* Timeframe Selection */}
-        <TimeframeSelector
-          options={TIMEFRAME_OPTIONS}
-          selectedTimeframe={selectedTimeframe}
-          onTimeframeSelect={setSelectedTimeframe}
-          testID="add-goal-timeframe-selector"
-        />
-
-        <View className="mb-8">
-          <PrimaryButton
-            onPress={handleCreateGoal}
-            title={isLoading ? 'Creating Goal...' : 'Create SMART Goal'}
-            disabled={isLoading || !goalDescription.trim() || !selectedTimeframe}
-            testID="create-goal-button"
+          {/* Goal Description Input */}
+          <GoalDescriptionInput
+            value={goalDescription}
+            onChangeText={setGoalDescription}
+            testID="add-goal-description-input"
           />
-        </View>
-      </ScrollView>
+
+          {/* Timeframe Selection */}
+          <TimeframeSelector
+            options={TIMEFRAME_OPTIONS}
+            selectedTimeframe={selectedTimeframe}
+            onTimeframeSelect={setSelectedTimeframe}
+            testID="add-goal-timeframe-selector"
+          />
+
+          <View className="mb-8">
+            <PrimaryButton
+              onPress={handleCreateGoal}
+              title={isLoading ? 'Creating Goal...' : 'Create SMART Goal'}
+              disabled={isLoading || !goalDescription.trim() || !selectedTimeframe}
+              testID="add-goal-create-goal-button"
+            />
+            <SecondaryButton
+              onPress={() => router.back()}
+              title='Cancel'
+              testID='add-goal-cancel-button'
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </LinearGradient>
   );
 }

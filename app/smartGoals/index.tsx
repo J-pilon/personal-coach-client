@@ -1,4 +1,5 @@
 import AiOnboardingWizard from '@/components/AiOnboardingWizard';
+import PrimaryButton from '@/components/buttons/PrimaryButton';
 import { LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
@@ -223,14 +224,14 @@ export default function SmartGoalsScreen() {
           )}
         </View>
 
-        <Pressable
-          className="flex-row justify-center items-center px-6 py-4 mb-8 bg-cyan-400 rounded-2xl shadow-lg"
+        <PrimaryButton
+          title='Add New Goal'
+          icon='add'
           onPress={() => router.push('/addGoal')}
-          testID="smart-goals-add-button"
-        >
-          <Ionicons name="add" size={24} color="#021A40" />
-          <Text className="text-[#021A40] font-semibold text-lg ml-2" testID="smart-goals-add-text">Add New Goal</Text>
-        </Pressable>
+          isLoading={goalsLoading}
+          className='flex-row-reverse gap-2'
+          testID='smart-goals-add-button'
+        />
       </ScrollView>
     </LinearGradient>
   );

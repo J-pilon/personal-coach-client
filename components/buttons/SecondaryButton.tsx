@@ -7,6 +7,7 @@ interface SecondaryButtonProps {
   isLoading?: boolean
   loadingText?: string
   disabled?: boolean
+  className?: string
   testID?: string
 }
 
@@ -16,6 +17,7 @@ export default function SecondaryButton({
   isLoading = false,
   loadingText,
   disabled = false,
+  className = '',
   testID = "primary-button"
 }: SecondaryButtonProps) {
   const isDisabled = disabled || isLoading
@@ -23,7 +25,7 @@ export default function SecondaryButton({
 
   return (
     <TouchableOpacity
-      className={`flex-row items-center justify-center py-4 px-6 rounded-xl shadow-md ${isDisabled ? 'bg-[#808080]' : 'bg-transparent'}`}
+      className={`flex-row items-center justify-center py-4 px-6 rounded-xl shadow-md ${isDisabled ? 'bg-[#808080]' : 'bg-transparent'} ${className}`}
       onPress={onPress}
       disabled={isDisabled}
       testID={testID}
