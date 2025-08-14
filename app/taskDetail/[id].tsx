@@ -5,7 +5,7 @@ import ScrollView from '@/components/util/ScrollView';
 import { useDeleteTask, useTask, useUpdateTask } from '@/hooks/useTasks';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, Text, TextInput, View } from 'react-native';
 
 export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();

@@ -27,9 +27,8 @@
  * }
  */
 
+import { API_BASE_URL } from '../constants/config';
 import * as SecureStore from 'expo-secure-store';
-
-const API_BASE_URL = 'http://localhost:3000/api/v1';
 
 // Profile interface for stored profile data
 export interface Profile {

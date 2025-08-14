@@ -4,7 +4,7 @@
     "slug": "personal-coach",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/personal-coach-app-icon.png",
     "scheme": "personalcoach",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -38,6 +38,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "apiBaseUrl": {
+        "development": "http://localhost:3000/api/v1",
+        "production": "https://personal-coach-server-c405d49500bf.herokuapp.com/api/v1"
+      }
     }
   }
 }

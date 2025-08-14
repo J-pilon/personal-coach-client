@@ -98,7 +98,7 @@ export default function MenuScreen() {
           {menuItems.map((item) => (
             <Pressable
               key={item.id}
-              className={`rounded-2xl p-5 shadow-lg border ${item.id === 'logout' ? 'bg-transparent border-cyan-400' : 'bg-[#2B42B6]'}`}
+              className={`rounded-2xl p-5 shadow-lg border ${item.id === 'logout' ? 'bg-transparent border-cyan-400' : 'bg-[#2B42B6] border-[#2B42B6]'}`}
               style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
               onPress={item.onPress}
               testID={`menu-item-${item.id}`}
