@@ -1,12 +1,14 @@
+import { ProfileUpdateData } from '@/api/users';
 import ProfileEditForm from '@/components/ProfileEditForm';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
-import { useProfile } from '@/hooks/useUser';
+import { useProfile, useUpdateProfile } from '@/hooks/useUser';
 import React, { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 export default function ProfileScreen() {
   const { data: profile, isLoading, error } = useProfile();
+  const updateProfile = useUpdateProfile();
   const [editing, setEditing] = useState(false);
 
   if (isLoading) {
@@ -28,14 +30,34 @@ export default function ProfileScreen() {
     );
   }
 
+  const handleEditOnSuccess = async (formData: ProfileUpdateData) => {
+    try {
+      await updateProfile.mutateAsync(formData);
+    } catch {
+      Alert.alert('Error', 'Failed to update profile. Please try again.');
+    } finally {
+      setEditing(false);
+    }
+  };
 
+  const handleEditOnCancel = () => {
+    Alert.alert(
+      'Cancel Editing',
+      'Are you sure you want to cancel? Your changes will be lost.',
+      [
+        { text: 'Continue Editing', style: 'cancel' },
+        { text: 'Cancel', style: 'destructive', onPress: () => setEditing(false) },
+      ]
+    );
+  }
 
   if (editing && profile) {
     return (
       <ProfileEditForm
         profile={profile}
-        onCancel={() => setEditing(false)}
-        onSuccess={() => setEditing(false)}
+        onCancel={handleEditOnCancel}
+        onSuccess={handleEditOnSuccess}
+        isLoading={updateProfile.isPending}
       />
     );
   }
