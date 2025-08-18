@@ -4,8 +4,7 @@ import ScrollView from '@/components/util/ScrollView';
 import { useUpdateProfile } from '@/hooks/useUser';
 import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
-import PrimaryButton from './buttons/PrimaryButton';
-import SecondaryButton from './buttons/SecondaryButton';
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 
 interface ProfileEditFormProps {
   profile: {

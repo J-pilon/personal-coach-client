@@ -1,6 +1,5 @@
 import { CreateTaskParams } from '@/api/tasks';
-import PrimaryButton from '@/components/buttons/PrimaryButton';
-import SecondaryButton from '@/components/buttons/SecondaryButton';
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useCreateTask } from '@/hooks/useTasks';
