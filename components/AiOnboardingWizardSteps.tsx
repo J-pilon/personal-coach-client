@@ -1,10 +1,10 @@
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import { LoadingSkeleton, LoadingSpinner } from '@/components/loading';
 import { setSkippedOnboarding } from '@/utils/handleSkipOnboarding';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 
 export interface ProfileDetailsStepProps {
   profileData: {
@@ -73,7 +73,7 @@ const GoalDescriptionStep = ({ goalDescription, setGoalDescription, handleSubmit
       />
     </View>
 
-    <View>
+    <View className='gap-4'>
       <PrimaryButton
         title={isLoading ? `Processing... ${progress}%` : "Generate SMART Goals"}
         loadingText="Generating your SMART goal..."
@@ -360,7 +360,7 @@ const ProfileDetailsStep = ({ profileData, setProfileData, handleSubmit, isLoadi
       </View>
     </View>
 
-    <View>
+    <View className='gap-4'>
       <PrimaryButton
         testID="profile-continue-button"
         title="Continue"

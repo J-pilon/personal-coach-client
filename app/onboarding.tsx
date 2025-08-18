@@ -84,7 +84,7 @@ export default function OnboardingScreen() {
             </Text>
           </View>
 
-          <View>
+          <View className='gap-4'>
             <PrimaryButton
               onPress={handleStartWizard}
               title='Start with AI'

@@ -138,7 +138,7 @@ export default function AddTaskScreen() {
               </View>
             </View>
 
-            <View className="">
+            <View className="gap-4">
               <PrimaryButton
                 title='Add'
                 onPress={handleAdd}
@@ -151,7 +151,6 @@ export default function AddTaskScreen() {
               <SecondaryButton
                 title='Cancel'
                 onPress={() => router.back()}
-                disabled={createTaskMutation.isPending}
                 testID='add-task-cancel-button'
               />
             </View>
