@@ -1,10 +1,10 @@
-import { ProfileUpdateData } from '@/api/users';
+import { Profile, ProfileUpdateData } from '@/api/users';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useAiResponseHelpers } from '@/hooks/useAi';
 import { useAiProxy } from '@/hooks/useAiProxy';
 import { useCreateMultipleSmartGoals } from '@/hooks/useSmartGoals';
-import { useCompleteOnboarding, useUpdateProfile } from '@/hooks/useUser';
+import { useCompleteOnboarding, useProfile, useUpdateProfile } from '@/hooks/useUser';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
@@ -38,18 +38,19 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
   const [goalDescription, setGoalDescription] = useState('');
   const [aiResponse, setAiResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const updateProfile = useUpdateProfile();
+  const { data: profile, isLoading: profileIsLoading, error } = useProfile();
   const [profileData, setProfileData] = useState<ProfileUpdateData>({
-    first_name: '',
-    last_name: '',
-    work_role: '',
-    education: '',
-    desires: '',
-    limiting_beliefs: ''
+    first_name: profile?.first_name || '',
+    last_name: profile?.last_name || '',
+    work_role: profile?.work_role || '',
+    education: profile?.education || '',
+    desires: profile?.desires || '',
+    limiting_beliefs: profile?.limiting_beliefs || ''
   });
 
   const aiProxy = useAiProxy();
   const createMultipleSmartGoals = useCreateMultipleSmartGoals();
-  const updateProfile = useUpdateProfile();
   const completeOnboarding = useCompleteOnboarding()
   const { isSmartGoalResponse, formatMultiPeriodSmartGoalResponse } = useAiResponseHelpers();
 
@@ -86,9 +87,23 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
 
   const currentStep = steps[currentStepIndex];
 
+  // Check if profileData has changed from current profile
+  const hasProfileChanged = (): boolean => {
+    if (!profile) return false;
+
+    return Object.keys(profileData).some(key =>
+      profileData[key as keyof ProfileUpdateData] !== profile[key as keyof Profile]
+    );
+  };
+
   const handleSubmitProfileDetails = async () => {
     if (!profileData.first_name?.trim() || !profileData.last_name?.trim() || !profileData.work_role?.trim() || !profileData.education?.trim()) {
       Alert.alert('Missing Information', 'Please fill in all required fields (First Name, Last Name, Work Role, and Education).');
+      return;
+    }
+
+    if (!hasProfileChanged()) {
+      setCurrentStepIndex(1);
       return;
     }
 
