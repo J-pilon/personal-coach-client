@@ -183,7 +183,7 @@ export default function SettingsScreen() {
                 secureTextEntry
                 testID="api-key-input"
               />
-              <View className="">
+              <View className="gap-4">
                 <PrimaryButton
                   title="Save Key"
                   onPress={handleSaveKey}
@@ -219,7 +219,7 @@ export default function SettingsScreen() {
                 </View>
               )}
 
-              <View className="">
+              <View className="gap-4">
                 <PrimaryButton
                   title={storedApiKey ? "Change Key" : "Add Key"}
                   onPress={() => setIsEditing(true)}
@@ -227,13 +227,11 @@ export default function SettingsScreen() {
                   testID={storedApiKey ? "change-key-button" : "add-key-button"}
                 />
                 {storedApiKey && (
-                  <View className='mt-2'>
-                    <SecondaryButton
-                      title="Clear Key"
-                      onPress={handleClearKey}
-                      testID="clear-key-button"
-                    />
-                  </View>
+                  <SecondaryButton
+                    title="Clear Key"
+                    onPress={handleClearKey}
+                    testID="clear-key-button"
+                  />
                 )}
               </View>
             </View>
