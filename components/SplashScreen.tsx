@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { PrimaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { getRandomQuote, Quote } from '@/utils/quotes';
-import PrimaryButton from '@/components/buttons/PrimaryButton';
+import React, { useEffect, useState } from 'react';
+import { Animated, Text, View } from 'react-native';
 
 interface SplashScreenProps {
   onFinish: () => void;

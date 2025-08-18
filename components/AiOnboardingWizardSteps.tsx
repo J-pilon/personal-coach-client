@@ -4,8 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import PrimaryButton from "./buttons/PrimaryButton";
-import SecondaryButton from './buttons/SecondaryButton';
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 
 export interface ProfileDetailsStepProps {
   profileData: {

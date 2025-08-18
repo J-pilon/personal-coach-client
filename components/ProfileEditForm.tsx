@@ -1,11 +1,10 @@
 import { ProfileUpdateData } from '@/api/users';
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useUpdateProfile } from '@/hooks/useUser';
 import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
-import PrimaryButton from './buttons/PrimaryButton';
-import SecondaryButton from './buttons/SecondaryButton';
 
 interface ProfileEditFormProps {
   profile: {
@@ -153,7 +152,6 @@ export default function ProfileEditForm({ profile, onCancel, onSuccess }: Profil
           </View>
 
           <View className="gap-4">
-
             <PrimaryButton
               title='Save Changes'
               onPress={handleSubmit}

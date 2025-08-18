@@ -1,6 +1,6 @@
 import { Task } from '@/api/tasks';
 import { AiTaskCard } from '@/components/AiTaskCard';
-import PrimaryButton from '@/components/buttons/PrimaryButton';
+import { PrimaryButton } from '@/components/buttons/';
 import { FocusModeScreen } from '@/components/FocusModeScreen';
 import { LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';

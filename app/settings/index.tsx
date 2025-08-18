@@ -1,5 +1,4 @@
-import PrimaryButton from '@/components/buttons/PrimaryButton';
-import SecondaryButton from '@/components/buttons/SecondaryButton';
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import { LoadingSkeleton, LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
