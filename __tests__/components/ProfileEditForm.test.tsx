@@ -1,13 +1,7 @@
 import ProfileEditForm from '@/components/ProfileEditForm';
-import { useUpdateProfile } from '@/hooks/useUser';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Alert } from 'react-native';
-
-// Mock the hooks
-jest.mock('@/hooks/useUser', () => ({
-  useUpdateProfile: jest.fn(),
-}));
 
 // Mock Alert
 jest.spyOn(Alert, 'alert');
@@ -23,24 +17,19 @@ const mockProfile = {
   onboarding_status: 'complete' as const,
 };
 
-const mockUpdateProfile = {
-  mutateAsync: jest.fn(),
-  isPending: false,
-};
-
 describe('ProfileEditForm', () => {
   const mockOnCancel = jest.fn();
   const mockOnSuccess = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useUpdateProfile as jest.Mock).mockReturnValue(mockUpdateProfile);
   });
 
   it('renders all form fields with profile data', () => {
     const { getByTestId } = render(
       <ProfileEditForm
         profile={mockProfile}
+        isLoading={false}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />
@@ -61,6 +50,7 @@ describe('ProfileEditForm', () => {
     const { getByTestId } = render(
       <ProfileEditForm
         profile={mockProfile}
+        isLoading={false}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />
@@ -85,6 +75,7 @@ describe('ProfileEditForm', () => {
     const { getByTestId } = render(
       <ProfileEditForm
         profile={mockProfile}
+        isLoading={false}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />
@@ -100,12 +91,11 @@ describe('ProfileEditForm', () => {
     expect(lastNameInput.props.value).toBe('Smith');
   });
 
-  it('calls updateProfile with form data when save button is pressed', async () => {
-    mockUpdateProfile.mutateAsync.mockResolvedValue({});
-
+  it('calls onSuccess with form data when save button is pressed', async () => {
     const { getByTestId } = render(
       <ProfileEditForm
         profile={mockProfile}
+        isLoading={false}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />
@@ -115,7 +105,7 @@ describe('ProfileEditForm', () => {
     fireEvent.press(saveButton);
 
     await waitFor(() => {
-      expect(mockUpdateProfile.mutateAsync).toHaveBeenCalledWith({
+      expect(mockOnSuccess).toHaveBeenCalledWith({
         first_name: 'John',
         last_name: 'Doe',
         work_role: 'Software Engineer',
@@ -126,49 +116,13 @@ describe('ProfileEditForm', () => {
     });
   });
 
-  it('shows success alert and calls onSuccess when update succeeds', async () => {
-    mockUpdateProfile.mutateAsync.mockResolvedValue({});
 
+
+  it('calls onCancel when cancel button is pressed', () => {
     const { getByTestId } = render(
       <ProfileEditForm
         profile={mockProfile}
-        onCancel={mockOnCancel}
-        onSuccess={mockOnSuccess}
-      />
-    );
-
-    const saveButton = getByTestId('profile-edit-save-button');
-    fireEvent.press(saveButton);
-
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Success', 'Profile updated successfully');
-      expect(mockOnSuccess).toHaveBeenCalled();
-    });
-  });
-
-  it('shows error alert when update fails', async () => {
-    mockUpdateProfile.mutateAsync.mockRejectedValue(new Error('Update failed'));
-
-    const { getByTestId } = render(
-      <ProfileEditForm
-        profile={mockProfile}
-        onCancel={mockOnCancel}
-        onSuccess={mockOnSuccess}
-      />
-    );
-
-    const saveButton = getByTestId('profile-edit-save-button');
-    fireEvent.press(saveButton);
-
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to update profile. Please try again.');
-    });
-  });
-
-  it('shows confirmation dialog when cancel button is pressed', () => {
-    const { getByTestId } = render(
-      <ProfileEditForm
-        profile={mockProfile}
+        isLoading={false}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />
@@ -177,26 +131,14 @@ describe('ProfileEditForm', () => {
     const cancelButton = getByTestId('profile-edit-cancel-button');
     fireEvent.press(cancelButton);
 
-    expect(Alert.alert).toHaveBeenCalledWith(
-      'Cancel Editing',
-      'Are you sure you want to cancel? Your changes will be lost.',
-      expect.arrayContaining([
-        { text: 'Continue Editing', style: 'cancel' },
-        { text: 'Cancel', style: 'destructive', onPress: mockOnCancel },
-      ])
-    );
+    expect(mockOnCancel).toHaveBeenCalled();
   });
 
   it('shows loading state when update is pending', () => {
-    const pendingMockUpdateProfile = {
-      ...mockUpdateProfile,
-      isPending: true,
-    };
-    (useUpdateProfile as jest.Mock).mockReturnValue(pendingMockUpdateProfile);
-
     const { getByTestId } = render(
       <ProfileEditForm
         profile={mockProfile}
+        isLoading={true}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />
@@ -223,6 +165,7 @@ describe('ProfileEditForm', () => {
     const { getByTestId } = render(
       <ProfileEditForm
         profile={emptyProfile}
+        isLoading={false}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />
@@ -239,6 +182,7 @@ describe('ProfileEditForm', () => {
     const { getByTestId } = render(
       <ProfileEditForm
         profile={mockProfile}
+        isLoading={false}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />
