@@ -1,11 +1,9 @@
 import { ProfileUpdateData } from '@/api/users';
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
-import { useUpdateProfile } from '@/hooks/useUser';
 import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
-import PrimaryButton from './buttons/PrimaryButton';
-import SecondaryButton from './buttons/SecondaryButton';
+import { KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
 
 interface ProfileEditFormProps {
   profile: {
@@ -18,11 +16,12 @@ interface ProfileEditFormProps {
     limiting_beliefs?: string;
     onboarding_status: 'incomplete' | 'complete';
   };
+  isLoading: boolean;
   onCancel: () => void;
-  onSuccess?: () => void;
+  onSuccess: (formData: ProfileUpdateData) => Promise<void>;
 }
 
-export default function ProfileEditForm({ profile, onCancel, onSuccess }: ProfileEditFormProps) {
+export default function ProfileEditForm({ profile, isLoading, onCancel, onSuccess }: ProfileEditFormProps) {
   const [formData, setFormData] = useState<ProfileUpdateData>({
     first_name: profile.first_name || '',
     last_name: profile.last_name || '',
@@ -32,34 +31,13 @@ export default function ProfileEditForm({ profile, onCancel, onSuccess }: Profil
     limiting_beliefs: profile.limiting_beliefs || '',
   });
 
-  const updateProfile = useUpdateProfile();
+  // const updateProfile = useUpdateProfile();
 
   const handleInputChange = (field: keyof ProfileUpdateData, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
     }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await updateProfile.mutateAsync(formData);
-      Alert.alert('Success', 'Profile updated successfully');
-      onSuccess?.();
-    } catch (error) {
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
-    }
-  };
-
-  const handleCancel = () => {
-    Alert.alert(
-      'Cancel Editing',
-      'Are you sure you want to cancel? Your changes will be lost.',
-      [
-        { text: 'Continue Editing', style: 'cancel' },
-        { text: 'Cancel', style: 'destructive', onPress: onCancel },
-      ]
-    );
   };
 
   return (
@@ -153,19 +131,18 @@ export default function ProfileEditForm({ profile, onCancel, onSuccess }: Profil
           </View>
 
           <View className="gap-4">
-
             <PrimaryButton
               title='Save Changes'
-              onPress={handleSubmit}
-              isLoading={updateProfile.isPending}
+              onPress={() => onSuccess(formData)}
+              isLoading={isLoading}
               loadingText='Saving...'
               testID='profile-edit-save-button'
-              disabled={updateProfile.isPending}
+              disabled={isLoading}
             />
 
             <SecondaryButton
               title='Cancel'
-              onPress={handleCancel}
+              onPress={onCancel}
               testID='profile-edit-cancel-button'
             />
           </View>

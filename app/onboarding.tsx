@@ -1,6 +1,5 @@
 import AiOnboardingWizard from '@/components/AiOnboardingWizard';
-import PrimaryButton from '@/components/buttons/PrimaryButton';
-import SecondaryButton from '@/components/buttons/SecondaryButton';
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -85,7 +84,7 @@ export default function OnboardingScreen() {
             </Text>
           </View>
 
-          <View>
+          <View className='gap-4'>
             <PrimaryButton
               onPress={handleStartWizard}
               title='Start with AI'

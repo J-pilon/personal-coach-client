@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 
 const SKIPPED_ONBOARDING_KEY = 'skipped_onboarding_at';
@@ -9,7 +10,7 @@ export const setSkippedOnboarding = async (): Promise<void> => {
   const currentTimestamp = new Date().toISOString();
 
   try {
-    await SecureStore.setItemAsync(SKIPPED_ONBOARDING_KEY, currentTimestamp);
+    await AsyncStorage.setItem(SKIPPED_ONBOARDING_KEY, currentTimestamp);
   } catch (error) {
     console.error('Error setting skipped onboarding timestamp:', error);
   }
@@ -17,7 +18,7 @@ export const setSkippedOnboarding = async (): Promise<void> => {
 
 export const clearSkippedOnboarding = async (): Promise<void> => {
   try {
-    await SecureStore.deleteItemAsync(SKIPPED_ONBOARDING_KEY);
+    await AsyncStorage.removeItem(SKIPPED_ONBOARDING_KEY);
     console.log('Cleared skipped onboarding timestamp')
   } catch (error) {
     console.error('Error clearing skipped onboarding timestamp:', error);
@@ -30,8 +31,13 @@ export const clearSkippedOnboarding = async (): Promise<void> => {
  */
 export const isOnboardingSkippable = async (): Promise<boolean> => {
   try {
-    const skippedTimestamp = await SecureStore.getItemAsync(SKIPPED_ONBOARDING_KEY);
+    // The purpose for this is to migrate from SecureStore for storing the SKIPPED_ONBOARDING_KEY
+    const oldTimestamp = await SecureStore.getItemAsync(SKIPPED_ONBOARDING_KEY);
+    if (oldTimestamp) {
+      SecureStore.deleteItemAsync(SKIPPED_ONBOARDING_KEY)
+    }
 
+    const skippedTimestamp = await AsyncStorage.getItem(SKIPPED_ONBOARDING_KEY);
     if (!skippedTimestamp) {
       return false;
     }

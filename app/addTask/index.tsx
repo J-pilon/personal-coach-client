@@ -1,6 +1,5 @@
 import { CreateTaskParams } from '@/api/tasks';
-import PrimaryButton from '@/components/buttons/PrimaryButton';
-import SecondaryButton from '@/components/buttons/SecondaryButton';
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useCreateTask } from '@/hooks/useTasks';
@@ -139,7 +138,7 @@ export default function AddTaskScreen() {
               </View>
             </View>
 
-            <View className="">
+            <View className="gap-4">
               <PrimaryButton
                 title='Add'
                 onPress={handleAdd}
@@ -152,7 +151,6 @@ export default function AddTaskScreen() {
               <SecondaryButton
                 title='Cancel'
                 onPress={() => router.back()}
-                disabled={createTaskMutation.isPending}
                 testID='add-task-cancel-button'
               />
             </View>

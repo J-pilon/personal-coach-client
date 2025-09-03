@@ -1,5 +1,5 @@
 import AiOnboardingWizard from '@/components/AiOnboardingWizard';
-import PrimaryButton from '@/components/buttons/PrimaryButton';
+import { PrimaryButton } from '@/components/buttons/';
 import { LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';

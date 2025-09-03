@@ -1,9 +1,8 @@
+import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
-import PrimaryButton from '../../components/buttons/PrimaryButton';
-import SecondaryButton from '../../components/buttons/SecondaryButton';
 import { GoalDescriptionInput } from '../../components/goals/GoalDescriptionInput';
 import { GoalPreviewCard } from '../../components/goals/GoalPreviewCard';
 import { TimeframeSelector } from '../../components/goals/TimeframeSelector';
@@ -25,6 +24,7 @@ export default function AddGoalScreen() {
     handleCancel,
     isLoading,
     aiResponse,
+    showConfirmation
   } = useGoalCreation();
 
   if (isLoading) {
@@ -38,7 +38,7 @@ export default function AddGoalScreen() {
     );
   }
 
-  if (!isLoading && aiResponse) {
+  if (!isLoading && aiResponse && showConfirmation) {
     return (
       <LinearGradient>
         <ScrollView
@@ -137,7 +137,7 @@ export default function AddGoalScreen() {
             testID="add-goal-timeframe-selector"
           />
 
-          <View className="mb-8">
+          <View className="gap-4">
             <PrimaryButton
               onPress={handleCreateGoal}
               title={isLoading ? 'Creating Goal...' : 'Create SMART Goal'}
