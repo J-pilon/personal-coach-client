@@ -8,7 +8,7 @@ export interface Task {
   description?: string;
   completed: boolean;
   action_category: 'do' | 'defer' | 'delegate';
-  priority?: number;
+  priority?: number | null;
   profile_id: number;
   created_at?: string;
   updated_at?: string;
@@ -20,7 +20,7 @@ export interface CreateTaskParams {
   title: string;
   description?: string;
   completed?: boolean;
-  priority?: number;
+  priority?: number | null;
   action_category: 'do' | 'defer' | 'delegate';
 }
 
@@ -29,7 +29,7 @@ export interface UpdateTaskParams {
   title?: string;
   description?: string;
   completed?: boolean;
-  priority?: number;
+  priority?: number | null;
   action_category?: 'do' | 'defer' | 'delegate';
 }
 
