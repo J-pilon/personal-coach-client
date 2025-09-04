@@ -26,6 +26,46 @@ jest.mock('react-native-css-interop', () => ({
   default: {},
 }));
 
+// Mock AsyncStorage with proper native module mocking
+jest.mock('@react-native-async-storage/async-storage', () => {
+  const mockAsyncStorage = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+    getAllKeys: jest.fn(),
+    multiGet: jest.fn(),
+    multiSet: jest.fn(),
+    multiRemove: jest.fn(),
+  };
+  
+  // Mock the native module that AsyncStorage depends on
+  require('react-native').NativeModules.PlatformLocalStorage = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+    getAllKeys: jest.fn(),
+    multiGet: jest.fn(),
+    multiSet: jest.fn(),
+    multiRemove: jest.fn(),
+  };
+  
+  return mockAsyncStorage;
+});
+
+// Mock NetInfo
+jest.mock('@react-native-community/netinfo', () => ({
+  addEventListener: jest.fn(),
+  fetch: jest.fn(),
+  getCurrentState: jest.fn(),
+}));
+
+// Mock React Query persistence
+jest.mock('@tanstack/query-async-storage-persister', () => ({
+  createAsyncStoragePersister: jest.fn(),
+}));
+
 // Global test setup
 global.console = {
   ...console,
