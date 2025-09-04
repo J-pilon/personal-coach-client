@@ -11,6 +11,18 @@ jest.mock('@/hooks/useUser', () => ({
   useUpdateProfile: () => ({
     mutateAsync: jest.fn().mockResolvedValue({}),
   }),
+  useProfile: () => ({
+    data: {
+      first_name: 'John',
+      last_name: 'Doe',
+      work_role: 'Software Engineer',
+      education: 'Computer Science',
+      desires: 'To build amazing products',
+      limiting_beliefs: 'I\'m not good enough'
+    },
+    isLoading: false,
+    error: null,
+  }),
 }));
 
 jest.mock('@/hooks/useSmartGoals', () => ({
