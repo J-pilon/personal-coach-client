@@ -7,15 +7,16 @@ import 'react-native-reanimated';
 import '../global.css';
 
 import SplashScreen from '@/components/SplashScreen';
+import { ensureMigrations } from '@/db/migrations';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
-import { QueryClient, onlineManager, focusManager } from '@tanstack/react-query';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import NetInfo from '@react-native-community/netinfo';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+import { QueryClient, focusManager, onlineManager } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { AppState } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Create persister for cache persistence
 const asyncStoragePersister = createAsyncStoragePersister({
@@ -94,87 +95,112 @@ function AppContent() {
 
   // Once auth is loaded, show the main app structure
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister: asyncStoragePersister }}
-    >
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
-          <Stack>
-            {/* Define all screens at layout level */}
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="profile/index"
-              options={{
-                headerShown: true,
-                headerTitle: "Profile",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="smartGoals/index"
-              options={{
-                headerShown: true,
-                headerTitle: "Goals",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="taskDetail/[id]"
-              options={{
-                headerShown: true,
-                headerTitle: "Task Details",
-                headerBackTitle: "Tasks"
-              }} />
-            <Stack.Screen
-              name="addTask/index"
-              options={{
-                headerShown: true,
-                headerTitle: "New Task",
-                headerBackTitle: "Tasks"
-              }} />
-            <Stack.Screen
-              name="about/index"
-              options={{
-                headerShown: true,
-                headerTitle: "How to Use",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="support-feedback/index"
-              options={{
-                headerShown: true,
-                headerTitle: "Support & Feedback",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="settings/index"
-              options={{
-                headerShown: true,
-                headerTitle: "Settings",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="addGoal/index"
-              options={{
-                headerShown: true,
-                headerTitle: "New Goal",
-                headerBackTitle: "SMART Goals"
-              }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </SafeAreaView>
-      </ThemeProvider>
-    </PersistQueryClientProvider>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+        <Stack>
+          {/* Define all screens at layout level */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="profile/index"
+            options={{
+              headerShown: true,
+              headerTitle: "Profile",
+              headerBackTitle: "Menu"
+            }} />
+          <Stack.Screen
+            name="smartGoals/index"
+            options={{
+              headerShown: true,
+              headerTitle: "Goals",
+              headerBackTitle: "Menu"
+            }} />
+          <Stack.Screen
+            name="taskDetail/[id]"
+            options={{
+              headerShown: true,
+              headerTitle: "Task Details",
+              headerBackTitle: "Tasks"
+            }} />
+          <Stack.Screen
+            name="addTask/index"
+            options={{
+              headerShown: true,
+              headerTitle: "New Task",
+              headerBackTitle: "Tasks"
+            }} />
+          <Stack.Screen
+            name="about/index"
+            options={{
+              headerShown: true,
+              headerTitle: "How to Use",
+              headerBackTitle: "Menu"
+            }} />
+          <Stack.Screen
+            name="support-feedback/index"
+            options={{
+              headerShown: true,
+              headerTitle: "Support & Feedback",
+              headerBackTitle: "Menu"
+            }} />
+          <Stack.Screen
+            name="settings/index"
+            options={{
+              headerShown: true,
+              headerTitle: "Settings",
+              headerBackTitle: "Menu"
+            }} />
+          <Stack.Screen
+            name="addGoal/index"
+            options={{
+              headerShown: true,
+              headerTitle: "New Goal",
+              headerBackTitle: "SMART Goals"
+            }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </SafeAreaView>
+    </ThemeProvider>
   );
 }
 
 export default function RootLayout() {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const initApp = async () => {
+      try {
+        // Initialize database first
+        await ensureMigrations();
+        console.log('Database initialized successfully');
+
+        // Then mark app as ready
+        setIsReady(true);
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
+        // Still mark as ready to prevent app from hanging
+        setIsReady(true);
+      }
+    };
+
+    initApp();
+  }, []);
+
+  if (!isReady) {
+    return <SplashScreen onFinish={() => { }} />;
+  }
+
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncStoragePersister }}
+    >
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </PersistQueryClientProvider>
   );
 }
