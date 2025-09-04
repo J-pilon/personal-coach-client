@@ -9,17 +9,53 @@ import '../global.css';
 import SplashScreen from '@/components/SplashScreen';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+import { QueryClient, onlineManager, focusManager } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import NetInfo from '@react-native-community/netinfo';
+import { AppState } from 'react-native';
 
-// Create a client
+// Create persister for cache persistence
+const asyncStoragePersister = createAsyncStoragePersister({
+  storage: AsyncStorage
+})
+
+// Create QueryClient with offline-first config
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 2,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours (was cacheTime)
+      retry: (failureCount, error) => {
+        // Don't retry network errors when offline
+        if (error?.message?.includes('Network request failed')) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+    },
+    mutations: {
+      retry: false, // We'll handle retries in our sync engine
     },
   },
 });
+
+// Wire up online manager
+onlineManager.setEventListener((setOnline) => {
+  return NetInfo.addEventListener((state) => {
+    setOnline(!!(state.isConnected && state.isInternetReachable))
+  })
+})
+
+// Wire up focus manager
+focusManager.setEventListener((setFocused) => {
+  const subscription = AppState.addEventListener('change', (status) => {
+    setFocused(status === 'active')
+  })
+  return () => subscription?.remove()
+})
 
 function AppContent() {
   const colorScheme = useColorScheme();
@@ -58,7 +94,10 @@ function AppContent() {
 
   // Once auth is loaded, show the main app structure
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncStoragePersister }}
+    >
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
           <Stack>
@@ -128,7 +167,7 @@ function AppContent() {
           <StatusBar style="auto" />
         </SafeAreaView>
       </ThemeProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }
 
