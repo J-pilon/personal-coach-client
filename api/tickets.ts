@@ -1,4 +1,4 @@
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest, type ApiResponse } from '@/utils/apiRequest';
 
 export interface TicketData {
   kind: 'bug' | 'feedback';
@@ -32,7 +32,7 @@ export interface TicketResponse {
 export const createTicket = async (
   ticketData: TicketData,
   diagnostics?: DiagnosticsData
-): Promise<TicketResponse> => {
+): Promise<ApiResponse<TicketResponse>> => {
   const payload = {
     ticket: ticketData,
     ...diagnostics
@@ -44,7 +44,7 @@ export const createTicket = async (
   });
 };
 
-export const getTicket = async (ticketId: number): Promise<TicketResponse> => {
+export const getTicket = async (ticketId: number): Promise<ApiResponse<TicketResponse>> => {
   return apiRequest<TicketResponse>(`/tickets/${ticketId}`, {
     method: 'GET'
   });

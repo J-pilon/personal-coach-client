@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, View, ViewStyle } from 'react-native';
 
 export interface LoadingSkeletonProps {
   /** The type of skeleton to display */
@@ -42,22 +42,14 @@ export default function LoadingSkeleton({
     };
   }, [shimmerAnim]);
 
-  const getSkeletonStyle = () => {
-    const baseStyle = {
+  const getSkeletonStyle = (): ViewStyle => {
+    return {
       height,
-      width: typeof width === 'number' ? width : width,
+      width: width as ViewStyle['width'],
       backgroundColor: '#2B42B6',
       opacity: 0.3,
+      ...(rounded && { borderRadius: height / 2 }),
     };
-
-    if (rounded) {
-      return {
-        ...baseStyle,
-        borderRadius: height / 2,
-      };
-    }
-
-    return baseStyle;
   };
 
   const renderSkeletonItem = (index: number) => {

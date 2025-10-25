@@ -76,7 +76,9 @@ describe('useAiSuggestedTasks', () => {
     job_id: 'job-123',
     status: 'complete',
     progress: 100,
-    result: mockSuggestions,
+    result: {
+      response: mockSuggestions,
+    },
   };
 
   const createWrapper = () => {
@@ -98,7 +100,7 @@ describe('useAiSuggestedTasks', () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 
@@ -126,7 +128,7 @@ describe('useAiSuggestedTasks', () => {
         error: null,
       });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 
@@ -159,7 +161,7 @@ describe('useAiSuggestedTasks', () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 
@@ -188,7 +190,7 @@ describe('useAiSuggestedTasks', () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 
@@ -223,7 +225,7 @@ describe('useAiSuggestedTasks', () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 
@@ -260,7 +262,7 @@ describe('useAiSuggestedTasks', () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 
@@ -312,7 +314,7 @@ describe('useAiSuggestedTasks', () => {
         error: null,
       });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 
@@ -337,7 +339,7 @@ describe('useAiSuggestedTasks', () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 
@@ -359,7 +361,7 @@ describe('useAiSuggestedTasks', () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(123), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 
@@ -387,7 +389,7 @@ describe('useAiSuggestedTasks', () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useAiSuggestedTasks(1), {
+    const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
     });
 

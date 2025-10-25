@@ -1,7 +1,7 @@
 import { PrimaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { getRandomQuote, Quote } from '@/utils/quotes';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 
 interface SplashScreenProps {
@@ -10,8 +10,8 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ onFinish }: SplashScreenProps) {
   const [quote, setQuote] = useState<Quote | null>(null);
-  const fadeAnim = new Animated.Value(0);
-  const scaleAnim = new Animated.Value(0.8);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
     // Get a random quote when component mounts
@@ -75,7 +75,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
             className="text-[#F1F5F9] text-2xl font-semibold text-center leading-relaxed mb-6 tracking-wide"
             testID="splash-quote-text"
           >
-            "{quote.text}"
+            &quot;{quote.text}&quot;
           </Text>
           <Text
             className="text-[#E6FAFF] text-lg text-center font-medium tracking-wide"

@@ -39,7 +39,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
   const [aiResponse, setAiResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const updateProfile = useUpdateProfile();
-  const { data: profile, isLoading: profileIsLoading, error } = useProfile();
+  const { data: profile } = useProfile();
   const [profileData, setProfileData] = useState<ProfileUpdateData>({
     first_name: profile?.first_name || '',
     last_name: profile?.last_name || '',
@@ -111,7 +111,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
     try {
       await updateProfile.mutateAsync(profileData);
       setCurrentStepIndex(1);
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to update your profile details. Please try again.');
     } finally {
       setIsLoading(false);
@@ -128,7 +128,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
       setIsLoading(true)
       await aiProxy.processAiRequest(goalDescription.trim());
       setCurrentStepIndex(2);
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to generate your SMART goal. Please try again.');
     }
   };
@@ -175,7 +175,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
 
       onComplete();
       router.replace('/(tabs)');
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save your goals. Please try again.');
     }
   };

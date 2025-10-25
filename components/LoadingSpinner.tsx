@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, Animated, ActivityIndicator } from 'react-native';
 import LinearGradient from '@/components/ui/LinearGradient';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useRef } from 'react';
+import { ActivityIndicator, Animated, Text, View } from 'react-native';
 
 export interface LoadingSpinnerProps {
   /** The size of the loading spinner */

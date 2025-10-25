@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { TasksAPI } from '../../api/tasks';
 import { useCreateTask, useDeleteTask, useTask, useTasks, useUpdateTask } from '../../hooks/useTasks';
 
 // Mock the API module
@@ -131,7 +130,6 @@ describe('useTasks', () => {
 
     it('calls createTask API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockCreateTask = TasksAPI.createTask as jest.MockedFunction<typeof TasksAPI.createTask>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,
@@ -175,7 +173,6 @@ describe('useTasks', () => {
 
     it('calls updateTask API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockUpdateTask = TasksAPI.updateTask as jest.MockedFunction<typeof TasksAPI.updateTask>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,
@@ -219,7 +216,6 @@ describe('useTasks', () => {
 
     it('calls deleteTask API when mutate is called', async () => {
       const mockMutate = jest.fn();
-      const mockDeleteTask = TasksAPI.deleteTask as jest.MockedFunction<typeof TasksAPI.deleteTask>;
 
       mockUseMutation.mockReturnValue({
         mutate: mockMutate,

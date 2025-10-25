@@ -31,7 +31,7 @@ export default function MenuScreen() {
             try {
               await signOut();
               router.replace('/auth/login');
-            } catch (error) {
+            } catch {
               Alert.alert('Error', 'Failed to sign out');
             }
           },

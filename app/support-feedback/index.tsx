@@ -32,7 +32,7 @@ export default function SupportFeedbackScreen() {
     build_number: Application.nativeBuildVersion || '1',
     device_model: Device.modelName || 'Unknown',
     os_version: Device.osVersion || 'Unknown',
-    locale: Device.locale || 'en',
+    locale: Intl.DateTimeFormat().resolvedOptions().locale || 'en',
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     network_state: 'online', // TODO: Implement network detection
     user_id: user?.id?.toString()
@@ -75,7 +75,7 @@ export default function SupportFeedbackScreen() {
           }
         ]
       );
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to submit your request. Please try again.');
     } finally {
       setIsSubmitting(false);
