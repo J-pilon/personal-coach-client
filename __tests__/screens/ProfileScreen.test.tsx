@@ -11,13 +11,14 @@ jest.mock('../../hooks/useUser', () => ({
 
 // Mock the ProfileEditForm component
 jest.mock('../../components/ProfileEditForm', () => {
+  const { View, Text, Pressable } = require('react-native');
   return function MockProfileEditForm({ profile, onCancel, onSuccess }: any) {
     return (
-      <div testID="profile-edit-form">
-        <div testID="mock-profile-edit-form">Profile Edit Form</div>
-        <button testID="mock-cancel-button" onClick={onCancel}>Cancel</button>
-        <button testID="mock-success-button" onClick={onSuccess}>Success</button>
-      </div>
+      <View testID="profile-edit-form">
+        <Text testID="mock-profile-edit-form">Profile Edit Form</Text>
+        <Pressable testID="mock-cancel-button" onPress={onCancel}><Text>Cancel</Text></Pressable>
+        <Pressable testID="mock-success-button" onPress={onSuccess}><Text>Success</Text></Pressable>
+      </View>
     );
   };
 });

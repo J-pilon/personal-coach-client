@@ -44,7 +44,7 @@ describe('AI API', () => {
 
       (fetch as jest.Mock).mockResolvedValueOnce(mockFetchResponse);
 
-      const result = await aiApi.processAiRequest({ input: 'Create a goal to exercise more' });
+      const result = await aiApi.processAiRequest({ input: 'Create a goal to exercise more', intent: 'smart_goal' });
 
       expect(result.data).toEqual(mockResponse);
       expect(result.status).toBe(200);
@@ -55,7 +55,7 @@ describe('AI API', () => {
           headers: expect.objectContaining({
             'Content-Type': 'application/json'
           }),
-          body: JSON.stringify({ input: 'Create a goal to exercise more' })
+          body: JSON.stringify({ input: 'Create a goal to exercise more', intent: 'smart_goal' })
         })
       );
     });
@@ -72,7 +72,7 @@ describe('AI API', () => {
         json: async () => mockError
       });
 
-      const result = await aiApi.processAiRequest({ input: '' });
+      const result = await aiApi.processAiRequest({ input: '', intent: 'smart_goal' });
 
       expect(result.error).toBe('Input is required');
       expect(result.status).toBe(400);
@@ -81,7 +81,7 @@ describe('AI API', () => {
     it('should handle network errors', async () => {
       (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
-      const result = await aiApi.processAiRequest({ input: 'test' });
+      const result = await aiApi.processAiRequest({ input: 'test', intent: 'smart_goal' });
 
       expect(result.error).toBe('Network error');
       expect(result.status).toBe(0);

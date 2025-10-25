@@ -69,12 +69,12 @@ export const formatTimeframeForAiResponse = (
  * @param userTimeframe - The user-selected timeframe
  * @returns Server-compatible timeframe value
  */
-export const getServerTimeframe = (userTimeframe: string): string => {
+export const getServerTimeframe = (userTimeframe: string): '1 month' | '3 months' | '6 months' => {
   const option = TIMEFRAME_OPTIONS.find(opt => opt.value === userTimeframe);
   if (!option) {
     throw new Error(`Invalid timeframe: ${userTimeframe}`);
   }
-  return option.serverValue;
+  return option.serverValue as '1_month' | '3_months' | '6_months';
 };
 
 /**

@@ -62,14 +62,17 @@ describe('SupportFeedbackScreen', () => {
 
   it('submits ticket successfully', async () => {
     mockCreateTicket.mockResolvedValue({
-      id: 1,
-      kind: 'bug',
-      title: 'Test Bug',
-      description: 'Test Description',
-      source: 'app',
-      metadata: {},
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
+      data: {
+        id: 1,
+        kind: 'bug',
+        title: 'Test Bug',
+        description: 'Test Description',
+        source: 'app',
+        metadata: {},
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      },
+      status: 200
     });
 
     const { getByText, getByPlaceholderText } = render(<SupportFeedbackScreen />);

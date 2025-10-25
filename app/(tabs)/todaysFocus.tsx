@@ -38,7 +38,7 @@ export default function TodaysFocusScreen() {
 
   useEffect(() => {
     clearSuggestions()
-  }, [])
+  }, [clearSuggestions])
 
   const sortSelectedTasks = (): Task[] => {
     const combinedTasks = [...selectedTasks, ...incompleteTasks];
@@ -78,7 +78,7 @@ export default function TodaysFocusScreen() {
     try {
       const createdTask = await createTaskMutation.mutateAsync({
         title: suggestion.title,
-        description: suggestion.description,
+        description: suggestion.description ?? undefined,
         action_category: 'do',
         priority: 2,
       });
@@ -104,7 +104,7 @@ export default function TodaysFocusScreen() {
     try {
       await createTaskMutation.mutateAsync({
         title: suggestion.title,
-        description: suggestion.description,
+        description: suggestion.description ?? undefined,
         action_category: 'do',
         priority: 2,
       });

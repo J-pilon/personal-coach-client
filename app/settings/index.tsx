@@ -37,7 +37,7 @@ export default function SettingsScreen() {
     };
 
     loadApiKey();
-  }, []);
+  }, [getStoredApiKey]);
 
   const handleSaveKey = async () => {
     if (!inputKey.trim()) {
@@ -50,7 +50,7 @@ export default function SettingsScreen() {
       setStoredApiKey(inputKey.trim());
       setIsEditing(false);
       Alert.alert('Success', 'Your API key has been saved securely');
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save API key. Please try again.');
     }
   };
@@ -70,7 +70,7 @@ export default function SettingsScreen() {
               setStoredApiKey(null);
               setInputKey('');
               Alert.alert('Success', 'API key cleared');
-            } catch (error) {
+            } catch {
               Alert.alert('Error', 'Failed to clear API key');
             }
           },
@@ -147,7 +147,7 @@ export default function SettingsScreen() {
           </Text>
 
           <Text className="text-[#E6FAFF] text-sm mb-4 leading-5">
-            Don't want to wait? You can use your own OpenAI API key for unlimited access.
+            Don&apos;t want to wait? You can use your own OpenAI API key for unlimited access.
           </Text>
 
           <View className="mb-4">
@@ -157,9 +157,9 @@ export default function SettingsScreen() {
             <View className="p-2 bg-transparent rounded-xl border border-cyan-400">
               <Text className="text-sm text-cyan-400">1. Go to https://platform.openai.com/account/api-keys</Text>
               <Text className="text-sm text-cyan-400">2. Log in or create a free OpenAI account</Text>
-              <Text className="text-sm text-cyan-400">3. Click "Create new secret key"</Text>
+              <Text className="text-sm text-cyan-400">3. Click &quot;Create new secret key&quot;</Text>
               <Text className="text-sm text-cyan-400">4. Copy and paste the key below</Text>
-              <Text className="text-sm text-cyan-400">5. We'll save it securely and use it for your AI requests</Text>
+              <Text className="text-sm text-cyan-400">5. We&apos;ll save it securely and use it for your AI requests</Text>
             </View>
           </View>
 

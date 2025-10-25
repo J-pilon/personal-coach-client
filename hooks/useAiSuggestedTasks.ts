@@ -7,7 +7,7 @@ import { useJobStatus } from './useJobStatus';
 // Interface for AI-generated task suggestions
 export interface AiTaskSuggestion {
   title: string;
-  description: string;
+  description: string | null;
   goal_id: string | null;
   time_estimate_minutes: number;
 }

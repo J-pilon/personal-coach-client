@@ -73,6 +73,7 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
 
 describe('AiOnboardingWizard', () => {
   const mockOnComplete = jest.fn();
+  const mockOnSkip = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -81,7 +82,7 @@ describe('AiOnboardingWizard', () => {
   it('renders the profile details step initially', () => {
     const { getByText, getByTestId } = render(
       <TestWrapper>
-        <AiOnboardingWizard onComplete={mockOnComplete} />
+        <AiOnboardingWizard onComplete={mockOnComplete} onSkip={mockOnSkip} />
       </TestWrapper>
     );
 
@@ -99,7 +100,7 @@ describe('AiOnboardingWizard', () => {
   it('shows validation error when submitting empty profile details', async () => {
     const { getByTestId } = render(
       <TestWrapper>
-        <AiOnboardingWizard onComplete={mockOnComplete} />
+        <AiOnboardingWizard onComplete={mockOnComplete} onSkip={mockOnSkip} />
       </TestWrapper>
     );
 
@@ -113,7 +114,7 @@ describe('AiOnboardingWizard', () => {
   it('shows progress bar with correct step count', () => {
     const { getByText } = render(
       <TestWrapper>
-        <AiOnboardingWizard onComplete={mockOnComplete} />
+        <AiOnboardingWizard onComplete={mockOnComplete} onSkip={mockOnSkip} />
       </TestWrapper>
     );
 
@@ -123,7 +124,7 @@ describe('AiOnboardingWizard', () => {
   it('has correct step titles', () => {
     const { getByText } = render(
       <TestWrapper>
-        <AiOnboardingWizard onComplete={mockOnComplete} />
+        <AiOnboardingWizard onComplete={mockOnComplete} onSkip={mockOnSkip} />
       </TestWrapper>
     );
 
@@ -134,7 +135,7 @@ describe('AiOnboardingWizard', () => {
   it('renders profile input fields with correct styling', () => {
     const { getByTestId } = render(
       <TestWrapper>
-        <AiOnboardingWizard onComplete={mockOnComplete} />
+        <AiOnboardingWizard onComplete={mockOnComplete} onSkip={mockOnSkip} />
       </TestWrapper>
     );
 
@@ -152,7 +153,7 @@ describe('AiOnboardingWizard', () => {
   it('renders submit button with correct text', () => {
     const { getByTestId } = render(
       <TestWrapper>
-        <AiOnboardingWizard onComplete={mockOnComplete} />
+        <AiOnboardingWizard onComplete={mockOnComplete} onSkip={mockOnSkip} />
       </TestWrapper>
     );
 
@@ -162,7 +163,7 @@ describe('AiOnboardingWizard', () => {
   it('renders optional fields with descriptions', () => {
     const { getByTestId } = render(
       <TestWrapper>
-        <AiOnboardingWizard onComplete={mockOnComplete} />
+        <AiOnboardingWizard onComplete={mockOnComplete} onSkip={mockOnSkip} />
       </TestWrapper>
     );
 
@@ -182,7 +183,7 @@ describe('AiOnboardingWizard', () => {
   it('allows user input in form fields', () => {
     const { getByTestId } = render(
       <TestWrapper>
-        <AiOnboardingWizard onComplete={mockOnComplete} />
+        <AiOnboardingWizard onComplete={mockOnComplete} onSkip={mockOnSkip} />
       </TestWrapper>
     );
 

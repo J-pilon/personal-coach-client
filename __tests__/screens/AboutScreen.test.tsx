@@ -24,82 +24,82 @@ describe('AboutScreen', () => {
   });
 
   it('renders the about screen with app description', () => {
-    const { getByTestId } = render(<AboutScreen />);
+    const { getByTestId, getByText } = render(<AboutScreen />);
 
     const appDescription = getByTestId('about-app-description');
     expect(appDescription).toBeTruthy();
-    expect(appDescription).toHaveTextContent('Personal Coach');
-    expect(appDescription).toHaveTextContent('Turn intention into action');
+    expect(getByText('Personal Coach')).toBeTruthy();
+    expect(getByText('Turn intention into action')).toBeTruthy();
   });
 
   it('renders the app description section', () => {
-    const { getByTestId } = render(<AboutScreen />);
+    const { getByTestId, getByText } = render(<AboutScreen />);
 
     const appDescription = getByTestId('about-app-description');
     expect(appDescription).toBeTruthy();
 
     // Check that the app name is displayed
-    expect(appDescription).toHaveTextContent('Personal Coach');
-    expect(appDescription).toHaveTextContent('Turn intention into action');
+    expect(getByText('Personal Coach')).toBeTruthy();
+    expect(getByText('Turn intention into action')).toBeTruthy();
   });
 
   it('renders AI suggestions section with correct content', () => {
-    const { getByTestId } = render(<AboutScreen />);
+    const { getByTestId, getByText } = render(<AboutScreen />);
 
     const aiSection = getByTestId('about-ai-suggestions-section');
     expect(aiSection).toBeTruthy();
-    expect(aiSection).toHaveTextContent('AI Task Suggestions');
-    expect(aiSection).toHaveTextContent('Assit Me');
+    expect(getByText('AI Task Suggestions')).toBeTruthy();
+    expect(getByText('Assit Me')).toBeTruthy();
   });
 
   it('renders Daily Focus section with correct content', () => {
-    const { getByTestId } = render(<AboutScreen />);
+    const { getByTestId, getByText } = render(<AboutScreen />);
 
     const dailySection = getByTestId('about-daily-focus-section');
     expect(dailySection).toBeTruthy();
-    expect(dailySection).toHaveTextContent("Today's Focus");
-    expect(dailySection).toHaveTextContent('Plan your day with focus');
+    expect(getByText("Today's Focus")).toBeTruthy();
+    expect(getByText('Plan your day with focus')).toBeTruthy();
   });
 
   it('renders SMART Goals section with correct content', () => {
-    const { getByTestId } = render(<AboutScreen />);
+    const { getByTestId, getByText } = render(<AboutScreen />);
 
     const goalsSection = getByTestId('about-smart-goals-section');
     expect(goalsSection).toBeTruthy();
-    expect(goalsSection).toHaveTextContent('SMART Goals');
-    expect(goalsSection).toHaveTextContent('Specific, Measurable, Achievable');
+    expect(getByText('SMART Goals')).toBeTruthy();
+    expect(getByText('Specific, Measurable, Achievable')).toBeTruthy();
   });
 
   it('renders SMART Goals section with correct content', () => {
-    const { getByTestId } = render(<AboutScreen />);
+    const { getByTestId, getByText } = render(<AboutScreen />);
 
     const goalsSection = getByTestId('about-smart-goals-section');
     expect(goalsSection).toBeTruthy();
-    expect(goalsSection).toHaveTextContent('SMART Goals');
-    expect(goalsSection).toHaveTextContent('Specific, Measurable, Achievable');
+    expect(getByText('SMART Goals')).toBeTruthy();
+    expect(getByText('Specific, Measurable, Achievable')).toBeTruthy();
   });
 
   it('renders Pro Tips section with all tips', () => {
-    const { getByTestId } = render(<AboutScreen />);
+    const { getByTestId, getByText } = render(<AboutScreen />);
 
     const tipsSection = getByTestId('about-tips-section');
     expect(tipsSection).toBeTruthy();
-    expect(tipsSection).toHaveTextContent('Pro Tips');
+    expect(getByText('Pro Tips')).toBeTruthy();
 
     // Check for all tip content
-    expect(tipsSection).toHaveTextContent('Use AI suggestions regularly');
-    expect(tipsSection).toHaveTextContent('Enter Focus Mode when you need');
-    expect(tipsSection).toHaveTextContent('Review your SMART goals weekly');
-    expect(tipsSection).toHaveTextContent('Keep your daily task list manageable');
+    expect(getByText('Use AI suggestions regularly')).toBeTruthy();
+    expect(getByText('Enter Focus Mode when you need')).toBeTruthy();
+    expect(getByText('Review your SMART goals weekly')).toBeTruthy();
+    expect(getByText('Keep your daily task list manageable')).toBeTruthy();
   });
 
   it('renders version info section', () => {
-    const { getByTestId } = render(<AboutScreen />);
+    const { getByTestId, getByText } = render(<AboutScreen />);
 
     const versionInfo = getByTestId('about-version-info');
     expect(versionInfo).toBeTruthy();
-    expect(versionInfo).toHaveTextContent('Version 1.0.0');
-    expect(versionInfo).toHaveTextContent('Built with ❤️ for productivity');
+    expect(getByText('Version 1.0.0')).toBeTruthy();
+    expect(getByText('Built with ❤️ for productivity')).toBeTruthy();
   });
 
   it('renders without back button', () => {
