@@ -76,7 +76,9 @@ describe('useAiSuggestedTasks', () => {
     job_id: 'job-123',
     status: 'complete',
     progress: 100,
-    result: mockSuggestions,
+    result: {
+      response: mockSuggestions,
+    },
   };
 
   const createWrapper = () => {

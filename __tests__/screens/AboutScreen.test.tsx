@@ -29,7 +29,7 @@ describe('AboutScreen', () => {
     const appDescription = getByTestId('about-app-description');
     expect(appDescription).toBeTruthy();
     expect(getByText('Personal Coach')).toBeTruthy();
-    expect(getByText('Turn intention into action')).toBeTruthy();
+    expect(getByText(/Turn intention into action/)).toBeTruthy();
   });
 
   it('renders the app description section', () => {
@@ -40,7 +40,7 @@ describe('AboutScreen', () => {
 
     // Check that the app name is displayed
     expect(getByText('Personal Coach')).toBeTruthy();
-    expect(getByText('Turn intention into action')).toBeTruthy();
+    expect(getByText(/Turn intention into action/)).toBeTruthy();
   });
 
   it('renders AI suggestions section with correct content', () => {
@@ -49,7 +49,7 @@ describe('AboutScreen', () => {
     const aiSection = getByTestId('about-ai-suggestions-section');
     expect(aiSection).toBeTruthy();
     expect(getByText('AI Task Suggestions')).toBeTruthy();
-    expect(getByText('Assit Me')).toBeTruthy();
+    expect(getByText(/Assit Me/)).toBeTruthy();
   });
 
   it('renders Daily Focus section with correct content', () => {
@@ -58,7 +58,7 @@ describe('AboutScreen', () => {
     const dailySection = getByTestId('about-daily-focus-section');
     expect(dailySection).toBeTruthy();
     expect(getByText("Today's Focus")).toBeTruthy();
-    expect(getByText('Plan your day with focus')).toBeTruthy();
+    expect(getByText(/Plan your day with focus/)).toBeTruthy();
   });
 
   it('renders SMART Goals section with correct content', () => {
@@ -67,7 +67,7 @@ describe('AboutScreen', () => {
     const goalsSection = getByTestId('about-smart-goals-section');
     expect(goalsSection).toBeTruthy();
     expect(getByText('SMART Goals')).toBeTruthy();
-    expect(getByText('Specific, Measurable, Achievable')).toBeTruthy();
+    expect(getByText(/Specific, Measurable, Achievable/)).toBeTruthy();
   });
 
   it('renders SMART Goals section with correct content', () => {
@@ -76,7 +76,7 @@ describe('AboutScreen', () => {
     const goalsSection = getByTestId('about-smart-goals-section');
     expect(goalsSection).toBeTruthy();
     expect(getByText('SMART Goals')).toBeTruthy();
-    expect(getByText('Specific, Measurable, Achievable')).toBeTruthy();
+    expect(getByText(/Specific, Measurable, Achievable/)).toBeTruthy();
   });
 
   it('renders Pro Tips section with all tips', () => {
@@ -87,10 +87,10 @@ describe('AboutScreen', () => {
     expect(getByText('Pro Tips')).toBeTruthy();
 
     // Check for all tip content
-    expect(getByText('Use AI suggestions regularly')).toBeTruthy();
-    expect(getByText('Enter Focus Mode when you need')).toBeTruthy();
-    expect(getByText('Review your SMART goals weekly')).toBeTruthy();
-    expect(getByText('Keep your daily task list manageable')).toBeTruthy();
+    expect(getByText(/Use AI suggestions regularly/)).toBeTruthy();
+    expect(getByText(/Enter Focus Mode when you need/)).toBeTruthy();
+    expect(getByText(/Review your SMART goals weekly/)).toBeTruthy();
+    expect(getByText(/Keep your daily task list manageable/)).toBeTruthy();
   });
 
   it('renders version info section', () => {

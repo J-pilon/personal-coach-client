@@ -79,10 +79,12 @@ export const useAiSuggestedTasks = () => {
     const status = jobStatus.data?.status;
     const result = jobStatus.data?.result;
     
-    if (status === 'complete' && result) {
-      try {
-        setSuggestions(result);
-        setError(null);
+      if (status === 'complete' && result) {
+        try {
+          // TODO: checking if the response is an array is definetly a code smell and needs to be refactored
+          const suggestions = Array.isArray(result?.response) ? result.response : [];
+          setSuggestions(suggestions);
+          setError(null);
         
         queryClient.invalidateQueries({ queryKey: ['tasks'] });
         
