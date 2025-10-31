@@ -3,14 +3,14 @@ import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import 'react-native-reanimated';
 import '../global.css';
 
 import SplashScreen from '@/components/SplashScreen';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Platform } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -60,7 +60,13 @@ function AppContent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+        <SafeAreaView
+          style={{ flex: 1 }}
+          edges={Platform.OS === 'android'
+            ? ["top", "left", "right"]
+            : ["top", "left", "right"]
+          }
+        >
           <Stack>
             {/* Define all screens at layout level */}
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -134,8 +140,10 @@ function AppContent() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

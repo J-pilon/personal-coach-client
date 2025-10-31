@@ -1,7 +1,7 @@
-import React from 'react';
-import { Pressable } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
+import React from 'react';
+import { Pressable } from 'react-native';
 
 interface AddTaskButtonProps {
   onPress?: () => void;
@@ -20,7 +20,7 @@ export default function AddTaskButton({ onPress }: AddTaskButtonProps) {
     <Pressable
       testID='add-task-button-button'
       onPress={handlePress}
-      className="absolute right-6 bottom-28 z-50 justify-center items-center w-16 h-16 bg-cyan-400 rounded-full shadow-lg"
+      className="absolute right-5 bottom-5 z-50 justify-center items-center w-16 h-16 bg-cyan-400 rounded-full shadow-lg"
       style={{
         shadowColor: '#33CFFF',
         shadowOpacity: 0.3,

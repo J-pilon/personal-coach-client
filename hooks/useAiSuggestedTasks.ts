@@ -82,7 +82,7 @@ export const useAiSuggestedTasks = () => {
       if (status === 'complete' && result) {
         try {
           // TODO: checking if the response is an array is definetly a code smell and needs to be refactored
-          const suggestions = Array.isArray(result?.response) ? result.response : [];
+          const suggestions = Array.isArray(result) ? result : [];
           setSuggestions(suggestions);
           setError(null);
         
@@ -110,12 +110,10 @@ export const useAiSuggestedTasks = () => {
   };
 
   const addToToday = (suggestion: AiTaskSuggestion) => {
-    // This will be handled by the parent component
     return suggestion;
   };
 
   const addForLater = async (suggestion: AiTaskSuggestion) => {
-    // This will be handled by the parent component
     return suggestion;
   };
 

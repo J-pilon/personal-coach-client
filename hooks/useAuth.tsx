@@ -1,7 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { TokenManager } from '../utils/api';
 import { API_BASE_URL } from '../constants/config';
+import { TokenManager } from '../utils/api';
 
 interface User {
   id: number;

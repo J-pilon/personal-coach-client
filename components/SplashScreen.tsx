@@ -1,8 +1,13 @@
 import { PrimaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { getRandomQuote, Quote } from '@/utils/quotes';
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -10,37 +15,28 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ onFinish }: SplashScreenProps) {
   const [quote, setQuote] = useState<Quote | null>(null);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const fadeAnim = useSharedValue(0);
+  const scaleAnim = useSharedValue(0.8);
 
   useEffect(() => {
-    // Get a random quote when component mounts
     setQuote(getRandomQuote());
 
-    // Animate the splash screen
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    fadeAnim.value = withTiming(1, { duration: 1000 });
+    scaleAnim.value = withTiming(1, { duration: 1000 });
   }, [fadeAnim, scaleAnim]);
 
   const handleExit = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }).start(() => {
+    fadeAnim.value = withTiming(0, { duration: 500 });
+
+    setTimeout(() => {
       onFinish();
-    });
+    }, 500);
   };
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: fadeAnim.value,
+    transform: [{ scale: scaleAnim.value }],
+  }));
 
   if (!quote) {
     return null;
@@ -50,10 +46,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
     <LinearGradient>
       <Animated.View
         className="flex-1 justify-center items-center px-8"
-        style={{
-          opacity: fadeAnim,
-          transform: [{ scale: scaleAnim }],
-        }}
+        style={animatedStyle}
       >
         <View className="mb-12">
           <Text
@@ -84,8 +77,6 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
             — {quote.author}
           </Text>
         </View>
-
-
 
         <PrimaryButton
           title="Let's Get Started!"
