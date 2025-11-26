@@ -79,27 +79,29 @@ export const useAiSuggestedTasks = () => {
     const status = jobStatus.data?.status;
     const result = jobStatus.data?.result;
     
-      if (status === 'complete' && result) {
-        try {
-          // TODO: checking if the response is an array is definetly a code smell and needs to be refactored
-          const suggestions = Array.isArray(result) ? result : [];
-          setSuggestions(suggestions);
+    if (status === 'complete' && result) {
+      try {
+        if (result.intent === 'task_suggestions' && Array.isArray(result.response)) {
+          setSuggestions(result.response);
           setError(null);
-        
-        queryClient.invalidateQueries({ queryKey: ['tasks'] });
-        
-        // Clear the job ID to stop polling
-        setJobId(null);
+          
+          queryClient.invalidateQueries({ queryKey: ['tasks'] });
+          
+          setJobId(null);
+          setIsLoading(false);
+        } else {
+          throw new Error('Unexpected result format');
+        }
       } catch (error) {
         console.error('Failed to parse task suggestions result:', error);
         setError('Failed to parse task suggestions');
         setJobId(null);
-      } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     } else if (status === 'failed') {
       setError('Failed to generate task suggestions');
       setJobId(null);
+      setIsLoading(false);
     }
   }, [jobStatus.data, queryClient]);
 

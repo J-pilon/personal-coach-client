@@ -1,11 +1,34 @@
 import { MultiPeriodSmartGoalResponse } from '@/api/ai';
+import { AiTaskSuggestion } from '@/hooks/useAiSuggestedTasks';
 import { apiGet } from '@/utils/apiRequest';
 import { useQuery } from '@tanstack/react-query';
-import { AiTaskSuggestion } from '@/hooks/useAiSuggestedTasks';
 
-export interface AiServiceResponse {
-  intent?: string,
-  response: MultiPeriodSmartGoalResponse | AiTaskSuggestion[]
+// Discriminated union for AI service responses
+export type AiServiceResponse =
+  | AiServiceResponseWithSmartGoal
+  | AiServiceResponseWithTaskSuggestions;
+
+export interface AiServiceResponseWithSmartGoal {
+  intent: 'smart_goal' | 'single_smart_goal' | 'prioritization';
+  response: MultiPeriodSmartGoalResponse;
+}
+
+export interface AiServiceResponseWithTaskSuggestions {
+  intent: 'task_suggestions';
+  response: AiTaskSuggestion[];
+}
+
+// Type guards for runtime type checking
+export function isSmartGoalResponse(
+  response: AiServiceResponse
+): response is AiServiceResponseWithSmartGoal {
+  return ['smart_goal', 'single_smart_goal', 'prioritization'].includes(response.intent);
+}
+
+export function isTaskSuggestionsResponse(
+  response: AiServiceResponse
+): response is AiServiceResponseWithTaskSuggestions {
+  return response.intent === 'task_suggestions';
 }
 
 export interface JobStatusResponse {
