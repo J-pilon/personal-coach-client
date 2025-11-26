@@ -13,6 +13,8 @@
       "bundleIdentifier": "com.personalcoach.app"
     },
     "android": {
+      "package": "com.personalcoach.app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -34,16 +36,24 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
       "apiBaseUrl": {
-        "development": "http://localhost:3000/api/v1",
+        "development": "http://10.0.2.2:3000/api/v1",
         "production": "https://personal-coach-server-c405d49500bf.herokuapp.com/api/v1"
+      },
+      "router": {},
+      "eas": {
+        "projectId": "3f50f902-668a-4124-94c8-31b980847077"
       }
-    }
+    },
+    "owner": "josiah.pilon"
   }
 }

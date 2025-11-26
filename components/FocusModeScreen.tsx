@@ -1,11 +1,15 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
-import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
-
 import { Task } from '@/api/tasks';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { Colors } from '@/constants/Colors';
 import { useUpdateTask } from '@/hooks/useTasks';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { Pressable, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface FocusModeScreenProps {
   selectedTasks: Task[];
@@ -16,17 +20,42 @@ interface FocusModeScreenProps {
 export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusModeScreenProps) {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState<number[]>([]);
-  const [tasksToComplete, setTasksToComplete] = useState<Task[]>(selectedTasks || [])
+  const [currentTasks, setCurrentTasks] = useState<Task[]>(selectedTasks || [])
+  const [allTasksCompleted, setAllTasksCompleted] = useState<boolean>(false)
 
   const updateTaskMutation = useUpdateTask();
 
-  const currentTask = tasksToComplete[currentTaskIndex];
+  const currentTask: Task = currentTasks[currentTaskIndex];
   const progress = completedTasks.length;
-  const totalTasks = selectedTasks.length;
+  const totalTasks = currentTasks.length;
   const progressPercentage = totalTasks > 0 ? (progress / totalTasks) * 100 : 0;
 
+  // Scale animations for buttons
+  const completeScale = useSharedValue(1);
+  const snoozeScale = useSharedValue(1);
+  const skipScale = useSharedValue(1);
+
+  // Animated styles
+  const completeButtonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: completeScale.value }],
+  }));
+
+  const snoozeButtonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: snoozeScale.value }],
+  }));
+
+  const skipButtonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: skipScale.value }],
+  }));
+
+  // Animation helper
+  const animateButton = (scale: typeof completeScale) => {
+    scale.value = withTiming(0.85, { duration: 100 }, () => {
+      scale.value = withTiming(1, { duration: 400 });
+    });
+  };
+
   useEffect(() => {
-    // Set status bar to immersive mode
     StatusBar.setHidden(true);
 
     return () => {
@@ -35,50 +64,75 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
   }, []);
 
   const handleComplete = async () => {
-    if (!currentTask?.id) return;
+    animateButton(completeScale);
+    if (!currentTask.id) return;
 
     try {
-      await updateTaskMutation.mutateAsync({
+      const result = await updateTaskMutation.mutateAsync({
         id: currentTask.id,
         taskData: { completed: true }
       });
 
-      const newCompletedTasks = [...completedTasks, currentTask.id!];
-      const newTasksToComplete = tasksToComplete.filter(task => task.id !== currentTask.id);
-      setCompletedTasks(newCompletedTasks);
-      setTasksToComplete(newTasksToComplete);
+      if (result === undefined) {
+        throw new Error('Task update failed: result is undefined.');
+      }
 
-      // Pass the updated values to moveToNextTask
-      moveToNextTask(newTasksToComplete, currentTaskIndex);
-      onComplete(currentTask.id);
+      const newCompletedTasks = [...completedTasks, currentTask.id];
+      setCompletedTasks(newCompletedTasks);
+
+      const updatedTasks = currentTasks.map(task =>
+        task.id === result.id ? result : task
+      );
+      setCurrentTasks(updatedTasks);
+
+      const tasksToComplete = updatedTasks.filter(task => task.completed === false);
+      if (tasksToComplete.length === 0) {
+        setAllTasksCompleted(true);
+        return;
+      }
+
+      moveToNextTask(updatedTasks);
     } catch (error) {
       console.error('Failed to complete task:', error);
     }
   };
 
   const handleSnooze = () => {
-    if (!currentTask?.id) return;
+    animateButton(snoozeScale);
+    const updatedTasks = currentTasks.filter(task => task.id !== currentTask.id);
+    setCurrentTasks(updatedTasks)
 
-    setTasksToComplete(prev => prev.filter(task => task.id !== currentTask.id));
-    moveToNextTask();
+    const nextIndex = updatedTasks.findIndex(task => !task.completed);
+    if (nextIndex !== -1) {
+      setCurrentTaskIndex(nextIndex);
+    } else {
+      setAllTasksCompleted(true);
+    }
   };
 
   const handleSkip = () => {
-    moveToNextTask();
+    animateButton(skipScale);
+    moveToNextTask(currentTasks);
   };
 
-  const moveToNextTask = (updatedTasksToComplete?: Task[], currentIndex?: number) => {
-    const tasks = updatedTasksToComplete || tasksToComplete;
-    const index = currentIndex ?? currentTaskIndex;
-    const nextIndex = index + 1;
+  const moveToNextTask = (currentTasks: Task[]) => {
+    const tasksToComplete = currentTasks.filter(task => task.completed === false)
+    if (tasksToComplete.length === 0) return setAllTasksCompleted(true);
 
-    if (nextIndex < tasks.length) {
+    // Find the next incomplete task from current position or wrap to beginning
+    let nextIndex = currentTasks.findIndex((task, idx) =>
+      !task.completed && idx > currentTaskIndex
+    );
+
+    if (nextIndex === -1) {
+      // If no task found from current position, check from beginning
+      nextIndex = currentTasks.findIndex(task => !task.completed);
+    }
+
+    if (nextIndex !== -1) {
       setCurrentTaskIndex(nextIndex);
-    } else if (tasks.length > 0 && nextIndex === tasks.length) {
-      setCurrentTaskIndex(0);
     } else {
-      // All tasks completed or skipped
-      setCurrentTaskIndex(-1);
+      setAllTasksCompleted(true);
     }
   };
 
@@ -86,7 +140,7 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
     onExit();
   };
 
-  if (!currentTask) {
+  if (!currentTask || allTasksCompleted) {
     return (
       <LinearGradient>
         <View className="absolute inset-0 z-50">
@@ -162,32 +216,35 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
 
           {/* Action Buttons */}
           <View className="flex-row justify-around px-5 w-full">
-            <TouchableOpacity
-              className="justify-center items-center px-5 py-4 rounded-xl border border-cyan-400 bg-cyan-400/10 min-w-20"
-              onPress={handleComplete}
-              testID="focus-mode-complete-button"
-            >
-              <Ionicons name="checkmark-circle" size={24} color={Colors.accent.primary} />
-              <Text className="mt-2 text-sm font-semibold text-cyan-400">Complete</Text>
-            </TouchableOpacity>
+            <Pressable onPress={handleComplete} testID="focus-mode-complete-button">
+              <Animated.View
+                className="justify-center items-center px-5 py-4 rounded-xl border border-cyan-400 bg-cyan-400/10 min-w-20"
+                style={completeButtonStyle}
+              >
+                <Ionicons name="checkmark-circle" size={24} color={Colors.accent.primary} />
+                <Text className="mt-2 text-sm font-semibold text-cyan-400">Complete</Text>
+              </Animated.View>
+            </Pressable>
 
-            <TouchableOpacity
-              className="justify-center items-center px-5 py-4 rounded-xl border border-slate-400 bg-white/5 min-w-20"
-              onPress={handleSnooze}
-              testID="focus-mode-snooze-button"
-            >
-              <Ionicons name="time" size={24} color={Colors.text.muted} />
-              <Text className="mt-2 text-sm font-semibold text-slate-400">Snooze</Text>
-            </TouchableOpacity>
+            <Pressable onPress={handleSnooze} testID="focus-mode-snooze-button">
+              <Animated.View
+                className="justify-center items-center px-5 py-4 rounded-xl border border-slate-400 bg-white/5 min-w-20"
+                style={snoozeButtonStyle}
+              >
+                <Ionicons name="time" size={24} color={Colors.text.muted} />
+                <Text className="mt-2 text-sm font-semibold text-slate-400">Snooze</Text>
+              </Animated.View>
+            </Pressable>
 
-            <TouchableOpacity
-              className="justify-center items-center px-5 py-4 rounded-xl border border-slate-400 bg-white/5 min-w-20"
-              onPress={handleSkip}
-              testID="focus-mode-skip-button"
-            >
-              <Ionicons name="arrow-forward" size={24} color={Colors.text.muted} />
-              <Text className="mt-2 text-sm font-semibold text-slate-400">Skip</Text>
-            </TouchableOpacity>
+            <Pressable onPress={handleSkip} testID="focus-mode-skip-button">
+              <Animated.View
+                className="justify-center items-center px-5 py-4 rounded-xl border border-slate-400 bg-white/5 min-w-20"
+                style={skipButtonStyle}
+              >
+                <Ionicons name="arrow-forward" size={24} color={Colors.text.muted} />
+                <Text className="mt-2 text-sm font-semibold text-slate-400">Skip</Text>
+              </Animated.View>
+            </Pressable>
           </View>
         </View>
       </View>

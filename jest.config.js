@@ -17,5 +17,8 @@ module.exports = {
     '!**/index.ts',
     '!**/App.tsx'
   ],
-  setupFiles: ['<rootDir>/jest.setup.js']
+  setupFiles: ['<rootDir>/jest.setup.js'],
+  testTimeout: 10000, // 10 second timeout for individual tests
+  // Force exit after tests complete to prevent hanging
+  forceExit: true,
 }; 

@@ -1,7 +1,6 @@
 import Constants from 'expo-constants';
 
 const getApiBaseUrl = () => {
-  // Get from Expo config
   const expoConfig = Constants.expoConfig?.extra?.apiBaseUrl;
   
   if (expoConfig) {
@@ -16,6 +15,9 @@ const getApiBaseUrl = () => {
   
   // Fallback
   if (__DEV__) return 'http://localhost:3000/api/v1'
+
+  // Use this domain if running on device in development
+  // return 'http://10.0.0.246:3000/api/v1' 
   
   return 'https://personal-coach-server-c405d49500bf.herokuapp.com/api/v1';
 };
