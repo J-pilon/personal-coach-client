@@ -29,18 +29,59 @@ jest.mock('../../hooks/useAuth', () => ({
 const mockApiPost = require('../../utils/apiRequest').apiPost;
 const mockUseJobStatus = require('../../hooks/useJobStatus').useJobStatus;
 
+// Set a timeout for the entire test suite to prevent hanging
+jest.setTimeout(5000);
+
+// Helper to create a properly mocked query return value
+const createMockQueryReturn = (data: any, isLoading = false, error: any = null) => ({
+  data,
+  isLoading,
+  error,
+  refetch: jest.fn(),
+  isRefetching: false,
+  isFetching: false,
+  status: 'success' as const,
+});
+
 describe('useAiSuggestedTasks', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
     queryClient = new QueryClient({
       defaultOptions: {
-        queries: { retry: false },
+        queries: {
+          retry: false,
+          gcTime: 0,
+          staleTime: 0,
+          refetchInterval: false, // Disable automatic refetching
+          refetchOnWindowFocus: false,
+          refetchOnMount: false,
+          refetchOnReconnect: false,
+        },
         mutations: { retry: false },
       },
     });
     mockApiPost.mockClear();
     mockUseJobStatus.mockClear();
+  });
+
+  afterEach(async () => {
+    // Cancel all active queries to stop any polling
+    await queryClient.cancelQueries();
+
+    // Clear all query data and remove queries
+    queryClient.clear();
+    queryClient.removeQueries();
+
+    // Unmount to cleanup any lingering effects
+    await new Promise(resolve => setTimeout(resolve, 0));
+  });
+
+  afterAll(async () => {
+    // Final cleanup - cancel and clear everything
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    queryClient.unmount();
   });
 
   const mockSuggestions: AiTaskSuggestion[] = [
@@ -77,6 +118,7 @@ describe('useAiSuggestedTasks', () => {
     status: 'complete',
     progress: 100,
     result: {
+      intent: 'task_suggestions',
       response: mockSuggestions,
     },
   };
@@ -94,11 +136,7 @@ describe('useAiSuggestedTasks', () => {
   };
 
   it('should initialize with empty suggestions and not loading', () => {
-    mockUseJobStatus.mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: null,
-    });
+    mockUseJobStatus.mockReturnValue(createMockQueryReturn(null));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
@@ -117,16 +155,8 @@ describe('useAiSuggestedTasks', () => {
 
     // Mock job status polling - initially called with null, then with job ID
     mockUseJobStatus
-      .mockReturnValueOnce({
-        data: null,
-        isLoading: false,
-        error: null,
-      })
-      .mockReturnValue({
-        data: mockJobCompletedResponse,
-        isLoading: false,
-        error: null,
-      });
+      .mockReturnValueOnce(createMockQueryReturn(null))
+      .mockReturnValue(createMockQueryReturn(mockJobCompletedResponse));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
@@ -155,11 +185,7 @@ describe('useAiSuggestedTasks', () => {
       error: errorMessage,
     });
 
-    mockUseJobStatus.mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: null,
-    });
+    mockUseJobStatus.mockReturnValue(createMockQueryReturn(null));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
@@ -184,11 +210,7 @@ describe('useAiSuggestedTasks', () => {
     });
 
     // Mock job status with completed result
-    mockUseJobStatus.mockReturnValue({
-      data: mockJobCompletedResponse,
-      isLoading: false,
-      error: null,
-    });
+    mockUseJobStatus.mockReturnValue(createMockQueryReturn(mockJobCompletedResponse));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
@@ -219,11 +241,7 @@ describe('useAiSuggestedTasks', () => {
     });
 
     // Mock job status with completed result
-    mockUseJobStatus.mockReturnValue({
-      data: mockJobCompletedResponse,
-      isLoading: false,
-      error: null,
-    });
+    mockUseJobStatus.mockReturnValue(createMockQueryReturn(mockJobCompletedResponse));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
@@ -256,11 +274,7 @@ describe('useAiSuggestedTasks', () => {
 
     mockApiPost.mockReturnValueOnce(apiPostPromise);
 
-    mockUseJobStatus.mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: null,
-    });
+    mockUseJobStatus.mockReturnValue(createMockQueryReturn(null));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
@@ -278,11 +292,7 @@ describe('useAiSuggestedTasks', () => {
     });
 
     // Mock job completion
-    mockUseJobStatus.mockReturnValue({
-      data: mockJobCompletedResponse,
-      isLoading: false,
-      error: null,
-    });
+    mockUseJobStatus.mockReturnValue(createMockQueryReturn(mockJobCompletedResponse));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -299,20 +309,12 @@ describe('useAiSuggestedTasks', () => {
 
     // Mock job status - first call with null, then with failed result
     mockUseJobStatus
-      .mockReturnValueOnce({
-        data: null,
-        isLoading: false,
-        error: null,
-      })
-      .mockReturnValue({
-        data: {
-          job_id: 'job-123',
-          status: 'failed',
-          progress: 0,
-        },
-        isLoading: false,
-        error: null,
-      });
+      .mockReturnValueOnce(createMockQueryReturn(null))
+      .mockReturnValue(createMockQueryReturn({
+        job_id: 'job-123',
+        status: 'failed',
+        progress: 0,
+      }));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
@@ -329,15 +331,11 @@ describe('useAiSuggestedTasks', () => {
   });
 
   it('should expose progress and status information', () => {
-    mockUseJobStatus.mockReturnValue({
-      data: {
-        job_id: 'job-123',
-        status: 'working',
-        progress: 50,
-      },
-      isLoading: false,
-      error: null,
-    });
+    mockUseJobStatus.mockReturnValue(createMockQueryReturn({
+      job_id: 'job-123',
+      status: 'working',
+      progress: 50,
+    }));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
@@ -355,11 +353,7 @@ describe('useAiSuggestedTasks', () => {
     });
 
     // Mock job status with completed result
-    mockUseJobStatus.mockReturnValue({
-      data: mockJobCompletedResponse,
-      isLoading: false,
-      error: null,
-    });
+    mockUseJobStatus.mockReturnValue(createMockQueryReturn(mockJobCompletedResponse));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
@@ -383,11 +377,7 @@ describe('useAiSuggestedTasks', () => {
   });
 
   it('should handle addToToday and addForLater methods', () => {
-    mockUseJobStatus.mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: null,
-    });
+    mockUseJobStatus.mockReturnValue(createMockQueryReturn(null));
 
     const { result } = renderHook(() => useAiSuggestedTasks(), {
       wrapper: createWrapper(),
