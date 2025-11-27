@@ -10,7 +10,13 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.personalcoach.app"
+      "bundleIdentifier": "com.personalcoach.app",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsLocalNetworking": true,
+          "NSAllowsArbitraryLoads": false
+        }
+      }
     },
     "android": {
       "package": "com.personalcoach.app",
@@ -46,7 +52,9 @@
     },
     "extra": {
       "apiBaseUrl": {
-        "development": "http://10.0.2.2:3000/api/v1",
+        // This domain is for running the app with Expo Go
+        "local": "http://10.0.2.2:3000/api/v1",
+        "development": "http://10.0.0.238:3000/api/v1",
         "production": "https://personal-coach-server-c405d49500bf.herokuapp.com/api/v1"
       },
       "router": {},
