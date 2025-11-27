@@ -17,7 +17,7 @@ const getApiBaseUrl = () => {
   if (__DEV__) return 'http://localhost:3000/api/v1'
 
   // Use this domain if running on device in development
-  // return 'http://10.0.0.246:3000/api/v1' 
+  // return 'http://10.0.0.238:3000/api/v1' 
   
   return 'https://personal-coach-server-c405d49500bf.herokuapp.com/api/v1';
 };
