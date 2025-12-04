@@ -15,7 +15,8 @@
         "NSAppTransportSecurity": {
           "NSAllowsLocalNetworking": true,
           "NSAllowsArbitraryLoads": false
-        }
+        },
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -25,7 +26,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -43,6 +45,14 @@
           "backgroundColor": "#ffffff"
         }
       ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/personal-coach-app-icon.png",
+          "color": "#021A40",
+          "enableBackgroundRemoteNotifications": true
+        }
+      ],
       "expo-font",
       "expo-secure-store",
       "expo-web-browser"
@@ -52,7 +62,6 @@
     },
     "extra": {
       "apiBaseUrl": {
-        // This domain is for running the app with Expo Go
         "local": "http://10.0.2.2:3000/api/v1",
         "development": "http://10.0.0.238:3000/api/v1",
         "production": "https://personal-coach-server-c405d49500bf.herokuapp.com/api/v1"
