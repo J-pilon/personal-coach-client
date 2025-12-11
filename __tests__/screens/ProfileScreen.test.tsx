@@ -240,8 +240,8 @@ describe('ProfileScreen', () => {
       </QueryClientProvider>
     );
 
-    // Check if "Not specified" is shown for missing data
-    expect(screen.getAllByText('Not specified')).toHaveLength(4);
+    // Check if "Not specified" is shown for missing data (work_role, education, timezone, desires, limiting_beliefs)
+    expect(screen.getAllByText('Not specified')).toHaveLength(5);
   });
 
   it('handles edit profile button press', () => {
