@@ -14,6 +14,7 @@ const mockProfile = {
   education: 'Computer Science',
   desires: 'To build amazing products',
   limiting_beliefs: 'I\'m not good enough',
+  timezone: 'America/New_York',
   onboarding_status: 'complete' as const,
 };
 
@@ -112,6 +113,7 @@ describe('ProfileEditForm', () => {
         education: 'Computer Science',
         desires: 'To build amazing products',
         limiting_beliefs: 'I\'m not good enough',
+        timezone: 'America/New_York',
       });
     });
   });

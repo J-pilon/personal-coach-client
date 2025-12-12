@@ -18,6 +18,7 @@ export interface Profile {
   education?: string;
   desires?: string;
   limiting_beliefs?: string;
+  timezone?: string;
   onboarding_status: 'incomplete' | 'complete';
   onboarding_completed_at?: string;
   user_id: number;
@@ -39,6 +40,7 @@ export interface ProfileUpdateData {
   education?: string;
   desires?: string;
   limiting_beliefs?: string;
+  timezone?: string;
   onboarding_status?: 'incomplete' | 'complete';
 }
 

@@ -2,8 +2,50 @@ import { ProfileUpdateData } from '@/api/users';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView as RNScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+// Common timezones list
+const TIMEZONES = [
+  { value: 'Pacific/Honolulu', label: 'Hawaii (HST)' },
+  { value: 'America/Anchorage', label: 'Alaska (AKST)' },
+  { value: 'America/Los_Angeles', label: 'Pacific Time (PST)' },
+  { value: 'America/Denver', label: 'Mountain Time (MST)' },
+  { value: 'America/Chicago', label: 'Central Time (CST)' },
+  { value: 'America/New_York', label: 'Eastern Time (EST)' },
+  { value: 'America/Halifax', label: 'Atlantic Time (AST)' },
+  { value: 'America/Sao_Paulo', label: 'São Paulo (BRT)' },
+  { value: 'Atlantic/Reykjavik', label: 'Iceland (GMT)' },
+  { value: 'Europe/London', label: 'London (GMT/BST)' },
+  { value: 'Europe/Paris', label: 'Paris (CET)' },
+  { value: 'Europe/Berlin', label: 'Berlin (CET)' },
+  { value: 'Europe/Moscow', label: 'Moscow (MSK)' },
+  { value: 'Asia/Dubai', label: 'Dubai (GST)' },
+  { value: 'Asia/Kolkata', label: 'India (IST)' },
+  { value: 'Asia/Bangkok', label: 'Bangkok (ICT)' },
+  { value: 'Asia/Singapore', label: 'Singapore (SGT)' },
+  { value: 'Asia/Hong_Kong', label: 'Hong Kong (HKT)' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+  { value: 'Australia/Sydney', label: 'Sydney (AEST)' },
+  { value: 'Pacific/Auckland', label: 'Auckland (NZST)' },
+  { value: 'UTC', label: 'UTC' },
+];
+
+// Get the device's timezone
+const getDeviceTimezone = (): string => {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return 'UTC';
+  }
+};
+
+// Get label for timezone value
+const getTimezoneLabel = (value: string): string => {
+  const tz = TIMEZONES.find(t => t.value === value);
+  return tz ? tz.label : value;
+};
 
 interface ProfileEditFormProps {
   profile: {
@@ -14,6 +56,7 @@ interface ProfileEditFormProps {
     education?: string;
     desires?: string;
     limiting_beliefs?: string;
+    timezone?: string;
     onboarding_status: 'incomplete' | 'complete';
   };
   isLoading: boolean;
@@ -22,6 +65,8 @@ interface ProfileEditFormProps {
 }
 
 export default function ProfileEditForm({ profile, isLoading, onCancel, onSuccess }: ProfileEditFormProps) {
+  const deviceTimezone = getDeviceTimezone();
+
   const [formData, setFormData] = useState<ProfileUpdateData>({
     first_name: profile.first_name || '',
     last_name: profile.last_name || '',
@@ -29,15 +74,21 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
     education: profile.education || '',
     desires: profile.desires || '',
     limiting_beliefs: profile.limiting_beliefs || '',
+    timezone: profile.timezone || deviceTimezone,
   });
 
-  // const updateProfile = useUpdateProfile();
+  const [showTimezonePicker, setShowTimezonePicker] = useState(false);
 
   const handleInputChange = (field: keyof ProfileUpdateData, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleTimezoneSelect = (timezone: string) => {
+    handleInputChange('timezone', timezone);
+    setShowTimezonePicker(false);
   };
 
   return (
@@ -97,6 +148,18 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
                 placeholderTextColor="#708090"
                 testID="profile-edit-education"
               />
+
+              <Text className="text-[#708090] text-sm font-medium mb-1">Timezone</Text>
+              <TouchableOpacity
+                className="bg-[#1A2B5C] rounded-xl p-3 flex-row items-center justify-between"
+                onPress={() => setShowTimezonePicker(true)}
+                testID="profile-edit-timezone-button"
+              >
+                <Text className="text-[#F1F5F9] text-base">
+                  {getTimezoneLabel(formData.timezone || deviceTimezone)}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#708090" />
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -148,6 +211,46 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Timezone Picker Modal */}
+      <Modal
+        visible={showTimezonePicker}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowTimezonePicker(false)}
+      >
+        <Pressable
+          className="flex-1 justify-center items-center bg-black/50"
+          onPress={() => setShowTimezonePicker(false)}
+        >
+          <Pressable
+            className="overflow-hidden w-80 max-h-96 bg-white rounded-2xl"
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View className="px-4 py-3 border-b border-gray-200">
+              <Text className="text-lg font-semibold text-center text-gray-800">
+                Select Timezone
+              </Text>
+            </View>
+            <RNScrollView className="max-h-80">
+              {TIMEZONES.map((tz) => (
+                <TouchableOpacity
+                  key={tz.value}
+                  className={`px-4 py-3 ${formData.timezone === tz.value ? 'bg-[#3B82F6]' : 'bg-white'}`}
+                  onPress={() => handleTimezoneSelect(tz.value)}
+                  testID={`timezone-option-${tz.value}`}
+                >
+                  <Text
+                    className={`text-base ${formData.timezone === tz.value ? 'text-white font-semibold' : 'text-gray-800'}`}
+                  >
+                    {tz.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </RNScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </LinearGradient>
   );
-} 
+}

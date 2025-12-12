@@ -21,7 +21,6 @@
     },
     "android": {
       "package": "com.personalcoach.app",
-      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

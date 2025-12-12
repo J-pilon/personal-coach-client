@@ -83,10 +83,17 @@ export default function ProfileScreen() {
               </Text>
             </View>
 
-            <View>
+            <View className="mb-4">
               <Text className="text-[#708090] text-sm font-medium mb-1">Education</Text>
               <Text className="text-[#E6FAFF] text-base" testID="profile-education">
                 {profile.education || 'Not specified'}
+              </Text>
+            </View>
+
+            <View>
+              <Text className="text-[#708090] text-sm font-medium mb-1">Timezone</Text>
+              <Text className="text-[#E6FAFF] text-base" testID="profile-timezone">
+                {profile.timezone || 'Not specified'}
               </Text>
             </View>
           </View>
