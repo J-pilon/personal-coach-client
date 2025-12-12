@@ -1,9 +1,8 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import React from 'react';
 import { Alert } from 'react-native';
 import HomeScreen from '../../app/(tabs)';
-import * as api from '../../api/tasks';
 
 // Mock the API module
 jest.mock('../../api/tasks');
@@ -269,5 +268,32 @@ describe('HomeScreen', () => {
     // The component doesn't automatically refetch on mutation success
     // It relies on React Query's invalidation mechanism
     expect(mockRefetch).not.toHaveBeenCalled();
+  });
+
+  it('renders the addTaskButton component', async () => {
+    const mockRouter = require('expo-router').router;
+
+    mockUseQuery.mockReturnValue({
+      data: [],
+      isLoading: false,
+      error: null,
+      isError: false,
+      isSuccess: true,
+      isFetching: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <HomeScreen />
+      </QueryClientProvider>
+    );
+
+    const addButton = screen.getByTestId('add-task-button-button')
+
+    fireEvent.press(addButton);
+
+    expect(mockRouter.push).toHaveBeenCalledWith('/addTask');
   });
 }); 
