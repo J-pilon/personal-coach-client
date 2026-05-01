@@ -1,4 +1,5 @@
 import { UpdateTaskParams } from '@/api/tasks';
+import { PRIORITY_OPTIONS, PriorityInput } from '@/components/inputs';
 import { LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
@@ -263,50 +264,16 @@ export default function TaskDetailScreen() {
             <View className="mb-6">
               <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Priority</Text>
               {isEditing ? (
-                <View className="flex-row gap-2">
-                  {[1, 2, 3, 4, 5].map((priority) => (
-                    <Pressable
-                      key={`priority-${priority}`}
-                      onPress={() => handlePriorityChange(priority)}
-                      className={`flex-1 py-3 px-4 rounded-lg border ${taskDetails.priority === priority
-                        ? 'border-[#33CFFF] bg-cyan-400'
-                        : 'border-[#708090] bg-[#13203a]'
-                        }`}
-                      disabled={updateTaskMutation.isPending}
-                    >
-                      <Text
-                        className={`text-center font-medium capitalize ${taskDetails.priority === priority
-                          ? 'text-[#021A40]'
-                          : 'text-[#E6FAFF]'
-                          }`}
-                      >
-                        {priority}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </View>
+                <PriorityInput
+                  value={taskDetails.priority}
+                  onChange={handlePriorityChange}
+                  disabled={updateTaskMutation.isPending}
+                />
               ) : (
-                <View className="flex-row gap-2 px-4 py-3">
-                  {[1, 2, 3, 4, 5].map((priority) => (
-                    <Pressable
-                      key={`priority-${priority}`}
-                      onPress={() => handlePriorityChange(priority)}
-                      className={`flex-1 py-3 px-4 rounded-lg border ${taskDetails.priority === priority
-                        ? 'border-[#33CFFF] bg-cyan-400'
-                        : 'border-[#708090] bg-[#13203a]'
-                        }`}
-                      disabled={updateTaskMutation.isPending}
-                    >
-                      <Text
-                        className={`text-center font-medium capitalize ${taskDetails.priority === priority
-                          ? 'text-[#021A40]'
-                          : 'text-[#E6FAFF]'
-                          }`}
-                      >
-                        {priority}
-                      </Text>
-                    </Pressable>
-                  ))}
+                <View className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]">
+                  <Text className="text-[#F1F5F9] text-base capitalize">
+                    {PRIORITY_OPTIONS.find(p => p.value === task.priority)?.label || task.priority}
+                  </Text>
                 </View>
               )}
             </View>

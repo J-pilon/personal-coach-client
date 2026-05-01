@@ -1,5 +1,6 @@
 import { CreateTaskParams } from '@/api/tasks';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
+import { PriorityInput } from '@/components/inputs';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useCreateTask } from '@/hooks/useTasks';
@@ -86,31 +87,12 @@ export default function AddTaskScreen() {
               testID="add-task-task-description-input"
             />
 
-            <View className="mb-5">
-              <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Priority:</Text>
-              <View className="flex-row gap-2">
-                {([1, 2, 3, 4, 5] as const).map((priority) => (
-                  <Pressable
-                    key={`priority-${priority}`}
-                    onPress={() => handlePriorityChange(priority)}
-                    className={`flex-1 py-2 px-3 rounded-lg border ${taskDetails.priority === priority
-                      ? 'border-cyan-400 bg-cyan-400'
-                      : 'border-[#708090] bg-[#13203a]'
-                      }`}
-                    disabled={createTaskMutation.isPending}
-                  >
-                    <Text
-                      className={`text-center font-medium capitalize ${taskDetails.priority === priority
-                        ? 'text-[#021A40]'
-                        : 'text-[#E6FAFF]'
-                        }`}
-                    >
-                      {priority}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
+            <PriorityInput
+              value={taskDetails.priority}
+              onChange={handlePriorityChange}
+              disabled={createTaskMutation.isPending}
+              showLabel
+            />
 
             <View className="mb-5">
               <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Action Category:</Text>

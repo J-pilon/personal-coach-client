@@ -2,6 +2,7 @@ import { Task } from '@/api/tasks';
 import { AiTaskCard } from '@/components/AiTaskCard';
 import { PrimaryButton } from '@/components/buttons/';
 import { FocusModeScreen } from '@/components/FocusModeScreen';
+import { PRIORITY_OPTIONS } from '@/components/inputs';
 import { LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
@@ -12,6 +13,7 @@ import { useCreateTask, useIncompleteTasks } from '@/hooks/useTasks';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
+
 
 export default function TodaysFocusScreen() {
   const { profile } = useAuth();
@@ -153,6 +155,10 @@ export default function TodaysFocusScreen() {
     return selectedTasks.some(t => t.id === task.id);
   };
 
+  const getPriorityLabel = (priority: number): string => {
+    return PRIORITY_OPTIONS.find(p => p.value === priority)?.label || 'Priority';
+  };
+
   if (isFocusMode) {
     return (
       <FocusModeScreen
@@ -273,7 +279,7 @@ export default function TodaysFocusScreen() {
                           color={task.priority >= 3 ? Colors.accent.primary : Colors.text.muted}
                         />
                         <Text className="ml-1 text-xs text-slate-400" testID={`todays-focus-task-priority-${task.id}`}>
-                          Priority {task.priority}
+                          {getPriorityLabel(task.priority)}
                         </Text>
                       </View>
                     )}
