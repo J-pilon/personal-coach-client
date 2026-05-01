@@ -1,4 +1,5 @@
 import { Task } from '@/api/tasks';
+import { PRIORITY_OPTIONS } from '@/components/inputs';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { Colors } from '@/constants/Colors';
 import { useUpdateTask } from '@/hooks/useTasks';
@@ -140,6 +141,10 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
     onExit();
   };
 
+  const getPriorityLabel = (priority: number): string => {
+    return PRIORITY_OPTIONS.find(p => p.value === priority)?.label || 'Priority';
+  };
+
   if (!currentTask || allTasksCompleted) {
     return (
       <LinearGradient>
@@ -208,7 +213,7 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
                   color={currentTask.priority >= 3 ? Colors.accent.primary : Colors.text.muted}
                 />
                 <Text className="text-sm text-slate-200 ml-1.5" testID="focus-mode-task-priority">
-                  Priority {currentTask.priority}
+                  {getPriorityLabel(currentTask.priority)}
                 </Text>
               </View>
             )}
