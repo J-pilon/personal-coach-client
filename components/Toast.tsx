@@ -1,6 +1,6 @@
+import { Ionicons } from '@expo/vector-icons'
 import React from 'react'
 import { Text, View } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
 import { IconButton } from './buttons'
 
 export type ToastVariant = 'success' | 'error' | 'info'
@@ -31,7 +31,7 @@ export default function Toast({ toast, onDismiss }: ToastProps) {
       testID={`toast-${toast.variant}`}
     >
       <Ionicons name={icon} size={22} color={iconColor} />
-      <Text className="flex-1 ml-3 text-white text-base font-medium" testID="toast-message">
+      <Text className="flex-1 ml-3 text-base font-medium text-white" testID="toast-message">
         {toast.message}
       </Text>
       <IconButton
@@ -39,7 +39,7 @@ export default function Toast({ toast, onDismiss }: ToastProps) {
         onPress={() => onDismiss(toast.id)}
         accessibilityLabel="Dismiss notification"
         testID="toast-dismiss"
-        className="ml-2 p-1"
+        className="p-1 ml-2"
       />
     </View>
   )

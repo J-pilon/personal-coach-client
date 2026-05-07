@@ -80,7 +80,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
       <View
         pointerEvents="box-none"
-        className="absolute top-0 left-0 right-0 pt-2"
+        className="absolute right-0 left-0 top-16 pt-2"
         testID="toast-stack"
       >
         {toasts.map((toast) => (
@@ -92,10 +92,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 }
 
 const NOOP_TOAST: ToastApi = {
-  success: () => {},
-  error: () => {},
-  info: () => {},
-  dismiss: () => {},
+  success: () => { },
+  error: () => { },
+  info: () => { },
+  dismiss: () => { },
 }
 
 export function useToast(): ToastApi {
