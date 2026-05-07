@@ -1,11 +1,11 @@
 import LinearGradient from '@/components/ui/LinearGradient';
+import { useToast } from '@/components/ToastManager';
 import ScrollView from '@/components/util/ScrollView';
 import { useAuth } from '@/hooks/useAuth';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Text,
@@ -20,20 +20,21 @@ export default function SignupScreen() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { signUp } = useAuth();
+  const toast = useToast();
 
   const handleSignUp = async () => {
     if (!email || !password || !passwordConfirmation) {
-      Alert.alert('Error', 'Please fill in all fields');
+      toast.error('Please fill in all fields');
       return;
     }
 
     if (password !== passwordConfirmation) {
-      Alert.alert('Error', 'Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long');
+      toast.error('Password must be at least 6 characters long');
       return;
     }
 
@@ -42,7 +43,7 @@ export default function SignupScreen() {
       await signUp(email, password, passwordConfirmation);
       router.replace('/(tabs)');
     } catch (error) {
-      Alert.alert('Sign Up Failed', error instanceof Error ? error.message : 'An error occurred');
+      toast.error(error instanceof Error ? error.message : 'Sign up failed');
     } finally {
       setIsLoading(false);
     }

@@ -21,6 +21,18 @@ jest.mock('expo-router', () => ({
   },
 }));
 
+// Mock toast
+const mockToastError = jest.fn();
+const mockToastSuccess = jest.fn();
+jest.mock('../../components/ToastManager', () => ({
+  useToast: () => ({
+    error: mockToastError,
+    success: mockToastSuccess,
+    info: jest.fn(),
+    dismiss: jest.fn(),
+  }),
+}));
+
 // Mock the API request
 jest.mock('../../utils/apiRequest', () => ({
   apiPost: jest.fn(),
@@ -249,7 +261,7 @@ describe('SettingsScreen', () => {
       fireEvent.press(saveButton);
 
       await waitFor(() => {
-        expect(Alert.alert).toHaveBeenCalledWith('Error', 'Please enter a valid API key');
+        expect(mockToastError).toHaveBeenCalledWith('Please enter a valid API key');
       });
     });
 
@@ -334,7 +346,7 @@ describe('SettingsScreen', () => {
       fireEvent.press(saveButton);
 
       await waitFor(() => {
-        expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to save API key. Please try again.');
+        expect(mockToastError).toHaveBeenCalledWith('Failed to save API key. Please try again.');
       });
     });
 
@@ -355,8 +367,8 @@ describe('SettingsScreen', () => {
       clearAction?.onPress();
 
       await waitFor(() => {
-        expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to clear API key');
+        expect(mockToastError).toHaveBeenCalledWith('Failed to clear API key');
       });
     });
   });
-}); 
+});

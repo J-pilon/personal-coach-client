@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { Alert } from 'react-native';
 import LoginScreen from '../../app/auth/login';
 import { AuthProvider } from '../../hooks/useAuth';
 
@@ -12,8 +11,16 @@ jest.mock('expo-router', () => ({
   },
 }));
 
-// Mock Alert
-jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+// Mock toast
+const mockToastError = jest.fn();
+jest.mock('../../components/ToastManager', () => ({
+  useToast: () => ({
+    error: mockToastError,
+    success: jest.fn(),
+    info: jest.fn(),
+    dismiss: jest.fn(),
+  }),
+}));
 
 // Mock the useAuth hook
 const mockSignIn = jest.fn();
@@ -65,7 +72,7 @@ describe('LoginScreen', () => {
     fireEvent.press(signInButton);
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Please fill in all fields');
+      expect(mockToastError).toHaveBeenCalledWith('Please fill in all fields');
     });
   });
 
@@ -110,7 +117,7 @@ describe('LoginScreen', () => {
     fireEvent.press(signInButton);
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Sign In Failed', errorMessage);
+      expect(mockToastError).toHaveBeenCalledWith(errorMessage);
     });
   });
 

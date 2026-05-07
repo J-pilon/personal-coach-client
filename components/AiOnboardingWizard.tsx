@@ -1,4 +1,5 @@
 import { Profile, ProfileUpdateData } from '@/api/users';
+import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useAiResponseHelpers } from '@/hooks/useAi';
@@ -7,7 +8,7 @@ import { useCreateMultipleSmartGoals } from '@/hooks/useSmartGoals';
 import { useCompleteOnboarding, useProfile, useUpdateProfile } from '@/hooks/useUser';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AiResponseStep, ConfirmationStep, GoalDescriptionStep, ProfileDetailsStep } from './AiOnboardingWizardSteps';
 import ProgressBar from './ProgressBar';
@@ -53,6 +54,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
   const createMultipleSmartGoals = useCreateMultipleSmartGoals();
   const completeOnboarding = useCompleteOnboarding()
   const { isSmartGoalResponse, formatMultiPeriodSmartGoalResponse } = useAiResponseHelpers();
+  const toast = useToast();
 
   // Handle completed job results
   useEffect(() => {
@@ -98,7 +100,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
 
   const handleSubmitProfileDetails = async () => {
     if (!profileData.first_name?.trim() || !profileData.last_name?.trim() || !profileData.work_role?.trim() || !profileData.education?.trim()) {
-      Alert.alert('Missing Information', 'Please fill in all required fields (First Name, Last Name, Work Role, and Education).');
+      toast.error('Please fill in all required fields (First Name, Last Name, Work Role, and Education).');
       return;
     }
 
@@ -112,7 +114,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
       await updateProfile.mutateAsync(profileData);
       setCurrentStepIndex(1);
     } catch {
-      Alert.alert('Error', 'Failed to update your profile details. Please try again.');
+      // apiRequest interceptor surfaces the error toast
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +122,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
 
   const handleSubmitGoalDescription = async () => {
     if (!goalDescription.trim()) {
-      Alert.alert('Missing Description', 'Please describe what you want to achieve.');
+      toast.error('Please describe what you want to achieve.');
       return;
     }
 
@@ -129,13 +131,13 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
       await aiProxy.processAiRequest(goalDescription.trim());
       setCurrentStepIndex(2);
     } catch {
-      Alert.alert('Error', 'Failed to generate your SMART goal. Please try again.');
+      // apiRequest interceptor surfaces the error toast
     }
   };
 
   const handleConfirmGoal = async () => {
     if (!aiResponse || !isSmartGoalResponse(aiResponse)) {
-      Alert.alert('Error', 'Invalid goal data. Please try again.');
+      toast.error('Invalid goal data. Please try again.');
       return;
     }
 
@@ -176,7 +178,7 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
       onComplete();
       router.replace('/(tabs)');
     } catch {
-      Alert.alert('Error', 'Failed to save your goals. Please try again.');
+      // apiRequest interceptor surfaces the error toast
     }
   };
 

@@ -34,7 +34,7 @@ export default function ProfileScreen() {
     try {
       await updateProfile.mutateAsync(formData);
     } catch {
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+      // apiRequest interceptor surfaces the error toast
     } finally {
       setEditing(false);
     }

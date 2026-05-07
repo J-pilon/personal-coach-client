@@ -1,6 +1,7 @@
 import { UpdateTaskParams } from '@/api/tasks';
 import { PRIORITY_OPTIONS, PriorityInput } from '@/components/inputs';
 import { LoadingSpinner } from '@/components/loading';
+import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useDeleteTask, useTask, useUpdateTask } from '@/hooks/useTasks';
@@ -22,6 +23,7 @@ export default function TaskDetailScreen() {
 
   const updateTaskMutation = useUpdateTask();
   const deleteTaskMutation = useDeleteTask();
+  const toast = useToast();
 
   // Fetch task details
   const { data: task, isLoading, error, refetch } = useTask(taskId);
@@ -40,7 +42,7 @@ export default function TaskDetailScreen() {
 
   const handleSave = () => {
     if (!taskDetails.title.trim()) {
-      Alert.alert('Error', 'Title is required');
+      toast.error('Title is required');
       return;
     }
 
@@ -56,10 +58,7 @@ export default function TaskDetailScreen() {
       {
         onSuccess: () => {
           setIsEditing(false);
-          Alert.alert('Success', 'Task updated successfully');
-        },
-        onError: (error) => {
-          Alert.alert('Error', error instanceof Error ? error.message : 'Failed to update task');
+          toast.success('Task updated successfully');
         },
       }
     );
@@ -78,9 +77,6 @@ export default function TaskDetailScreen() {
             deleteTaskMutation.mutate(taskId, {
               onSuccess: () => {
                 router.back();
-              },
-              onError: (error) => {
-                Alert.alert('Error', error instanceof Error ? error.message : 'Failed to delete task');
               },
             });
           },

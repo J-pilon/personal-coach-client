@@ -1,5 +1,4 @@
 import { act, renderHook } from '@testing-library/react-native';
-import { Alert } from 'react-native';
 import { useAiProxy } from '../../hooks/useAiProxy';
 import { useGoalCreation } from '../../hooks/useGoalCreation';
 import { useCreateSmartGoal } from '../../hooks/useSmartGoals';
@@ -11,6 +10,18 @@ jest.mock('expo-router', () => ({
   router: {
     back: jest.fn()
   }
+}));
+
+// Mock toast
+const mockToastError = jest.fn();
+const mockToastSuccess = jest.fn();
+jest.mock('../../components/ToastManager', () => ({
+  useToast: () => ({
+    error: mockToastError,
+    success: mockToastSuccess,
+    info: jest.fn(),
+    dismiss: jest.fn(),
+  }),
 }));
 
 const mockUseAiProxy = useAiProxy as jest.MockedFunction<typeof useAiProxy>;
@@ -54,8 +65,6 @@ describe('useGoalCreation', () => {
       mutate: jest.fn()
     });
 
-    // Mock Alert.alert
-    jest.spyOn(Alert, 'alert').mockImplementation(() => { });
   });
 
   it('should initialize with default state', () => {
@@ -126,7 +135,7 @@ describe('useGoalCreation', () => {
         await result.current.handleCreateGoal();
       });
 
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Please enter a goal description');
+      expect(mockToastError).toHaveBeenCalledWith('Please enter a goal description');
       expect(mockProcessAiRequest).not.toHaveBeenCalled();
     });
 
@@ -141,11 +150,11 @@ describe('useGoalCreation', () => {
         await result.current.handleCreateGoal();
       });
 
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Please select a timeframe');
+      expect(mockToastError).toHaveBeenCalledWith('Please select a timeframe');
       expect(mockProcessAiRequest).not.toHaveBeenCalled();
     });
 
-    it('should show error alert when AI request fails', async () => {
+    it('should not throw when AI request fails (interceptor surfaces toast)', async () => {
       const { result } = renderHook(() => useGoalCreation());
 
       mockProcessAiRequest.mockRejectedValue(new Error('AI request failed'));
@@ -159,7 +168,8 @@ describe('useGoalCreation', () => {
         await result.current.handleCreateGoal();
       });
 
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to create goal. Please try again.');
+      expect(mockProcessAiRequest).toHaveBeenCalled();
+      expect(result.current.showConfirmation).toBe(false);
     });
   });
 
@@ -212,14 +222,14 @@ describe('useGoalCreation', () => {
       });
     });
 
-    it('should show error alert when AI response is missing', async () => {
+    it('should show error toast when AI response is missing', async () => {
       const { result } = renderHook(() => useGoalCreation());
 
       await act(async () => {
         await result.current.handleConfirmGoal();
       });
 
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to save goal. Please try again.');
+      expect(mockToastError).toHaveBeenCalledWith('No goal details available');
       expect(mockCreateSmartGoal).not.toHaveBeenCalled();
     });
   });
