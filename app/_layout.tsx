@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import '../global.css';
 
 import SplashScreen from '@/components/SplashScreen';
+import { ToastProvider } from '@/components/ToastManager';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { NotificationProvider } from '@/hooks/useNotifications';
@@ -68,71 +69,73 @@ function AppContent() {
             : ["top", "left", "right"]
           }
         >
-          <Stack>
-            {/* Define all screens at layout level */}
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="profile/index"
-              options={{
-                headerShown: true,
-                headerTitle: "Profile",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="smartGoals/index"
-              options={{
-                headerShown: true,
-                headerTitle: "Goals",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="taskDetail/[id]"
-              options={{
-                headerShown: true,
-                headerTitle: "Task Details",
-                headerBackTitle: "Tasks"
-              }} />
-            <Stack.Screen
-              name="addTask/index"
-              options={{
-                headerShown: true,
-                headerTitle: "New Task",
-                headerBackTitle: "Tasks"
-              }} />
-            <Stack.Screen
-              name="about/index"
-              options={{
-                headerShown: true,
-                headerTitle: "How to Use",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="support-feedback/index"
-              options={{
-                headerShown: true,
-                headerTitle: "Support & Feedback",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="settings/index"
-              options={{
-                headerShown: true,
-                headerTitle: "Settings",
-                headerBackTitle: "Menu"
-              }} />
-            <Stack.Screen
-              name="addGoal/index"
-              options={{
-                headerShown: true,
-                headerTitle: "New Goal",
-                headerBackTitle: "SMART Goals"
-              }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
+          <ToastProvider>
+            <Stack>
+              {/* Define all screens at layout level */}
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+              <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+              <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="profile/index"
+                options={{
+                  headerShown: true,
+                  headerTitle: "Profile",
+                  headerBackTitle: "Menu"
+                }} />
+              <Stack.Screen
+                name="smartGoals/index"
+                options={{
+                  headerShown: true,
+                  headerTitle: "Goals",
+                  headerBackTitle: "Menu"
+                }} />
+              <Stack.Screen
+                name="taskDetail/[id]"
+                options={{
+                  headerShown: true,
+                  headerTitle: "Task Details",
+                  headerBackTitle: "Tasks"
+                }} />
+              <Stack.Screen
+                name="addTask/index"
+                options={{
+                  headerShown: true,
+                  headerTitle: "New Task",
+                  headerBackTitle: "Tasks"
+                }} />
+              <Stack.Screen
+                name="about/index"
+                options={{
+                  headerShown: true,
+                  headerTitle: "How to Use",
+                  headerBackTitle: "Menu"
+                }} />
+              <Stack.Screen
+                name="support-feedback/index"
+                options={{
+                  headerShown: true,
+                  headerTitle: "Support & Feedback",
+                  headerBackTitle: "Menu"
+                }} />
+              <Stack.Screen
+                name="settings/index"
+                options={{
+                  headerShown: true,
+                  headerTitle: "Settings",
+                  headerBackTitle: "Menu"
+                }} />
+              <Stack.Screen
+                name="addGoal/index"
+                options={{
+                  headerShown: true,
+                  headerTitle: "New Goal",
+                  headerBackTitle: "SMART Goals"
+                }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </ToastProvider>
         </SafeAreaView>
       </ThemeProvider>
     </QueryClientProvider>
