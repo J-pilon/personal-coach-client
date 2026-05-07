@@ -42,6 +42,10 @@ export default function LoginScreen() {
     router.push('/auth/signup');
   };
 
+  const handleForgotPassword = () => {
+    router.push('/auth/forgot-password');
+  };
+
   return (
     <LinearGradient>
       <KeyboardAvoidingView
@@ -109,6 +113,12 @@ export default function LoginScreen() {
                     shadowOffset: { width: 0, height: 3 }
                   }}
                 />
+              </View>
+
+              <View className="items-end mt-3">
+                <TouchableOpacity testID="login-forgot-password-link" onPress={handleForgotPassword}>
+                  <Text className="text-sm font-semibold text-cyan-400">Forgot password?</Text>
+                </TouchableOpacity>
               </View>
             </View>
 

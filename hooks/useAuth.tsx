@@ -34,6 +34,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, passwordConfirmation: string) => Promise<void>;
   signOut: () => Promise<void>;
   clearAuth: () => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
+  resetPassword: (token: string, password: string, passwordConfirmation: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -197,6 +199,64 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const requestPasswordReset = async (email: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user: { email }
+        }),
+      });
+
+      if (!response.ok) {
+        try {
+          const errorData = await response.json();
+          throw new Error(errorData.status?.message || 'Could not send reset instructions');
+        } catch (parseError) {
+          throw new Error('Could not send reset instructions. Please try again.');
+        }
+      }
+    } catch (error) {
+      console.error('Request password reset error:', error);
+      throw error;
+    }
+  };
+
+  const resetPassword = async (token: string, password: string, passwordConfirmation: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user: {
+            reset_password_token: token,
+            password,
+            password_confirmation: passwordConfirmation
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        let message = 'Password reset failed. Please try again.';
+        try {
+          const errorData = await response.json();
+          if (errorData?.status?.message) message = errorData.status.message;
+        } catch (parseError) {
+          // keep default message
+        }
+        throw new Error(message);
+      }
+    } catch (error) {
+      console.error('Reset password error:', error);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
     try {
       if (token) {
@@ -225,6 +285,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     signOut,
     clearAuth,
+    requestPasswordReset,
+    resetPassword,
   };
 
   return (
