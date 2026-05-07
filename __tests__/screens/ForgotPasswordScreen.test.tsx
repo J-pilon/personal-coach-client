@@ -13,10 +13,11 @@ jest.mock('expo-router', () => ({
 }));
 
 const mockToastError = jest.fn();
+const mockToastSuccess = jest.fn();
 jest.mock('../../components/ToastManager', () => ({
   useToast: () => ({
     error: mockToastError,
-    success: jest.fn(),
+    success: mockToastSuccess,
     info: jest.fn(),
     dismiss: jest.fn(),
   }),
@@ -70,7 +71,7 @@ describe('ForgotPasswordScreen', () => {
     expect(mockRequestPasswordReset).not.toHaveBeenCalled();
   });
 
-  it('calls requestPasswordReset and shows the success state on success', async () => {
+  it('navigates to the confirm screen with the email param on success', async () => {
     mockRequestPasswordReset.mockResolvedValue(undefined);
     renderScreen();
 
@@ -82,11 +83,12 @@ describe('ForgotPasswordScreen', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId('forgot-password-title').props.children).toBe('Check Your Email');
+      expect(mockToastSuccess).toHaveBeenCalledWith('If that email is registered, we’ve sent a reset code.');
+      expect(mockRouterReplace).toHaveBeenCalledWith({
+        pathname: '/auth/password-reset-confirm',
+        params: { email: 'user@example.com' },
+      });
     });
-
-    expect(screen.queryByTestId('forgot-password-submit-button')).toBeNull();
-    expect(screen.queryByTestId('forgot-password-email-input')).toBeNull();
   });
 
   it('surfaces the server error message via the toast on failure', async () => {
@@ -99,9 +101,7 @@ describe('ForgotPasswordScreen', () => {
     await waitFor(() => {
       expect(mockToastError).toHaveBeenCalledWith('Service unavailable');
     });
-
-    // Stays on the form, does not flip to the success state
-    expect(screen.getByTestId('forgot-password-email-input')).toBeTruthy();
+    expect(mockRouterReplace).not.toHaveBeenCalled();
   });
 
   it('navigates back to login when the cancel link is pressed', () => {
