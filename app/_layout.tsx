@@ -76,6 +76,8 @@ function AppContent() {
               <Stack.Screen name="onboarding" options={{ headerShown: false }} />
               <Stack.Screen name="auth/login" options={{ headerShown: false }} />
               <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
+              <Stack.Screen name="auth/forgot-password" options={{ headerShown: false }} />
+              <Stack.Screen name="auth/password-reset-confirm" options={{ headerShown: false }} />
               <Stack.Screen
                 name="profile/index"
                 options={{
