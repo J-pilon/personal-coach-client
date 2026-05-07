@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { Alert } from 'react-native';
 import SignupScreen from '../../app/auth/signup';
 import { AuthProvider } from '../../hooks/useAuth';
 
@@ -12,8 +11,17 @@ jest.mock('expo-router', () => ({
   },
 }));
 
-// Mock Alert
-jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+// Mock toast
+const mockToastError = jest.fn();
+const mockToastSuccess = jest.fn();
+jest.mock('../../components/ToastManager', () => ({
+  useToast: () => ({
+    error: mockToastError,
+    success: mockToastSuccess,
+    info: jest.fn(),
+    dismiss: jest.fn(),
+  }),
+}));
 
 // Mock the useAuth hook
 const mockSignIn = jest.fn();
@@ -66,7 +74,7 @@ describe('SignupScreen', () => {
     fireEvent.press(signupButton);
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Please fill in all fields');
+      expect(mockToastError).toHaveBeenCalledWith('Please fill in all fields');
     });
   });
 
@@ -88,7 +96,7 @@ describe('SignupScreen', () => {
     fireEvent.press(signupButton);
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Passwords do not match');
+      expect(mockToastError).toHaveBeenCalledWith('Passwords do not match');
     });
   });
 
@@ -110,7 +118,7 @@ describe('SignupScreen', () => {
     fireEvent.press(signupButton);
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Password must be at least 6 characters long');
+      expect(mockToastError).toHaveBeenCalledWith('Password must be at least 6 characters long');
     });
   });
 
@@ -159,7 +167,7 @@ describe('SignupScreen', () => {
     fireEvent.press(signupButton);
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Sign Up Failed', errorMessage);
+      expect(mockToastError).toHaveBeenCalledWith(errorMessage);
     });
   });
 
@@ -269,7 +277,7 @@ describe('SignupScreen', () => {
     fireEvent.press(signupButton);
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Please fill in all fields');
+      expect(mockToastError).toHaveBeenCalledWith('Please fill in all fields');
     });
   });
-}); 
+});

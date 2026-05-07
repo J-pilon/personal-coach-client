@@ -1,4 +1,5 @@
 import { LoadingSkeleton, LoadingSpinner } from '@/components/loading';
+import { useToast } from '@/components/ToastManager';
 import { useAiSettings } from '@/hooks/useAiSettings';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
@@ -15,6 +16,7 @@ const OpenAIApiKeyInput = () => {
     isLoading,
     error
   } = useAiSettings();
+  const toast = useToast();
 
   const [inputKey, setInputKey] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -40,7 +42,7 @@ const OpenAIApiKeyInput = () => {
 
   const handleSaveKey = async () => {
     if (!inputKey.trim()) {
-      Alert.alert('Error', 'Please enter a valid API key');
+      toast.error('Please enter a valid API key');
       return;
     }
 
@@ -48,9 +50,9 @@ const OpenAIApiKeyInput = () => {
       await setApiKey(inputKey.trim());
       setStoredApiKey(inputKey.trim());
       setIsEditing(false);
-      Alert.alert('Success', 'Your API key has been saved securely');
+      toast.success('Your API key has been saved securely');
     } catch {
-      Alert.alert('Error', 'Failed to save API key. Please try again.');
+      toast.error('Failed to save API key. Please try again.');
     }
   }
 
@@ -68,9 +70,9 @@ const OpenAIApiKeyInput = () => {
               await clearApiKey();
               setStoredApiKey(null);
               setInputKey('');
-              Alert.alert('Success', 'API key cleared');
+              toast.success('API key cleared');
             } catch {
-              Alert.alert('Error', 'Failed to clear API key');
+              toast.error('Failed to clear API key');
             }
           },
         },

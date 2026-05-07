@@ -4,6 +4,7 @@ import { PrimaryButton } from '@/components/buttons/';
 import { FocusModeScreen } from '@/components/FocusModeScreen';
 import { PRIORITY_OPTIONS } from '@/components/inputs';
 import { LoadingSpinner } from '@/components/loading';
+import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { Colors } from '@/constants/Colors';
@@ -12,13 +13,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCreateTask, useIncompleteTasks } from '@/hooks/useTasks';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 
 export default function TodaysFocusScreen() {
   const { profile } = useAuth();
   const { data: incompleteTasks = [] } = useIncompleteTasks();
   const createTaskMutation = useCreateTask();
+  const toast = useToast();
 
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
   const [isFocusMode, setIsFocusMode] = useState(false);
@@ -54,14 +56,14 @@ export default function TodaysFocusScreen() {
 
   const handleAssistMe = async () => {
     if (!profile?.id) {
-      Alert.alert('Error', 'Profile not found');
+      toast.error('Profile not found');
       return;
     }
 
     try {
       await generateSuggestions();
     } catch {
-      Alert.alert('Error', 'Failed to generate AI suggestions');
+      // apiRequest interceptor surfaces the error toast
     }
   };
 
@@ -86,7 +88,7 @@ export default function TodaysFocusScreen() {
       }
       dismissSuggestion(suggestion);
     } catch {
-      Alert.alert('Error', 'Failed to save task');
+      // apiRequest interceptor surfaces the error toast
     } finally {
       // Clear loading state for this suggestion
       setLoadingSuggestions(prev => {
@@ -107,7 +109,7 @@ export default function TodaysFocusScreen() {
       });
       dismissSuggestion(suggestion);
     } catch {
-      Alert.alert('Error', 'Failed to save task for later');
+      // apiRequest interceptor surfaces the error toast
     }
   };
 
@@ -122,7 +124,7 @@ export default function TodaysFocusScreen() {
 
   const handleEnterFocusMode = () => {
     if (selectedTasks.length === 0) {
-      Alert.alert('No Tasks Selected', 'Please select at least one task to enter focus mode.');
+      toast.error('Please select at least one task to enter focus mode.');
       return;
     }
     setIsFocusMode(true);

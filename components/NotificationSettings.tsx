@@ -1,7 +1,7 @@
 import { useNotificationPreferences } from '@/hooks/useNotificationPreferences';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { LoadingSkeleton } from './loading';
 
 const HOURS = [
@@ -79,10 +79,9 @@ const NotificationSettings = () => {
     try {
       await updatePreferences({ push_enabled: value });
     } catch {
-      // Revert on error
+      // Revert on error — apiRequest interceptor surfaces the toast
       setPushEnabled(!value);
       setDailyReminderEnabled(!value);
-      Alert.alert('Error', 'Failed to update notification preferences');
     }
   };
 
@@ -95,9 +94,9 @@ const NotificationSettings = () => {
       try {
         await updatePreferences({ push_enabled: true });
       } catch {
+        // Revert on error — apiRequest interceptor surfaces the toast
         setPushEnabled(false);
         setDailyReminderEnabled(false);
-        Alert.alert('Error', 'Failed to update notification preferences');
       }
     }
   };
@@ -113,10 +112,9 @@ const NotificationSettings = () => {
       const timeString = formatTimeForAPI(hour, period);
       await updatePreferences({ preferred_time: timeString });
     } catch {
-      // Revert on error
+      // Revert on error — apiRequest interceptor surfaces the toast
       setSelectedHour(prevHour);
       setSelectedPeriod(prevPeriod);
-      Alert.alert('Error', 'Failed to update reminder time');
     }
   };
 

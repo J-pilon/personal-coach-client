@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert } from 'react-native';
+import { useToast } from '../components/ToastManager';
 import {
   formatTimeframeForAiResponse,
   getServerTimeframe,
@@ -30,6 +30,7 @@ export interface GoalCreationActions {
 export const useGoalCreation = (): GoalCreationActions & GoalCreationState => {
   const { mutateAsync: createSmartGoal } = useCreateSmartGoal();
   const { processAiRequest, isLoading, aiResponse } = useAiProxy();
+  const toast = useToast();
 
   const [goalDescription, setGoalDescription] = useState('');
   const [selectedTimeframe, setSelectedTimeframe] = useState('');
@@ -38,15 +39,15 @@ export const useGoalCreation = (): GoalCreationActions & GoalCreationState => {
   const handleCreateGoal = async (): Promise<void> => {
     const validation = validateGoalData(goalDescription, selectedTimeframe);
     if (!validation.isValid) {
-      Alert.alert('Error', validation.errorMessage);
+      toast.error(validation.errorMessage ?? 'Invalid goal data');
       return;
     }
 
     try {
       await processAiRequest(goalDescription, selectedTimeframe);
       setShowConfirmation(true);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to create goal. Please try again.');
+    } catch {
+      // apiRequest interceptor surfaces the error toast
     }
   };
 
@@ -70,18 +71,13 @@ export const useGoalCreation = (): GoalCreationActions & GoalCreationState => {
         time_bound: formattedResponse.time_bound
       });
 
-      Alert.alert(
-        'Success!',
-        'Your SMART goal has been created successfully.',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.back()
-          }
-        ]
-      );
+      toast.success('Your SMART goal has been created successfully.');
+      router.back();
     } catch (error) {
-      Alert.alert('Error', 'Failed to save goal. Please try again.');
+      // apiRequest interceptor surfaces API error toasts; surface non-API failures (e.g., missing aiResponse)
+      if (error instanceof Error && error.message === 'No goal details available') {
+        toast.error(error.message);
+      }
     }
   };
 

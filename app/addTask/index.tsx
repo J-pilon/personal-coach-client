@@ -6,7 +6,7 @@ import ScrollView from '@/components/util/ScrollView';
 import { useCreateTask } from '@/hooks/useTasks';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 
 export default function AddTaskScreen() {
   const [taskDetails, setTaskDetails] = useState({
@@ -32,9 +32,6 @@ export default function AddTaskScreen() {
         onSuccess: () => {
           // Navigate back to home screen
           router.push('/(tabs)');
-        },
-        onError: (error) => {
-          Alert.alert('Error', error instanceof Error ? error.message : 'Failed to create task');
         },
       });
     }

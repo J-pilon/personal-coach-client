@@ -179,12 +179,7 @@ describe('HomeScreen', () => {
     fireEvent.press(completeButton);
 
     await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledWith(
-        { id: 1, completed: true },
-        expect.objectContaining({
-          onError: expect.any(Function),
-        })
-      );
+      expect(mockMutate).toHaveBeenCalledWith({ id: 1, completed: true });
     });
   });
 

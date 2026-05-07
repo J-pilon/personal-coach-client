@@ -5,7 +5,7 @@ import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useTasks, useToggleTaskCompletion } from '@/hooks/useTasks';
 import React, { useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 export default function HomeScreen() {
   const { data: tasks = [], isLoading, error, refetch } = useTasks();
@@ -26,15 +26,7 @@ export default function HomeScreen() {
   });
 
   const handleToggle = async (taskId: number, completed: boolean) => {
-    toggleTaskMutation.mutate(
-      { id: taskId, completed },
-      {
-        onError: (error) => {
-          Alert.alert('Error', error instanceof Error ? error.message : 'Failed to update task');
-        },
-      }
-    );
-
+    toggleTaskMutation.mutate({ id: taskId, completed });
   };
 
   const toggleAccordion = (category: string) => {

@@ -1,3 +1,4 @@
+import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { useAuth } from '@/hooks/useAuth';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +15,7 @@ interface MenuItem {
 
 export default function MenuScreen() {
   const { signOut } = useAuth();
+  const toast = useToast();
 
   const handleLogout = () => {
     Alert.alert(
@@ -32,7 +34,7 @@ export default function MenuScreen() {
               await signOut();
               router.replace('/auth/login');
             } catch {
-              Alert.alert('Error', 'Failed to sign out');
+              toast.error('Failed to sign out');
             }
           },
         },

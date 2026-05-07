@@ -1,4 +1,5 @@
 import { createTicket, DiagnosticsData, TicketData } from '@/api/tickets';
+import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useAuth } from '@/hooks/useAuth';
@@ -7,7 +8,7 @@ import * as Application from 'expo-application';
 import * as Device from 'expo-device';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 
 type TicketKind = 'bug' | 'feedback';
 
@@ -19,6 +20,7 @@ interface FormData {
 
 export default function SupportFeedbackScreen() {
   const { user } = useAuth();
+  const toast = useToast();
   const [selectedKind, setSelectedKind] = useState<TicketKind>('bug');
   const [formData, setFormData] = useState<FormData>({
     kind: 'bug',
@@ -48,7 +50,7 @@ export default function SupportFeedbackScreen() {
 
   const handleSubmit = async () => {
     if (!formData.title.trim() || !formData.description.trim()) {
-      Alert.alert('Missing Information', 'Please fill in both title and description.');
+      toast.error('Please fill in both title and description.');
       return;
     }
 
@@ -65,18 +67,10 @@ export default function SupportFeedbackScreen() {
       const diagnostics = getDiagnostics();
       await createTicket(ticketData, diagnostics);
 
-      Alert.alert(
-        'Thank You!',
-        'Your submission has been received. We\'ll review it and get back to you soon.',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.back()
-          }
-        ]
-      );
+      toast.success('Thank you! Your submission has been received.');
+      router.back();
     } catch {
-      Alert.alert('Error', 'Failed to submit your request. Please try again.');
+      // apiRequest interceptor surfaces the error toast
     } finally {
       setIsSubmitting(false);
     }

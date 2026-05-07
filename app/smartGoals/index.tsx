@@ -1,6 +1,7 @@
 import AiOnboardingWizard from '@/components/AiOnboardingWizard';
 import { PrimaryButton } from '@/components/buttons/';
 import { LoadingSpinner } from '@/components/loading';
+import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useSmartGoals } from '@/hooks/useSmartGoals';
@@ -8,12 +9,13 @@ import { useProfile } from '@/hooks/useUser';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 export default function SmartGoalsScreen() {
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: goals, isLoading: goalsLoading, error } = useSmartGoals();
   const [showWizard, setShowWizard] = useState(false);
+  const toast = useToast();
 
   const handleStartOnboarding = () => {
     setShowWizard(true);
@@ -183,7 +185,7 @@ export default function SmartGoalsScreen() {
         className="border-2 border-[#33CFFF] rounded-xl py-3 px-4 items-center"
         onPress={() => {
           // TODO: Navigate to edit goal screen
-          Alert.alert('Edit Goal', 'Edit functionality coming soon!');
+          toast.info('Edit functionality coming soon!');
         }}
       >
         <Text className="text-[#33CFFF] font-semibold text-base">Edit Goal</Text>
