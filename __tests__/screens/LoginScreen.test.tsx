@@ -41,6 +41,19 @@ jest.mock('../../hooks/useAuth', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+const fillForm = (email: string, password: string) => {
+  fireEvent.changeText(screen.getByTestId('login-email-input'), email);
+  fireEvent.changeText(screen.getByTestId('login-password-input'), password);
+};
+
+const waitForButtonEnabled = async () => {
+  const button = screen.getByTestId('login-signin-button');
+  await waitFor(() => {
+    expect(button.props.accessibilityState?.disabled).toBe(false);
+  });
+  return button;
+};
+
 describe('LoginScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -61,7 +74,7 @@ describe('LoginScreen', () => {
     expect(screen.getByTestId('login-signup-link')).toBeTruthy();
   });
 
-  it('shows validation error when fields are empty', async () => {
+  it('keeps the submit button disabled while fields are empty', () => {
     render(
       <AuthProvider>
         <LoginScreen />
@@ -69,11 +82,9 @@ describe('LoginScreen', () => {
     );
 
     const signInButton = screen.getByTestId('login-signin-button');
+    expect(signInButton.props.accessibilityState?.disabled).toBe(true);
     fireEvent.press(signInButton);
-
-    await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('Please fill in all fields');
-    });
+    expect(mockSignIn).not.toHaveBeenCalled();
   });
 
   it('handles successful sign in', async () => {
@@ -85,12 +96,8 @@ describe('LoginScreen', () => {
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('login-email-input');
-    const passwordInput = screen.getByTestId('login-password-input');
-    const signInButton = screen.getByTestId('login-signin-button');
-
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, 'password123');
+    fillForm('test@example.com', 'password123');
+    const signInButton = await waitForButtonEnabled();
     fireEvent.press(signInButton);
 
     await waitFor(() => {
@@ -108,12 +115,8 @@ describe('LoginScreen', () => {
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('login-email-input');
-    const passwordInput = screen.getByTestId('login-password-input');
-    const signInButton = screen.getByTestId('login-signin-button');
-
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, 'wrongpassword');
+    fillForm('test@example.com', 'wrongpassword');
+    const signInButton = await waitForButtonEnabled();
     fireEvent.press(signInButton);
 
     await waitFor(() => {
@@ -145,15 +148,10 @@ describe('LoginScreen', () => {
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('login-email-input');
-    const passwordInput = screen.getByTestId('login-password-input');
-    const signInButton = screen.getByTestId('login-signin-button');
-
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, 'password123');
+    fillForm('test@example.com', 'password123');
+    const signInButton = await waitForButtonEnabled();
     fireEvent.press(signInButton);
 
-    // Check that loading indicator appears
     await waitFor(() => {
       expect(screen.getByTestId('login-loading-indicator')).toBeTruthy();
     });
@@ -168,39 +166,27 @@ describe('LoginScreen', () => {
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('login-email-input');
-    const passwordInput = screen.getByTestId('login-password-input');
-    const signInButton = screen.getByTestId('login-signin-button');
-
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, 'password123');
+    fillForm('test@example.com', 'password123');
+    const signInButton = await waitForButtonEnabled();
     fireEvent.press(signInButton);
 
-    // Button should be disabled during loading
     await waitFor(() => {
       expect(signInButton.props.accessibilityState?.disabled).toBe(true);
     });
   });
 
-  it('validates email format', async () => {
+  it('shows inline error for invalid email format', async () => {
     render(
       <AuthProvider>
         <LoginScreen />
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('login-email-input');
-    const passwordInput = screen.getByTestId('login-password-input');
-    const signInButton = screen.getByTestId('login-signin-button');
+    fillForm('invalid-email', 'password123');
 
-    // Test with invalid email format
-    fireEvent.changeText(emailInput, 'invalid-email');
-    fireEvent.changeText(passwordInput, 'password123');
-    fireEvent.press(signInButton);
-
-    // Should still attempt sign in (validation happens on server)
     await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith('invalid-email', 'password123');
+      expect(screen.getByTestId('login-email-error')).toBeTruthy();
     });
+    expect(mockSignIn).not.toHaveBeenCalled();
   });
-}); 
+});
