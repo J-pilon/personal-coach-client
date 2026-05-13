@@ -60,14 +60,12 @@ describe('ForgotPasswordScreen', () => {
     expect(screen.getByTestId('forgot-password-back-link')).toBeTruthy();
   });
 
-  it('shows a validation error when the email field is empty', async () => {
+  it('keeps the submit button disabled while the email is empty', () => {
     renderScreen();
 
-    fireEvent.press(screen.getByTestId('forgot-password-submit-button'));
-
-    await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('Please enter your email');
-    });
+    const button = screen.getByTestId('forgot-password-submit-button');
+    expect(button.props.accessibilityState?.disabled).toBe(true);
+    fireEvent.press(button);
     expect(mockRequestPasswordReset).not.toHaveBeenCalled();
   });
 
@@ -76,7 +74,11 @@ describe('ForgotPasswordScreen', () => {
     renderScreen();
 
     fireEvent.changeText(screen.getByTestId('forgot-password-email-input'), 'user@example.com');
-    fireEvent.press(screen.getByTestId('forgot-password-submit-button'));
+    const button = screen.getByTestId('forgot-password-submit-button');
+    await waitFor(() => {
+      expect(button.props.accessibilityState?.disabled).toBe(false);
+    });
+    fireEvent.press(button);
 
     await waitFor(() => {
       expect(mockRequestPasswordReset).toHaveBeenCalledWith('user@example.com');
@@ -96,7 +98,11 @@ describe('ForgotPasswordScreen', () => {
     renderScreen();
 
     fireEvent.changeText(screen.getByTestId('forgot-password-email-input'), 'user@example.com');
-    fireEvent.press(screen.getByTestId('forgot-password-submit-button'));
+    const button = screen.getByTestId('forgot-password-submit-button');
+    await waitFor(() => {
+      expect(button.props.accessibilityState?.disabled).toBe(false);
+    });
+    fireEvent.press(button);
 
     await waitFor(() => {
       expect(mockToastError).toHaveBeenCalledWith('Service unavailable');

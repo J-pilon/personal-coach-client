@@ -1,56 +1,84 @@
 import { UpdateTaskParams } from '@/api/tasks';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { PRIORITY_OPTIONS, PriorityInput } from '@/components/inputs';
 import { LoadingSpinner } from '@/components/loading';
 import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useDeleteTask, useTask, useUpdateTask } from '@/hooks/useTasks';
+import { taskSchema } from '@/models';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { z } from 'zod';
+
+const editTaskFormSchema = taskSchema.pick({
+  title: true,
+  description: true,
+  priority: true,
+  action_category: true,
+});
+
+type EditTaskFormValues = z.infer<typeof editTaskFormSchema>;
+
+const fieldErrorClassName = 'text-red-400 text-xs mt-1';
 
 export default function TaskDetailScreen() {
+  const queryClient = useQueryClient();
+  return (
+    <ErrorBoundary
+      scope="task-detail"
+      onReset={() => queryClient.invalidateQueries({ queryKey: ['tasks'] })}
+    >
+      <TaskDetailContent />
+    </ErrorBoundary>
+  );
+}
+
+function TaskDetailContent() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const taskId = parseInt(id || '0', 10);
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [taskDetails, setTaskDetails] = useState({
-    title: '',
-    description: '',
-    action_category: 'do' as 'do' | 'defer' | 'delegate',
-    priority: 1
-  });
 
   const updateTaskMutation = useUpdateTask();
   const deleteTaskMutation = useDeleteTask();
   const toast = useToast();
 
-  // Fetch task details
   const { data: task, isLoading, error, refetch } = useTask(taskId);
 
-  // Update local state when task data is loaded
+  const { control, handleSubmit, formState: { errors, isValid }, reset } = useForm<EditTaskFormValues>({
+    resolver: zodResolver(editTaskFormSchema),
+    mode: 'onChange',
+    defaultValues: {
+      title: '',
+      description: '',
+      priority: 1,
+      action_category: 'do',
+    },
+  });
+
+  // editingMode: separate ref-like state via reset + a flag
+  const [isEditing, setIsEditing] = React.useState(false);
+
   useEffect(() => {
     if (task) {
-      setTaskDetails({
+      reset({
         title: task.title,
         description: task.description || '',
         action_category: task.action_category,
         priority: task.priority || 1,
       });
     }
-  }, [task]);
+  }, [task, reset]);
 
-  const handleSave = () => {
-    if (!taskDetails.title.trim()) {
-      toast.error('Title is required');
-      return;
-    }
-
+  const onSubmit = (values: EditTaskFormValues) => {
     const updateData: UpdateTaskParams = {
-      title: taskDetails.title.trim(),
-      description: taskDetails.description.trim() || undefined,
-      action_category: taskDetails.action_category,
-      priority: taskDetails.priority
+      title: values.title,
+      description: values.description || undefined,
+      action_category: values.action_category,
+      priority: values.priority,
     };
 
     updateTaskMutation.mutate(
@@ -62,6 +90,18 @@ export default function TaskDetailScreen() {
         },
       }
     );
+  };
+
+  const handleCancelEdit = () => {
+    if (task) {
+      reset({
+        title: task.title,
+        description: task.description || '',
+        action_category: task.action_category,
+        priority: task.priority || 1,
+      });
+    }
+    setIsEditing(false);
   };
 
   const handleDelete = () => {
@@ -83,14 +123,6 @@ export default function TaskDetailScreen() {
         },
       ]
     );
-  };
-
-  const handleCategoryChange = (category: 'do' | 'defer' | 'delegate') => {
-    setTaskDetails(prev => ({ ...prev, action_category: category }));
-  };
-
-  const handlePriorityChange = (priority: number) => {
-    setTaskDetails(prev => ({ ...prev, priority: priority }));
   };
 
   if (isLoading) {
@@ -153,7 +185,7 @@ export default function TaskDetailScreen() {
                 {isEditing ? (
                   <>
                     <Pressable
-                      onPress={() => setIsEditing(false)}
+                      onPress={handleCancelEdit}
                       className="px-4 py-2 rounded-lg border border-[#708090]"
                       disabled={updateTaskMutation.isPending}
                       testID="task-detail-cancel-button"
@@ -161,9 +193,9 @@ export default function TaskDetailScreen() {
                       <Text className="text-[#E6FAFF] font-medium" testID="task-detail-cancel-text">Cancel</Text>
                     </Pressable>
                     <Pressable
-                      onPress={handleSave}
+                      onPress={handleSubmit(onSubmit)}
                       className="flex-row items-center px-4 py-2 bg-cyan-400 rounded-lg"
-                      disabled={updateTaskMutation.isPending}
+                      disabled={!isValid || updateTaskMutation.isPending}
                       testID="task-detail-save-button"
                     >
                       {updateTaskMutation.isPending && (
@@ -218,15 +250,29 @@ export default function TaskDetailScreen() {
             <View className="mb-6">
               <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Title</Text>
               {isEditing ? (
-                <TextInput
-                  className="px-4 py-3 border border-[#33CFFF] rounded-xl text-base text-[#F1F5F9] bg-[#13203a]"
-                  value={taskDetails.title}
-                  onChangeText={(text) => setTaskDetails(prev => ({ ...prev, title: text }))}
-                  placeholder="Task title"
-                  placeholderTextColor="#708090"
-                  editable={!updateTaskMutation.isPending}
-                  testID="task-detail-title-input"
-                />
+                <>
+                  <Controller
+                    control={control}
+                    name="title"
+                    render={({ field: { value, onChange, onBlur } }) => (
+                      <TextInput
+                        className="px-4 py-3 border border-[#33CFFF] rounded-xl text-base text-[#F1F5F9] bg-[#13203a]"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        placeholder="Task title"
+                        placeholderTextColor="#708090"
+                        editable={!updateTaskMutation.isPending}
+                        testID="task-detail-title-input"
+                      />
+                    )}
+                  />
+                  {errors.title && (
+                    <Text className={fieldErrorClassName} testID="task-detail-title-error">
+                      {errors.title.message}
+                    </Text>
+                  )}
+                </>
               ) : (
                 <View className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]">
                   <Text className="text-[#F1F5F9] text-base" testID="task-detail-title">{task.title}</Text>
@@ -237,17 +283,31 @@ export default function TaskDetailScreen() {
             <View className="mb-6">
               <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Description</Text>
               {isEditing ? (
-                <TextInput
-                  className="px-4 py-3 border border-[#33CFFF] rounded-xl text-base text-[#F1F5F9] bg-[#13203a]"
-                  value={taskDetails.description}
-                  onChangeText={(text) => setTaskDetails(prev => ({ ...prev, description: text }))}
-                  placeholder="Task description (optional)"
-                  placeholderTextColor="#708090"
-                  multiline
-                  numberOfLines={4}
-                  editable={!updateTaskMutation.isPending}
-                  testID="task-detail-description-input"
-                />
+                <>
+                  <Controller
+                    control={control}
+                    name="description"
+                    render={({ field: { value, onChange, onBlur } }) => (
+                      <TextInput
+                        className="px-4 py-3 border border-[#33CFFF] rounded-xl text-base text-[#F1F5F9] bg-[#13203a]"
+                        value={value ?? ''}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        placeholder="Task description (optional)"
+                        placeholderTextColor="#708090"
+                        multiline
+                        numberOfLines={4}
+                        editable={!updateTaskMutation.isPending}
+                        testID="task-detail-description-input"
+                      />
+                    )}
+                  />
+                  {errors.description && (
+                    <Text className={fieldErrorClassName}>
+                      {errors.description.message}
+                    </Text>
+                  )}
+                </>
               ) : (
                 <View className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]">
                   <Text className="text-[#F1F5F9] text-base" testID="task-detail-description">
@@ -260,10 +320,16 @@ export default function TaskDetailScreen() {
             <View className="mb-6">
               <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Priority</Text>
               {isEditing ? (
-                <PriorityInput
-                  value={taskDetails.priority}
-                  onChange={handlePriorityChange}
-                  disabled={updateTaskMutation.isPending}
+                <Controller
+                  control={control}
+                  name="priority"
+                  render={({ field: { value, onChange } }) => (
+                    <PriorityInput
+                      value={value ?? 1}
+                      onChange={onChange}
+                      disabled={updateTaskMutation.isPending}
+                    />
+                  )}
                 />
               ) : (
                 <View className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]">
@@ -277,28 +343,34 @@ export default function TaskDetailScreen() {
             <View className="mb-6">
               <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Action Category</Text>
               {isEditing ? (
-                <View className="flex-row gap-2">
-                  {(['do', 'defer', 'delegate'] as const).map((category) => (
-                    <Pressable
-                      key={category}
-                      onPress={() => handleCategoryChange(category)}
-                      className={`flex-1 py-3 px-4 rounded-lg border ${taskDetails.action_category === category
-                        ? 'border-[#33CFFF] bg-cyan-400'
-                        : 'border-[#708090] bg-[#13203a]'
-                        }`}
-                      disabled={updateTaskMutation.isPending}
-                    >
-                      <Text
-                        className={`text-center font-medium capitalize ${taskDetails.action_category === category
-                          ? 'text-[#021A40]'
-                          : 'text-[#E6FAFF]'
-                          }`}
-                      >
-                        {category}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </View>
+                <Controller
+                  control={control}
+                  name="action_category"
+                  render={({ field: { value, onChange } }) => (
+                    <View className="flex-row gap-2">
+                      {(['do', 'defer', 'delegate'] as const).map((category) => (
+                        <Pressable
+                          key={category}
+                          onPress={() => onChange(category)}
+                          className={`flex-1 py-3 px-4 rounded-lg border ${value === category
+                            ? 'border-[#33CFFF] bg-cyan-400'
+                            : 'border-[#708090] bg-[#13203a]'
+                            }`}
+                          disabled={updateTaskMutation.isPending}
+                        >
+                          <Text
+                            className={`text-center font-medium capitalize ${value === category
+                              ? 'text-[#021A40]'
+                              : 'text-[#E6FAFF]'
+                              }`}
+                          >
+                            {category}
+                          </Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                  )}
+                />
               ) : (
                 <View className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]">
                   <Text className="text-[#F1F5F9] text-base capitalize">{task.action_category}</Text>

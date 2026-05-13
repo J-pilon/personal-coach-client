@@ -2,8 +2,11 @@ import LinearGradient from '@/components/ui/LinearGradient';
 import { useToast } from '@/components/ToastManager';
 import ScrollView from '@/components/util/ScrollView';
 import { useAuth } from '@/hooks/useAuth';
+import { emailSchema } from '@/models';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -13,19 +16,28 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { z } from 'zod';
+
+const forgotPasswordFormSchema = z.object({
+  email: emailSchema,
+});
+
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordFormSchema>;
+
+const fieldErrorClassName = 'mt-1 text-xs text-red-400';
 
 export default function ForgotPasswordScreen() {
-  const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { requestPasswordReset } = useAuth();
   const toast = useToast();
 
-  const handleSubmit = async () => {
-    if (!email) {
-      toast.error('Please enter your email');
-      return;
-    }
+  const { control, handleSubmit, formState: { errors, isValid } } = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordFormSchema),
+    mode: 'onChange',
+    defaultValues: { email: '' },
+  });
 
+  const onSubmit = async ({ email }: ForgotPasswordFormValues) => {
     setIsLoading(true);
     try {
       await requestPasswordReset(email);
@@ -41,9 +53,7 @@ export default function ForgotPasswordScreen() {
     }
   };
 
-  const handleBackToLogin = () => {
-    router.replace('/auth/login');
-  };
+  const handleBackToLogin = () => router.replace('/auth/login');
 
   return (
     <LinearGradient>
@@ -73,29 +83,41 @@ export default function ForgotPasswordScreen() {
               <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
                 Email
               </Text>
-              <TextInput
-                testID="forgot-password-email-input"
-                className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
-                placeholder="Enter your email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                style={{
-                  shadowColor: '#274B8E',
-                  shadowOpacity: 0.10,
-                  shadowRadius: 10,
-                  shadowOffset: { width: 0, height: 3 }
-                }}
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <TextInput
+                    testID="forgot-password-email-input"
+                    className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                    placeholder="Enter your email"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    style={{
+                      shadowColor: '#274B8E',
+                      shadowOpacity: 0.10,
+                      shadowRadius: 10,
+                      shadowOffset: { width: 0, height: 3 }
+                    }}
+                  />
+                )}
               />
+              {errors.email && (
+                <Text className={fieldErrorClassName} testID="forgot-password-email-error">
+                  {errors.email.message}
+                </Text>
+              )}
             </View>
 
             <TouchableOpacity
               testID="forgot-password-submit-button"
-              className={`w-full py-4 rounded-xl shadow-md mb-8 ${isLoading ? 'bg-[#808080]' : 'bg-cyan-400'}`}
-              onPress={handleSubmit}
-              disabled={isLoading}
+              className={`w-full py-4 rounded-xl shadow-md mb-8 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-cyan-400'}`}
+              onPress={handleSubmit(onSubmit)}
+              disabled={isLoading || !isValid}
               style={{
                 shadowColor: isLoading ? '#808080' : '#33CFFF',
                 shadowOpacity: isLoading ? 0.12 : 0.25,

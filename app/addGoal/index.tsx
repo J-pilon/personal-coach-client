@@ -1,8 +1,12 @@
 import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Ionicons } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
+import { z } from 'zod';
 import { GoalDescriptionInput } from '../../components/goals/GoalDescriptionInput';
 import { GoalPreviewCard } from '../../components/goals/GoalPreviewCard';
 import { TimeframeSelector } from '../../components/goals/TimeframeSelector';
@@ -12,20 +16,57 @@ import ScrollView from '../../components/util/ScrollView';
 import { useGoalCreation } from '../../hooks/useGoalCreation';
 import { TIMEFRAME_OPTIONS, formatTimeframeForAiResponse } from '../../utils/smartGoalFormatters';
 
+const TIMEFRAME_VALUES = ['1 month', '3 months', '6 months'] as const;
+
+const addGoalFormSchema = z.object({
+  goalDescription: z
+    .string()
+    .trim()
+    .min(10, 'Please describe your goal in at least 10 characters')
+    .max(2000, 'Goal description is too long'),
+  selectedTimeframe: z.enum(TIMEFRAME_VALUES, { message: 'Please select a timeframe' }),
+});
+
+type AddGoalFormValues = z.infer<typeof addGoalFormSchema>;
+
+const fieldErrorClassName = 'text-red-400 text-xs mt-2';
+
 export default function AddGoalScreen() {
+  return (
+    <ErrorBoundary scope="add-goal">
+      <AddGoalContent />
+    </ErrorBoundary>
+  );
+}
+
+function AddGoalContent() {
   const {
-    goalDescription,
-    selectedTimeframe,
-    setGoalDescription,
-    setSelectedTimeframe,
     handleCreateGoal,
     handleConfirmGoal,
     handleEditGoal,
     handleCancel,
     isLoading,
     aiResponse,
-    showConfirmation
+    showConfirmation,
   } = useGoalCreation();
+
+  const { control, handleSubmit, getValues, formState: { errors, isValid } } = useForm<AddGoalFormValues>({
+    resolver: zodResolver(addGoalFormSchema),
+    mode: 'onChange',
+    defaultValues: {
+      goalDescription: '',
+      selectedTimeframe: undefined,
+    },
+  });
+
+  const onCreate = (values: AddGoalFormValues) =>
+    handleCreateGoal(values.goalDescription, values.selectedTimeframe);
+
+  const onConfirm = () => {
+    const { goalDescription, selectedTimeframe } = getValues();
+    if (!selectedTimeframe) return;
+    return handleConfirmGoal(goalDescription, selectedTimeframe);
+  };
 
   if (isLoading) {
     return (
@@ -39,6 +80,7 @@ export default function AddGoalScreen() {
   }
 
   if (!isLoading && aiResponse && showConfirmation) {
+    const selectedTimeframe = getValues('selectedTimeframe');
     return (
       <LinearGradient>
         <ScrollView
@@ -49,23 +91,22 @@ export default function AddGoalScreen() {
             paddingBottom: 40
           }}
         >
-          {/* Header */}
           <View className="flex-row items-center mb-8">
             <Text className="text-2xl font-semibold text-[#F1F5F9]">
               Confirm Your Goal
             </Text>
           </View>
 
-          {/* Goal Preview Card */}
-          <GoalPreviewCard
-            goalData={formatTimeframeForAiResponse(selectedTimeframe, aiResponse)}
-            testID="add-goal-preview-card"
-          />
+          {selectedTimeframe && (
+            <GoalPreviewCard
+              goalData={formatTimeframeForAiResponse(selectedTimeframe, aiResponse)}
+              testID="add-goal-preview-card"
+            />
+          )}
 
-          {/* Action Buttons */}
           <View className="gap-4 mb-8">
             <PrimaryButton
-              onPress={handleConfirmGoal}
+              onPress={onConfirm}
               title="Confirm & Save Goal"
               testID="confirm-goal-button"
             />
@@ -122,26 +163,46 @@ export default function AddGoalScreen() {
             </View>
           </View>
 
-          {/* Goal Description Input */}
-          <GoalDescriptionInput
-            value={goalDescription}
-            onChangeText={setGoalDescription}
-            testID="add-goal-description-input"
+          <Controller
+            control={control}
+            name="goalDescription"
+            render={({ field: { value, onChange } }) => (
+              <GoalDescriptionInput
+                value={value}
+                onChangeText={onChange}
+                testID="add-goal-description-input"
+              />
+            )}
           />
+          {errors.goalDescription && (
+            <Text className={fieldErrorClassName} testID="add-goal-description-error">
+              {errors.goalDescription.message}
+            </Text>
+          )}
 
-          {/* Timeframe Selection */}
-          <TimeframeSelector
-            options={TIMEFRAME_OPTIONS}
-            selectedTimeframe={selectedTimeframe}
-            onTimeframeSelect={setSelectedTimeframe}
-            testID="add-goal-timeframe-selector"
+          <Controller
+            control={control}
+            name="selectedTimeframe"
+            render={({ field: { value, onChange } }) => (
+              <TimeframeSelector
+                options={TIMEFRAME_OPTIONS}
+                selectedTimeframe={value ?? ''}
+                onTimeframeSelect={onChange}
+                testID="add-goal-timeframe-selector"
+              />
+            )}
           />
+          {errors.selectedTimeframe && (
+            <Text className={fieldErrorClassName} testID="add-goal-timeframe-error">
+              {errors.selectedTimeframe.message}
+            </Text>
+          )}
 
           <View className="gap-4">
             <PrimaryButton
-              onPress={handleCreateGoal}
+              onPress={handleSubmit(onCreate)}
               title={isLoading ? 'Creating Goal...' : 'Create SMART Goal'}
-              disabled={isLoading || !goalDescription.trim() || !selectedTimeframe}
+              disabled={!isValid || isLoading}
               testID="add-goal-create-goal-button"
             />
             <SecondaryButton

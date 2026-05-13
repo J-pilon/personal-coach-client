@@ -1,3 +1,4 @@
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -30,41 +31,43 @@ export default function TabLayout() {
   }, [profile, isLoading]);
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Tasks',
-          headerShown: false,
-          tabBarIcon: ({ color }) => <FontAwesome5 name="tasks" size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="todaysFocus"
-        options={{
-          headerShown: false,
-          title: "Today's Focus",
-          tabBarIcon: ({ color }) => <Ionicons name="compass" size={28} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="menu"
-        options={{
-          title: 'Menu',
-          headerShown: false,
-          tabBarIcon: ({ color }) => <Ionicons name="menu" size={28} color={color} />,
-        }}
-      />
-    </Tabs>
+    <ErrorBoundary scope="tabs">
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+          tabBarBackground: TabBarBackground,
+          tabBarStyle: Platform.select({
+            ios: {
+              position: 'absolute',
+            },
+            default: {},
+          }),
+        }}>
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Tasks',
+            headerShown: false,
+            tabBarIcon: ({ color }) => <FontAwesome5 name="tasks" size={24} color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="todaysFocus"
+          options={{
+            headerShown: false,
+            title: "Today's Focus",
+            tabBarIcon: ({ color }) => <Ionicons name="compass" size={28} color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="menu"
+          options={{
+            title: 'Menu',
+            headerShown: false,
+            tabBarIcon: ({ color }) => <Ionicons name="menu" size={28} color={color} />,
+          }}
+        />
+      </Tabs>
+    </ErrorBoundary>
   );
 }

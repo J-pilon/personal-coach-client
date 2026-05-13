@@ -29,12 +29,12 @@ function AppContent() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
   const [showSplash, setShowSplash] = useState(true);
-  const { user, isLoading } = useAuth();
+  const { user, profile, isLoading } = useAuth();
 
   // Navigation logic - redirect based on authentication state
   useEffect(() => {
     if (!isLoading && !showSplash) {
-      if (user) {
+      if (user && profile) {
         // User is authenticated, redirect to main app
         router.replace('/(tabs)');
       } else {
@@ -42,7 +42,7 @@ function AppContent() {
         router.replace('/auth/login');
       }
     }
-  }, [user, isLoading, showSplash]);
+  }, [user, profile, isLoading, showSplash]);
 
   if (!loaded) {
     return null;

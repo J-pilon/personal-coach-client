@@ -93,6 +93,10 @@ describe('AddTaskScreen', () => {
 
     fireEvent.changeText(titleInput, 'Test Task');
     fireEvent.changeText(descriptionInput, 'Test Description');
+
+    await waitFor(() => {
+      expect(submitButton.props.accessibilityState?.disabled).toBe(false);
+    });
     fireEvent.press(submitButton);
 
     await waitFor(() => {
@@ -205,7 +209,15 @@ describe('AddTaskScreen', () => {
     const submitButton = screen.getByTestId('add-task-add-button');
 
     fireEvent.changeText(titleInput, 'Test Task');
+
+    await waitFor(() => {
+      expect(submitButton.props.accessibilityState?.disabled).toBe(false);
+    });
     fireEvent.press(submitButton);
+
+    await waitFor(() => {
+      expect(mockMutate).toHaveBeenCalled();
+    });
 
     // Get the onSuccess callback from the mutation call
     const onSuccessCallback = mockMutate.mock.calls[0][1]?.onSuccess;

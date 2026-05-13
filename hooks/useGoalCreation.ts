@@ -3,26 +3,21 @@ import { useState } from 'react';
 import { useToast } from '../components/ToastManager';
 import {
   formatTimeframeForAiResponse,
-  getServerTimeframe,
-  validateGoalData
+  getServerTimeframe
 } from '../utils/smartGoalFormatters';
 import { useAiProxy } from './useAiProxy';
 import { useCreateSmartGoal } from './useSmartGoals';
 
 export interface GoalCreationState {
-  goalDescription: string;
-  selectedTimeframe: string;
   showConfirmation: boolean;
   isLoading: boolean;
   aiResponse: any;
 }
 
 export interface GoalCreationActions {
-  setGoalDescription: (description: string) => void;
-  setSelectedTimeframe: (timeframe: string) => void;
   setShowConfirmation: (show: boolean) => void;
-  handleCreateGoal: () => Promise<void>;
-  handleConfirmGoal: () => Promise<void>;
+  handleCreateGoal: (description: string, timeframe: string) => Promise<void>;
+  handleConfirmGoal: (description: string, timeframe: string) => Promise<void>;
   handleEditGoal: () => void;
   handleCancel: () => void;
 }
@@ -32,37 +27,29 @@ export const useGoalCreation = (): GoalCreationActions & GoalCreationState => {
   const { processAiRequest, isLoading, aiResponse } = useAiProxy();
   const toast = useToast();
 
-  const [goalDescription, setGoalDescription] = useState('');
-  const [selectedTimeframe, setSelectedTimeframe] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const handleCreateGoal = async (): Promise<void> => {
-    const validation = validateGoalData(goalDescription, selectedTimeframe);
-    if (!validation.isValid) {
-      toast.error(validation.errorMessage ?? 'Invalid goal data');
-      return;
-    }
-
+  const handleCreateGoal = async (description: string, timeframe: string): Promise<void> => {
     try {
-      await processAiRequest(goalDescription, selectedTimeframe);
+      await processAiRequest(description, timeframe);
       setShowConfirmation(true);
     } catch {
       // apiRequest interceptor surfaces the error toast
     }
   };
 
-  const handleConfirmGoal = async (): Promise<void> => {
+  const handleConfirmGoal = async (description: string, timeframe: string): Promise<void> => {
     try {
       if (!aiResponse) {
         throw new Error('No goal details available');
       }
 
-      const formattedResponse = formatTimeframeForAiResponse(selectedTimeframe, aiResponse);
-      const serverTimeframe = getServerTimeframe(selectedTimeframe);
+      const formattedResponse = formatTimeframeForAiResponse(timeframe, aiResponse);
+      const serverTimeframe = getServerTimeframe(timeframe);
 
       await createSmartGoal({
         title: formattedResponse.specific,
-        description: goalDescription,
+        description,
         timeframe: serverTimeframe,
         specific: formattedResponse.specific,
         measurable: formattedResponse.measurable,
@@ -94,16 +81,9 @@ export const useGoalCreation = (): GoalCreationActions & GoalCreationState => {
   };
 
   return {
-    // State
-    goalDescription,
-    selectedTimeframe,
     showConfirmation,
     isLoading,
     aiResponse,
-    
-    // Actions
-    setGoalDescription,
-    setSelectedTimeframe,
     setShowConfirmation,
     handleCreateGoal,
     handleConfirmGoal,
