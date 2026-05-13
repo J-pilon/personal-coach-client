@@ -194,6 +194,19 @@ describe('TodaysFocusScreen', () => {
     expect(screen.getByTestId("todays-focus-title")).toBeTruthy();
   });
 
+  it('shows profile loading fallback when auth profile is temporarily unavailable', () => {
+    mockUseAuth.mockReturnValue({
+      user: { id: 1, email: 'test@example.com' },
+      profile: null,
+      isLoading: false,
+    });
+
+    renderTodaysFocusScreen();
+
+    expect(screen.getByTestId('todays-focus-profile-loading')).toBeTruthy();
+    expect(screen.queryByTestId('todays-focus-title')).toBeNull();
+  });
+
   it('renders the assist me button', () => {
     renderTodaysFocusScreen();
 
