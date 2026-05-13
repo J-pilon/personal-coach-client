@@ -26,9 +26,20 @@ export default function TodaysFocusScreen() {
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState<Set<string>>(new Set());
 
-  // Profile should always exist at this point due to auth protection in _layout.tsx
+  // During auth/profile hydration, profile can be temporarily unavailable.
   if (!profile) {
-    throw new Error('Profile is required but not available. This should not happen.');
+    return (
+      <LinearGradient>
+        <View className="flex-1 items-center justify-center px-5">
+          <LoadingSpinner
+            size="medium"
+            text="Loading your profile..."
+            variant="inline"
+            testID="todays-focus-profile-loading"
+          />
+        </View>
+      </LinearGradient>
+    );
   }
 
   const {
