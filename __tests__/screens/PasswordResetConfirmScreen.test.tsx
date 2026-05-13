@@ -80,37 +80,31 @@ describe('PasswordResetConfirmScreen', () => {
       fireEvent.changeText(screen.getByTestId('password-reset-confirm-confirmation-input'), confirmation);
     };
 
-    it('shows a validation error when any field is empty', async () => {
+    it('keeps the submit button disabled when any field is empty', () => {
       renderScreen();
 
-      fireEvent.press(screen.getByTestId('password-reset-confirm-submit-button'));
-
-      await waitFor(() => {
-        expect(mockToastError).toHaveBeenCalledWith('Please fill in all fields');
-      });
+      const button = screen.getByTestId('password-reset-confirm-submit-button');
+      expect(button.props.accessibilityState?.disabled).toBe(true);
+      fireEvent.press(button);
       expect(mockResetPassword).not.toHaveBeenCalled();
     });
 
-    it('shows a validation error when passwords do not match', async () => {
+    it('shows an inline error when passwords do not match', async () => {
       renderScreen();
       fillForm('code-abc', 'newpassword456', 'mismatch789');
 
-      fireEvent.press(screen.getByTestId('password-reset-confirm-submit-button'));
-
       await waitFor(() => {
-        expect(mockToastError).toHaveBeenCalledWith('Passwords do not match');
+        expect(screen.getByTestId('password-reset-confirm-confirmation-error')).toBeTruthy();
       });
       expect(mockResetPassword).not.toHaveBeenCalled();
     });
 
-    it('shows a validation error when the password is shorter than 6 characters', async () => {
+    it('shows an inline error when the password is shorter than 6 characters', async () => {
       renderScreen();
       fillForm('code-abc', 'short', 'short');
 
-      fireEvent.press(screen.getByTestId('password-reset-confirm-submit-button'));
-
       await waitFor(() => {
-        expect(mockToastError).toHaveBeenCalledWith('Password must be at least 6 characters long');
+        expect(screen.getByTestId('password-reset-confirm-password-error')).toBeTruthy();
       });
       expect(mockResetPassword).not.toHaveBeenCalled();
     });
@@ -120,7 +114,11 @@ describe('PasswordResetConfirmScreen', () => {
       renderScreen();
       fillForm('  code-abc  ', 'newpassword456', 'newpassword456');
 
-      fireEvent.press(screen.getByTestId('password-reset-confirm-submit-button'));
+      const button = screen.getByTestId('password-reset-confirm-submit-button');
+      await waitFor(() => {
+        expect(button.props.accessibilityState?.disabled).toBe(false);
+      });
+      fireEvent.press(button);
 
       await waitFor(() => {
         expect(mockResetPassword).toHaveBeenCalledWith('code-abc', 'newpassword456', 'newpassword456');
@@ -137,7 +135,11 @@ describe('PasswordResetConfirmScreen', () => {
       renderScreen();
       fillForm('code-abc', 'newpassword456', 'newpassword456');
 
-      fireEvent.press(screen.getByTestId('password-reset-confirm-submit-button'));
+      const button = screen.getByTestId('password-reset-confirm-submit-button');
+      await waitFor(() => {
+        expect(button.props.accessibilityState?.disabled).toBe(false);
+      });
+      fireEvent.press(button);
 
       await waitFor(() => {
         expect(mockToastError).toHaveBeenCalledWith('Reset password token has expired');

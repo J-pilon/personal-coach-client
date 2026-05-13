@@ -2,8 +2,11 @@ import LinearGradient from '@/components/ui/LinearGradient';
 import { useToast } from '@/components/ToastManager';
 import ScrollView from '@/components/util/ScrollView';
 import { useAuth } from '@/hooks/useAuth';
+import { passwordSchema } from '@/models';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -13,38 +16,42 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { z } from 'zod';
+
+const passwordResetConfirmSchema = z
+  .object({
+    code: z.string().trim().min(1, 'Reset code is required'),
+    password: passwordSchema,
+    passwordConfirmation: z.string(),
+  })
+  .refine((values) => values.password === values.passwordConfirmation, {
+    message: 'Passwords do not match',
+    path: ['passwordConfirmation'],
+  });
+
+type PasswordResetConfirmFormValues = z.infer<typeof passwordResetConfirmSchema>;
+
+const fieldErrorClassName = 'mt-1 text-xs text-red-400';
 
 export default function PasswordResetConfirmScreen() {
   const params = useLocalSearchParams<{ email?: string }>();
   const email = typeof params.email === 'string' ? params.email : '';
 
-  const [code, setCode] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const { resetPassword, requestPasswordReset } = useAuth();
   const toast = useToast();
 
-  const handleSubmit = async () => {
-    if (!code || !password || !passwordConfirmation) {
-      toast.error('Please fill in all fields');
-      return;
-    }
+  const { control, handleSubmit, formState: { errors, isValid } } = useForm<PasswordResetConfirmFormValues>({
+    resolver: zodResolver(passwordResetConfirmSchema),
+    mode: 'onChange',
+    defaultValues: { code: '', password: '', passwordConfirmation: '' },
+  });
 
-    if (password !== passwordConfirmation) {
-      toast.error('Passwords do not match');
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters long');
-      return;
-    }
-
+  const onSubmit = async (values: PasswordResetConfirmFormValues) => {
     setIsLoading(true);
     try {
-      await resetPassword(code.trim(), password, passwordConfirmation);
+      await resetPassword(values.code.trim(), values.password, values.passwordConfirmation);
       toast.success('Password reset successfully. Please sign in.');
       router.replace('/auth/login');
     } catch (error) {
@@ -72,9 +79,7 @@ export default function PasswordResetConfirmScreen() {
     }
   };
 
-  const handleBackToLogin = () => {
-    router.replace('/auth/login');
-  };
+  const handleBackToLogin = () => router.replace('/auth/login');
 
   return (
     <LinearGradient>
@@ -107,73 +112,109 @@ export default function PasswordResetConfirmScreen() {
                 <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
                   Reset Code
                 </Text>
-                <TextInput
-                  testID="password-reset-confirm-code-input"
-                  className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
-                  placeholder="Paste the code from your email"
-                  value={code}
-                  onChangeText={setCode}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  style={{
-                    shadowColor: '#274B8E',
-                    shadowOpacity: 0.10,
-                    shadowRadius: 10,
-                    shadowOffset: { width: 0, height: 3 }
-                  }}
+                <Controller
+                  control={control}
+                  name="code"
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextInput
+                      testID="password-reset-confirm-code-input"
+                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      placeholder="Paste the code from your email"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      style={{
+                        shadowColor: '#274B8E',
+                        shadowOpacity: 0.10,
+                        shadowRadius: 10,
+                        shadowOffset: { width: 0, height: 3 }
+                      }}
+                    />
+                  )}
                 />
+                {errors.code && (
+                  <Text className={fieldErrorClassName} testID="password-reset-confirm-code-error">
+                    {errors.code.message}
+                  </Text>
+                )}
               </View>
 
               <View className="mb-4">
                 <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
                   New Password
                 </Text>
-                <TextInput
-                  testID="password-reset-confirm-password-input"
-                  className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
-                  placeholder="Enter new password"
-                  value={password}
-                  onChangeText={setPassword}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  secureTextEntry
-                  style={{
-                    shadowColor: '#274B8E',
-                    shadowOpacity: 0.10,
-                    shadowRadius: 10,
-                    shadowOffset: { width: 0, height: 3 }
-                  }}
+                <Controller
+                  control={control}
+                  name="password"
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextInput
+                      testID="password-reset-confirm-password-input"
+                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      placeholder="Enter new password"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      secureTextEntry
+                      style={{
+                        shadowColor: '#274B8E',
+                        shadowOpacity: 0.10,
+                        shadowRadius: 10,
+                        shadowOffset: { width: 0, height: 3 }
+                      }}
+                    />
+                  )}
                 />
+                {errors.password && (
+                  <Text className={fieldErrorClassName} testID="password-reset-confirm-password-error">
+                    {errors.password.message}
+                  </Text>
+                )}
               </View>
 
               <View>
                 <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
                   Confirm Password
                 </Text>
-                <TextInput
-                  testID="password-reset-confirm-confirmation-input"
-                  className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
-                  placeholder="Confirm new password"
-                  value={passwordConfirmation}
-                  onChangeText={setPasswordConfirmation}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  secureTextEntry
-                  style={{
-                    shadowColor: '#274B8E',
-                    shadowOpacity: 0.10,
-                    shadowRadius: 10,
-                    shadowOffset: { width: 0, height: 3 }
-                  }}
+                <Controller
+                  control={control}
+                  name="passwordConfirmation"
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextInput
+                      testID="password-reset-confirm-confirmation-input"
+                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      placeholder="Confirm new password"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      secureTextEntry
+                      style={{
+                        shadowColor: '#274B8E',
+                        shadowOpacity: 0.10,
+                        shadowRadius: 10,
+                        shadowOffset: { width: 0, height: 3 }
+                      }}
+                    />
+                  )}
                 />
+                {errors.passwordConfirmation && (
+                  <Text className={fieldErrorClassName} testID="password-reset-confirm-confirmation-error">
+                    {errors.passwordConfirmation.message}
+                  </Text>
+                )}
               </View>
             </View>
 
             <TouchableOpacity
               testID="password-reset-confirm-submit-button"
-              className={`w-full py-4 rounded-xl shadow-md mb-6 ${isLoading ? 'bg-[#808080]' : 'bg-cyan-400'}`}
-              onPress={handleSubmit}
-              disabled={isLoading}
+              className={`w-full py-4 rounded-xl shadow-md mb-6 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-cyan-400'}`}
+              onPress={handleSubmit(onSubmit)}
+              disabled={isLoading || !isValid}
               style={{
                 shadowColor: isLoading ? '#808080' : '#33CFFF',
                 shadowOpacity: isLoading ? 0.12 : 0.25,
