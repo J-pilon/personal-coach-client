@@ -1,5 +1,6 @@
 import AiOnboardingWizard from '@/components/AiOnboardingWizard';
 import { PrimaryButton } from '@/components/buttons/';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { LoadingSpinner } from '@/components/loading';
 import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
@@ -7,11 +8,24 @@ import ScrollView from '@/components/util/ScrollView';
 import { useSmartGoals } from '@/hooks/useSmartGoals';
 import { useProfile } from '@/hooks/useUser';
 import { Ionicons } from '@expo/vector-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 export default function SmartGoalsScreen() {
+  const queryClient = useQueryClient();
+  return (
+    <ErrorBoundary
+      scope="smart-goals"
+      onReset={() => queryClient.invalidateQueries({ queryKey: ['smartGoals'] })}
+    >
+      <SmartGoalsContent />
+    </ErrorBoundary>
+  );
+}
+
+function SmartGoalsContent() {
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: goals, isLoading: goalsLoading, error } = useSmartGoals();
   const [showWizard, setShowWizard] = useState(false);

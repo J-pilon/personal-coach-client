@@ -1,5 +1,6 @@
 import AiOnboardingWizard from '@/components/AiOnboardingWizard';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import LinearGradient from '@/components/ui/LinearGradient';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -11,6 +12,14 @@ import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function OnboardingScreen() {
+  return (
+    <ErrorBoundary scope="onboarding">
+      <OnboardingContent />
+    </ErrorBoundary>
+  );
+}
+
+function OnboardingContent() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const [showWizard, setShowWizard] = useState(false);
