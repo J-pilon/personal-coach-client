@@ -2,11 +2,27 @@ import { ProfileUpdateData } from '@/api/users';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
+import { profileSchema } from '@/models';
 import { Ionicons } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView as RNScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { z } from 'zod';
 
-// Common timezones list
+// Form schema: pick the editable fields off the canonical profile model.
+const profileEditFormSchema = profileSchema.pick({
+  first_name: true,
+  last_name: true,
+  work_role: true,
+  education: true,
+  desires: true,
+  limiting_beliefs: true,
+  timezone: true,
+});
+
+type ProfileEditFormValues = z.infer<typeof profileEditFormSchema>;
+
 const TIMEZONES = [
   { value: 'Pacific/Honolulu', label: 'Hawaii (HST)' },
   { value: 'America/Anchorage', label: 'Alaska (AKST)' },
@@ -32,7 +48,6 @@ const TIMEZONES = [
   { value: 'UTC', label: 'UTC' },
 ];
 
-// Get the device's timezone
 const getDeviceTimezone = (): string => {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -41,7 +56,6 @@ const getDeviceTimezone = (): string => {
   }
 };
 
-// Get label for timezone value
 const getTimezoneLabel = (value: string): string => {
   const tz = TIMEZONES.find(t => t.value === value);
   return tz ? tz.label : value;
@@ -64,32 +78,28 @@ interface ProfileEditFormProps {
   onSuccess: (formData: ProfileUpdateData) => Promise<void>;
 }
 
+const fieldErrorClassName = 'text-red-400 text-xs mt-1 mb-3';
+const inputClassName = 'bg-[#1A2B5C] rounded-xl p-3 text-[#F1F5F9] text-base mb-1';
+
 export default function ProfileEditForm({ profile, isLoading, onCancel, onSuccess }: ProfileEditFormProps) {
   const deviceTimezone = getDeviceTimezone();
-
-  const [formData, setFormData] = useState<ProfileUpdateData>({
-    first_name: profile.first_name || '',
-    last_name: profile.last_name || '',
-    work_role: profile.work_role || '',
-    education: profile.education || '',
-    desires: profile.desires || '',
-    limiting_beliefs: profile.limiting_beliefs || '',
-    timezone: profile.timezone || deviceTimezone,
-  });
-
   const [showTimezonePicker, setShowTimezonePicker] = useState(false);
 
-  const handleInputChange = (field: keyof ProfileUpdateData, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const { control, handleSubmit, formState: { errors } } = useForm<ProfileEditFormValues>({
+    resolver: zodResolver(profileEditFormSchema),
+    mode: 'onChange',
+    defaultValues: {
+      first_name: profile.first_name || '',
+      last_name: profile.last_name || '',
+      work_role: profile.work_role || '',
+      education: profile.education || '',
+      desires: profile.desires || '',
+      limiting_beliefs: profile.limiting_beliefs || '',
+      timezone: profile.timezone || deviceTimezone,
+    },
+  });
 
-  const handleTimezoneSelect = (timezone: string) => {
-    handleInputChange('timezone', timezone);
-    setShowTimezonePicker(false);
-  };
+  const onSubmit = (values: ProfileEditFormValues) => onSuccess(values);
 
   return (
     <LinearGradient>
@@ -110,56 +120,153 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
 
             <View className="bg-[#2B42B6] rounded-2xl p-5 mb-4 shadow-md border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
               <Text className="text-[#708090] text-sm font-medium mb-1">First Name</Text>
-              <TextInput
-                className="bg-[#1A2B5C] rounded-xl p-3 text-[#F1F5F9] text-base mb-4"
-                value={formData.first_name}
-                onChangeText={(value) => handleInputChange('first_name', value)}
-                placeholder="Enter first name"
-                placeholderTextColor="#708090"
-                testID="profile-edit-first-name"
+              <Controller
+                control={control}
+                name="first_name"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <TextInput
+                    className={inputClassName}
+                    value={value ?? ''}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter first name"
+                    placeholderTextColor="#708090"
+                    testID="profile-edit-first-name"
+                  />
+                )}
               />
-
-              <Text className="text-[#708090] text-sm font-medium mb-1">Last Name</Text>
-              <TextInput
-                className="bg-[#1A2B5C] rounded-xl p-3 text-[#F1F5F9] text-base mb-4"
-                value={formData.last_name}
-                onChangeText={(value) => handleInputChange('last_name', value)}
-                placeholder="Enter last name"
-                placeholderTextColor="#708090"
-                testID="profile-edit-last-name"
-              />
-
-              <Text className="text-[#708090] text-sm font-medium mb-1">Work Role</Text>
-              <TextInput
-                className="bg-[#1A2B5C] rounded-xl p-3 text-[#F1F5F9] text-base mb-4"
-                value={formData.work_role}
-                onChangeText={(value) => handleInputChange('work_role', value)}
-                placeholder="Enter work role"
-                placeholderTextColor="#708090"
-                testID="profile-edit-work-role"
-              />
-
-              <Text className="text-[#708090] text-sm font-medium mb-1">Education</Text>
-              <TextInput
-                className="bg-[#1A2B5C] rounded-xl p-3 text-[#F1F5F9] text-base mb-4"
-                value={formData.education}
-                onChangeText={(value) => handleInputChange('education', value)}
-                placeholder="Enter education"
-                placeholderTextColor="#708090"
-                testID="profile-edit-education"
-              />
-
-              <Text className="text-[#708090] text-sm font-medium mb-1">Timezone</Text>
-              <TouchableOpacity
-                className="bg-[#1A2B5C] rounded-xl p-3 flex-row items-center justify-between"
-                onPress={() => setShowTimezonePicker(true)}
-                testID="profile-edit-timezone-button"
-              >
-                <Text className="text-[#F1F5F9] text-base">
-                  {getTimezoneLabel(formData.timezone || deviceTimezone)}
+              {errors.first_name && (
+                <Text className={fieldErrorClassName} testID="profile-edit-first-name-error">
+                  {errors.first_name.message}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#708090" />
-              </TouchableOpacity>
+              )}
+
+              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Last Name</Text>
+              <Controller
+                control={control}
+                name="last_name"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <TextInput
+                    className={inputClassName}
+                    value={value ?? ''}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter last name"
+                    placeholderTextColor="#708090"
+                    testID="profile-edit-last-name"
+                  />
+                )}
+              />
+              {errors.last_name && (
+                <Text className={fieldErrorClassName} testID="profile-edit-last-name-error">
+                  {errors.last_name.message}
+                </Text>
+              )}
+
+              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Work Role</Text>
+              <Controller
+                control={control}
+                name="work_role"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <TextInput
+                    className={inputClassName}
+                    value={value ?? ''}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter work role"
+                    placeholderTextColor="#708090"
+                    testID="profile-edit-work-role"
+                  />
+                )}
+              />
+              {errors.work_role && (
+                <Text className={fieldErrorClassName} testID="profile-edit-work-role-error">
+                  {errors.work_role.message}
+                </Text>
+              )}
+
+              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Education</Text>
+              <Controller
+                control={control}
+                name="education"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <TextInput
+                    className={inputClassName}
+                    value={value ?? ''}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter education"
+                    placeholderTextColor="#708090"
+                    testID="profile-edit-education"
+                  />
+                )}
+              />
+              {errors.education && (
+                <Text className={fieldErrorClassName} testID="profile-edit-education-error">
+                  {errors.education.message}
+                </Text>
+              )}
+
+              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Timezone</Text>
+              <Controller
+                control={control}
+                name="timezone"
+                render={({ field: { value, onChange } }) => (
+                  <>
+                    <TouchableOpacity
+                      className="bg-[#1A2B5C] rounded-xl p-3 flex-row items-center justify-between"
+                      onPress={() => setShowTimezonePicker(true)}
+                      testID="profile-edit-timezone-button"
+                    >
+                      <Text className="text-[#F1F5F9] text-base">
+                        {getTimezoneLabel(value || deviceTimezone)}
+                      </Text>
+                      <Ionicons name="chevron-down" size={20} color="#708090" />
+                    </TouchableOpacity>
+                    <Modal
+                      visible={showTimezonePicker}
+                      transparent
+                      animationType="fade"
+                      onRequestClose={() => setShowTimezonePicker(false)}
+                    >
+                      <Pressable
+                        className="flex-1 justify-center items-center bg-black/50"
+                        onPress={() => setShowTimezonePicker(false)}
+                      >
+                        <Pressable
+                          className="overflow-hidden w-80 max-h-96 bg-white rounded-2xl"
+                          onPress={(e) => e.stopPropagation()}
+                        >
+                          <View className="px-4 py-3 border-b border-gray-200">
+                            <Text className="text-lg font-semibold text-center text-gray-800">
+                              Select Timezone
+                            </Text>
+                          </View>
+                          <RNScrollView className="max-h-80">
+                            {TIMEZONES.map((tz) => (
+                              <TouchableOpacity
+                                key={tz.value}
+                                className={`px-4 py-3 ${value === tz.value ? 'bg-[#3B82F6]' : 'bg-white'}`}
+                                onPress={() => {
+                                  onChange(tz.value);
+                                  setShowTimezonePicker(false);
+                                }}
+                                testID={`timezone-option-${tz.value}`}
+                              >
+                                <Text
+                                  className={`text-base ${value === tz.value ? 'text-white font-semibold' : 'text-gray-800'}`}
+                                >
+                                  {tz.label}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                          </RNScrollView>
+                        </Pressable>
+                      </Pressable>
+                    </Modal>
+                  </>
+                )}
+              />
             </View>
           </View>
 
@@ -168,35 +275,59 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
 
             <View className="bg-[#2B42B6] rounded-2xl p-5 mb-4 shadow-md border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
               <Text className="text-[#708090] text-sm font-medium mb-1">Desires</Text>
-              <TextInput
-                className="bg-[#1A2B5C] rounded-xl p-3 text-[#F1F5F9] text-base mb-4"
-                value={formData.desires}
-                onChangeText={(value) => handleInputChange('desires', value)}
-                placeholder="What do you desire to achieve?"
-                placeholderTextColor="#708090"
-                multiline
-                numberOfLines={3}
-                testID="profile-edit-desires"
+              <Controller
+                control={control}
+                name="desires"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <TextInput
+                    className={inputClassName}
+                    value={value ?? ''}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="What do you desire to achieve?"
+                    placeholderTextColor="#708090"
+                    multiline
+                    numberOfLines={3}
+                    testID="profile-edit-desires"
+                  />
+                )}
               />
+              {errors.desires && (
+                <Text className={fieldErrorClassName} testID="profile-edit-desires-error">
+                  {errors.desires.message}
+                </Text>
+              )}
 
-              <Text className="text-[#708090] text-sm font-medium mb-1">Limiting Beliefs</Text>
-              <TextInput
-                className="bg-[#1A2B5C] rounded-xl p-3 text-[#F1F5F9] text-base mb-4"
-                value={formData.limiting_beliefs}
-                onChangeText={(value) => handleInputChange('limiting_beliefs', value)}
-                placeholder="What beliefs might be holding you back?"
-                placeholderTextColor="#708090"
-                multiline
-                numberOfLines={3}
-                testID="profile-edit-limiting-beliefs"
+              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Limiting Beliefs</Text>
+              <Controller
+                control={control}
+                name="limiting_beliefs"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <TextInput
+                    className={inputClassName}
+                    value={value ?? ''}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="What beliefs might be holding you back?"
+                    placeholderTextColor="#708090"
+                    multiline
+                    numberOfLines={3}
+                    testID="profile-edit-limiting-beliefs"
+                  />
+                )}
               />
+              {errors.limiting_beliefs && (
+                <Text className={fieldErrorClassName} testID="profile-edit-limiting-beliefs-error">
+                  {errors.limiting_beliefs.message}
+                </Text>
+              )}
             </View>
           </View>
 
           <View className="gap-4">
             <PrimaryButton
               title='Save Changes'
-              onPress={() => onSuccess(formData)}
+              onPress={handleSubmit(onSubmit)}
               isLoading={isLoading}
               loadingText='Saving...'
               testID='profile-edit-save-button'
@@ -211,46 +342,6 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-
-      {/* Timezone Picker Modal */}
-      <Modal
-        visible={showTimezonePicker}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowTimezonePicker(false)}
-      >
-        <Pressable
-          className="flex-1 justify-center items-center bg-black/50"
-          onPress={() => setShowTimezonePicker(false)}
-        >
-          <Pressable
-            className="overflow-hidden w-80 max-h-96 bg-white rounded-2xl"
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View className="px-4 py-3 border-b border-gray-200">
-              <Text className="text-lg font-semibold text-center text-gray-800">
-                Select Timezone
-              </Text>
-            </View>
-            <RNScrollView className="max-h-80">
-              {TIMEZONES.map((tz) => (
-                <TouchableOpacity
-                  key={tz.value}
-                  className={`px-4 py-3 ${formData.timezone === tz.value ? 'bg-[#3B82F6]' : 'bg-white'}`}
-                  onPress={() => handleTimezoneSelect(tz.value)}
-                  testID={`timezone-option-${tz.value}`}
-                >
-                  <Text
-                    className={`text-base ${formData.timezone === tz.value ? 'text-white font-semibold' : 'text-gray-800'}`}
-                  >
-                    {tz.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </RNScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
     </LinearGradient>
   );
 }
