@@ -6,12 +6,42 @@ import { useAiResponseHelpers } from '@/hooks/useAi';
 import { useAiProxy } from '@/hooks/useAiProxy';
 import { useCreateMultipleSmartGoals } from '@/hooks/useSmartGoals';
 import { useCompleteOnboarding, useProfile, useUpdateProfile } from '@/hooks/useUser';
+import { profileSchema } from '@/models';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { z } from 'zod';
 import { AiResponseStep, ConfirmationStep, GoalDescriptionStep, ProfileDetailsStep } from './AiOnboardingWizardSteps';
 import ProgressBar from './ProgressBar';
+
+export const onboardingProfileSchema = profileSchema
+  .pick({
+    first_name: true,
+    last_name: true,
+    work_role: true,
+    education: true,
+    desires: true,
+    limiting_beliefs: true,
+  })
+  .extend({
+    first_name: z.string().trim().min(1, 'First name is required').max(100),
+    last_name: z.string().trim().min(1, 'Last name is required').max(100),
+    work_role: z.string().trim().min(1, 'Work role is required').max(200),
+    education: z.string().trim().min(1, 'Education is required').max(200),
+  });
+
+export type OnboardingProfileFormValues = z.infer<typeof onboardingProfileSchema>;
+
+export const onboardingGoalSchema = z.object({
+  goalDescription: z
+    .string()
+    .trim()
+    .min(10, 'Please describe your goal in at least 10 characters')
+    .max(2000),
+});
+
+export type OnboardingGoalFormValues = z.infer<typeof onboardingGoalSchema>;
 
 export interface SMARTGoalData {
   title: string;
@@ -41,14 +71,6 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
   const [isLoading, setIsLoading] = useState(false);
   const updateProfile = useUpdateProfile();
   const { data: profile } = useProfile();
-  const [profileData, setProfileData] = useState<ProfileUpdateData>({
-    first_name: profile?.first_name || '',
-    last_name: profile?.last_name || '',
-    work_role: profile?.work_role || '',
-    education: profile?.education || '',
-    desires: profile?.desires || '',
-    limiting_beliefs: profile?.limiting_beliefs || ''
-  });
 
   const aiProxy = useAiProxy();
   const createMultipleSmartGoals = useCreateMultipleSmartGoals();
@@ -56,7 +78,6 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
   const { isSmartGoalResponse, formatMultiPeriodSmartGoalResponse } = useAiResponseHelpers();
   const toast = useToast();
 
-  // Handle completed job results
   useEffect(() => {
     if (aiProxy.isJobComplete && aiProxy.jobStatus?.result) {
       setAiResponse(aiProxy.jobStatus.result);
@@ -89,29 +110,22 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
 
   const currentStep = steps[currentStepIndex];
 
-  // Check if profileData has changed from current profile
-  const hasProfileChanged = (): boolean => {
-    if (!profile) return false;
-
-    return Object.keys(profileData).some(key =>
-      profileData[key as keyof ProfileUpdateData] !== profile[key as keyof Profile]
+  const hasProfileChanged = (values: OnboardingProfileFormValues): boolean => {
+    if (!profile) return true;
+    return (Object.keys(values) as (keyof OnboardingProfileFormValues)[]).some(
+      key => values[key] !== profile[key as keyof Profile],
     );
   };
 
-  const handleSubmitProfileDetails = async () => {
-    if (!profileData.first_name?.trim() || !profileData.last_name?.trim() || !profileData.work_role?.trim() || !profileData.education?.trim()) {
-      toast.error('Please fill in all required fields (First Name, Last Name, Work Role, and Education).');
-      return;
-    }
-
-    if (!hasProfileChanged()) {
+  const handleProfileSubmit = async (values: OnboardingProfileFormValues): Promise<void> => {
+    if (!hasProfileChanged(values)) {
       setCurrentStepIndex(1);
       return;
     }
 
     setIsLoading(true);
     try {
-      await updateProfile.mutateAsync(profileData);
+      await updateProfile.mutateAsync(values as ProfileUpdateData);
       setCurrentStepIndex(1);
     } catch {
       // apiRequest interceptor surfaces the error toast
@@ -120,15 +134,11 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
     }
   };
 
-  const handleSubmitGoalDescription = async () => {
-    if (!goalDescription.trim()) {
-      toast.error('Please describe what you want to achieve.');
-      return;
-    }
-
+  const handleGoalDescriptionSubmit = async (values: OnboardingGoalFormValues): Promise<void> => {
+    setGoalDescription(values.goalDescription);
     try {
-      setIsLoading(true)
-      await aiProxy.processAiRequest(goalDescription.trim());
+      setIsLoading(true);
+      await aiProxy.processAiRequest(values.goalDescription);
       setCurrentStepIndex(2);
     } catch {
       // apiRequest interceptor surfaces the error toast
@@ -191,21 +201,24 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
       case 'profile-details':
         return (
           <ProfileDetailsStep
-            profileData={profileData}
-            setProfileData={setProfileData}
-            handleSubmit={handleSubmitProfileDetails}
-            isLoading={false}
+            initialValues={{
+              first_name: profile?.first_name || '',
+              last_name: profile?.last_name || '',
+              work_role: profile?.work_role || '',
+              education: profile?.education || '',
+              desires: profile?.desires || '',
+              limiting_beliefs: profile?.limiting_beliefs || '',
+            }}
+            onSubmit={handleProfileSubmit}
+            isLoading={isLoading}
           />
         );
       case 'goal-description':
         return (
           <GoalDescriptionStep
-            goalDescription={goalDescription}
-            setGoalDescription={setGoalDescription}
-            handleSubmit={handleSubmitGoalDescription}
+            onSubmit={handleGoalDescriptionSubmit}
             isLoading={aiProxy.isLoading}
             progress={aiProxy.progress}
-            isJobComplete={aiProxy.isJobComplete}
             isJobFailed={aiProxy.isJobFailed}
           />
         );
@@ -237,7 +250,6 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
     <LinearGradient>
       <SafeAreaView className="flex-1">
         <ScrollView className="flex-1 p-5" showsVerticalScrollIndicator={false}>
-          {/* Header */}
           <View className="items-center mb-8">
             <Text className="mb-2 text-2xl font-bold text-center text-[#E6FAFF]">
               {currentStep.title}
@@ -252,4 +264,4 @@ export default function AiOnboardingWizard({ onComplete }: OnboardingWizardProps
       </SafeAreaView>
     </LinearGradient>
   );
-} 
+}
