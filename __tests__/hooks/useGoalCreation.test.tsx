@@ -70,31 +70,9 @@ describe('useGoalCreation', () => {
   it('should initialize with default state', () => {
     const { result } = renderHook(() => useGoalCreation());
 
-    expect(result.current.goalDescription).toBe('');
-    expect(result.current.selectedTimeframe).toBe('');
     expect(result.current.showConfirmation).toBe(false);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.aiResponse).toBe(null);
-  });
-
-  it('should update goal description', () => {
-    const { result } = renderHook(() => useGoalCreation());
-
-    act(() => {
-      result.current.setGoalDescription('Learn React Native');
-    });
-
-    expect(result.current.goalDescription).toBe('Learn React Native');
-  });
-
-  it('should update selected timeframe', () => {
-    const { result } = renderHook(() => useGoalCreation());
-
-    act(() => {
-      result.current.setSelectedTimeframe('3 months');
-    });
-
-    expect(result.current.selectedTimeframe).toBe('3 months');
   });
 
   it('should update show confirmation', () => {
@@ -108,50 +86,15 @@ describe('useGoalCreation', () => {
   });
 
   describe('handleCreateGoal', () => {
-    it('should call processAiRequest when validation passes', async () => {
+    it('should call processAiRequest with provided values', async () => {
       const { result } = renderHook(() => useGoalCreation());
 
-      act(() => {
-        result.current.setGoalDescription('Learn React Native');
-        result.current.setSelectedTimeframe('3 months');
-      });
-
       await act(async () => {
-        await result.current.handleCreateGoal();
+        await result.current.handleCreateGoal('Learn React Native', '3 months');
       });
 
       expect(mockProcessAiRequest).toHaveBeenCalledWith('Learn React Native', '3 months');
       expect(result.current.showConfirmation).toBe(true);
-    });
-
-    it('should show error alert when goal description is empty', async () => {
-      const { result } = renderHook(() => useGoalCreation());
-
-      act(() => {
-        result.current.setSelectedTimeframe('3 months');
-      });
-
-      await act(async () => {
-        await result.current.handleCreateGoal();
-      });
-
-      expect(mockToastError).toHaveBeenCalledWith('Please enter a goal description');
-      expect(mockProcessAiRequest).not.toHaveBeenCalled();
-    });
-
-    it('should show error alert when timeframe is not selected', async () => {
-      const { result } = renderHook(() => useGoalCreation());
-
-      act(() => {
-        result.current.setGoalDescription('Learn React Native');
-      });
-
-      await act(async () => {
-        await result.current.handleCreateGoal();
-      });
-
-      expect(mockToastError).toHaveBeenCalledWith('Please select a timeframe');
-      expect(mockProcessAiRequest).not.toHaveBeenCalled();
     });
 
     it('should not throw when AI request fails (interceptor surfaces toast)', async () => {
@@ -159,13 +102,8 @@ describe('useGoalCreation', () => {
 
       mockProcessAiRequest.mockRejectedValue(new Error('AI request failed'));
 
-      act(() => {
-        result.current.setGoalDescription('Learn React Native');
-        result.current.setSelectedTimeframe('3 months');
-      });
-
       await act(async () => {
-        await result.current.handleCreateGoal();
+        await result.current.handleCreateGoal('Learn React Native', '3 months');
       });
 
       expect(mockProcessAiRequest).toHaveBeenCalled();
@@ -201,13 +139,8 @@ describe('useGoalCreation', () => {
 
       const { result } = renderHook(() => useGoalCreation());
 
-      act(() => {
-        result.current.setGoalDescription('Learn React Native');
-        result.current.setSelectedTimeframe('3 months');
-      });
-
       await act(async () => {
-        await result.current.handleConfirmGoal();
+        await result.current.handleConfirmGoal('Learn React Native', '3 months');
       });
 
       expect(mockCreateSmartGoal).toHaveBeenCalledWith({
@@ -226,7 +159,7 @@ describe('useGoalCreation', () => {
       const { result } = renderHook(() => useGoalCreation());
 
       await act(async () => {
-        await result.current.handleConfirmGoal();
+        await result.current.handleConfirmGoal('Learn React Native', '3 months');
       });
 
       expect(mockToastError).toHaveBeenCalledWith('No goal details available');
