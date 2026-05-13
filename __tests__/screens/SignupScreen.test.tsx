@@ -42,6 +42,20 @@ jest.mock('../../hooks/useAuth', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+const fillForm = (email: string, password: string, confirmation: string) => {
+  fireEvent.changeText(screen.getByTestId('signup-email-input'), email);
+  fireEvent.changeText(screen.getByTestId('signup-password-input'), password);
+  fireEvent.changeText(screen.getByTestId('signup-password-confirmation-input'), confirmation);
+};
+
+const waitForButtonEnabled = async () => {
+  const button = screen.getByTestId('signup-signup-button');
+  await waitFor(() => {
+    expect(button.props.accessibilityState?.disabled).toBe(false);
+  });
+  return button;
+};
+
 describe('SignupScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -63,7 +77,7 @@ describe('SignupScreen', () => {
     expect(screen.getByTestId('signup-signin-link')).toBeTruthy();
   });
 
-  it('shows validation error when fields are empty', async () => {
+  it('keeps the submit button disabled while fields are empty', () => {
     render(
       <AuthProvider>
         <SignupScreen />
@@ -71,55 +85,39 @@ describe('SignupScreen', () => {
     );
 
     const signupButton = screen.getByTestId('signup-signup-button');
+    expect(signupButton.props.accessibilityState?.disabled).toBe(true);
     fireEvent.press(signupButton);
-
-    await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('Please fill in all fields');
-    });
+    expect(mockSignUp).not.toHaveBeenCalled();
   });
 
-  it('shows validation error when passwords do not match', async () => {
+  it('shows inline error when passwords do not match', async () => {
     render(
       <AuthProvider>
         <SignupScreen />
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('signup-email-input');
-    const passwordInput = screen.getByTestId('signup-password-input');
-    const passwordConfirmationInput = screen.getByTestId('signup-password-confirmation-input');
-    const signupButton = screen.getByTestId('signup-signup-button');
-
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, 'password123');
-    fireEvent.changeText(passwordConfirmationInput, 'differentpassword');
-    fireEvent.press(signupButton);
+    fillForm('test@example.com', 'password123', 'differentpassword');
 
     await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('Passwords do not match');
+      expect(screen.getByTestId('signup-password-confirmation-error')).toBeTruthy();
     });
+    expect(mockSignUp).not.toHaveBeenCalled();
   });
 
-  it('shows validation error when password is too short', async () => {
+  it('shows inline error when password is too short', async () => {
     render(
       <AuthProvider>
         <SignupScreen />
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('signup-email-input');
-    const passwordInput = screen.getByTestId('signup-password-input');
-    const passwordConfirmationInput = screen.getByTestId('signup-password-confirmation-input');
-    const signupButton = screen.getByTestId('signup-signup-button');
-
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, '123');
-    fireEvent.changeText(passwordConfirmationInput, '123');
-    fireEvent.press(signupButton);
+    fillForm('test@example.com', '123', '123');
 
     await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('Password must be at least 6 characters long');
+      expect(screen.getByTestId('signup-password-error')).toBeTruthy();
     });
+    expect(mockSignUp).not.toHaveBeenCalled();
   });
 
   it('handles successful sign up', async () => {
@@ -131,14 +129,8 @@ describe('SignupScreen', () => {
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('signup-email-input');
-    const passwordInput = screen.getByTestId('signup-password-input');
-    const passwordConfirmationInput = screen.getByTestId('signup-password-confirmation-input');
-    const signupButton = screen.getByTestId('signup-signup-button');
-
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, 'password123');
-    fireEvent.changeText(passwordConfirmationInput, 'password123');
+    fillForm('test@example.com', 'password123', 'password123');
+    const signupButton = await waitForButtonEnabled();
     fireEvent.press(signupButton);
 
     await waitFor(() => {
@@ -156,14 +148,8 @@ describe('SignupScreen', () => {
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('signup-email-input');
-    const passwordInput = screen.getByTestId('signup-password-input');
-    const passwordConfirmationInput = screen.getByTestId('signup-password-confirmation-input');
-    const signupButton = screen.getByTestId('signup-signup-button');
-
-    fireEvent.changeText(emailInput, 'existing@example.com');
-    fireEvent.changeText(passwordInput, 'password123');
-    fireEvent.changeText(passwordConfirmationInput, 'password123');
+    fillForm('existing@example.com', 'password123', 'password123');
+    const signupButton = await waitForButtonEnabled();
     fireEvent.press(signupButton);
 
     await waitFor(() => {
@@ -195,17 +181,10 @@ describe('SignupScreen', () => {
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('signup-email-input');
-    const passwordInput = screen.getByTestId('signup-password-input');
-    const passwordConfirmationInput = screen.getByTestId('signup-password-confirmation-input');
-    const signupButton = screen.getByTestId('signup-signup-button');
-
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, 'password123');
-    fireEvent.changeText(passwordConfirmationInput, 'password123');
+    fillForm('test@example.com', 'password123', 'password123');
+    const signupButton = await waitForButtonEnabled();
     fireEvent.press(signupButton);
 
-    // Check that loading indicator appears
     await waitFor(() => {
       expect(screen.getByTestId('signup-loading-indicator')).toBeTruthy();
     });
@@ -220,64 +199,46 @@ describe('SignupScreen', () => {
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('signup-email-input');
-    const passwordInput = screen.getByTestId('signup-password-input');
-    const passwordConfirmationInput = screen.getByTestId('signup-password-confirmation-input');
-    const signupButton = screen.getByTestId('signup-signup-button');
-
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, 'password123');
-    fireEvent.changeText(passwordConfirmationInput, 'password123');
+    fillForm('test@example.com', 'password123', 'password123');
+    const signupButton = await waitForButtonEnabled();
     fireEvent.press(signupButton);
 
-    // Button should be disabled during loading
     await waitFor(() => {
       expect(signupButton.props.accessibilityState?.disabled).toBe(true);
     });
   });
 
-  it('validates email format', async () => {
+  it('shows inline error for invalid email format', async () => {
     render(
       <AuthProvider>
         <SignupScreen />
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('signup-email-input');
-    const passwordInput = screen.getByTestId('signup-password-input');
-    const passwordConfirmationInput = screen.getByTestId('signup-password-confirmation-input');
-    const signupButton = screen.getByTestId('signup-signup-button');
+    fillForm('invalid-email', 'password123', 'password123');
 
-    // Test with invalid email format
-    fireEvent.changeText(emailInput, 'invalid-email');
-    fireEvent.changeText(passwordInput, 'password123');
-    fireEvent.changeText(passwordConfirmationInput, 'password123');
-    fireEvent.press(signupButton);
-
-    // Should still attempt sign up (validation happens on server)
     await waitFor(() => {
-      expect(mockSignUp).toHaveBeenCalledWith('invalid-email', 'password123', 'password123');
+      expect(screen.getByTestId('signup-email-error')).toBeTruthy();
     });
+    expect(mockSignUp).not.toHaveBeenCalled();
   });
 
-  it('handles partial field validation', async () => {
+  it('keeps the submit button disabled when only some fields are filled', async () => {
     render(
       <AuthProvider>
         <SignupScreen />
       </AuthProvider>
     );
 
-    const emailInput = screen.getByTestId('signup-email-input');
-    const passwordInput = screen.getByTestId('signup-password-input');
     const signupButton = screen.getByTestId('signup-signup-button');
 
-    // Fill only email and password, leave confirmation empty
-    fireEvent.changeText(emailInput, 'test@example.com');
-    fireEvent.changeText(passwordInput, 'password123');
-    fireEvent.press(signupButton);
+    fireEvent.changeText(screen.getByTestId('signup-email-input'), 'test@example.com');
+    fireEvent.changeText(screen.getByTestId('signup-password-input'), 'password123');
 
+    // confirmation left empty
     await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('Please fill in all fields');
+      expect(signupButton.props.accessibilityState?.disabled).toBe(true);
     });
+    expect(mockSignUp).not.toHaveBeenCalled();
   });
 });
