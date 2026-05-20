@@ -38,12 +38,14 @@ jest.mock('../../hooks/useTasks', () => ({
 }));
 jest.mock('../../hooks/useSmartGoals', () => ({
   useSmartGoal: jest.fn(),
+  useSmartGoals: jest.fn(),
 }));
 
 const mockUseTask = require('../../hooks/useTasks').useTask;
 const mockUseUpdateTask = require('../../hooks/useTasks').useUpdateTask;
 const mockUseDeleteTask = require('../../hooks/useTasks').useDeleteTask;
 const mockUseSmartGoal = require('../../hooks/useSmartGoals').useSmartGoal;
+const mockUseSmartGoals = require('../../hooks/useSmartGoals').useSmartGoals;
 
 describe('TaskDetailScreen', () => {
   let queryClient: QueryClient;
@@ -60,6 +62,11 @@ describe('TaskDetailScreen', () => {
     jest.clearAllMocks();
     mockUseSmartGoal.mockReturnValue({
       data: null,
+      isLoading: false,
+      error: null,
+    });
+    mockUseSmartGoals.mockReturnValue({
+      data: [],
       isLoading: false,
       error: null,
     });
