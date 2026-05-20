@@ -1,6 +1,7 @@
 import { CreateTaskParams } from '@/api/tasks';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { LinkedGoalSelector } from '@/components/goals/LinkedGoalSelector';
 import { PriorityInput } from '@/components/inputs';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
@@ -38,9 +39,10 @@ function AddTaskContent() {
   const { data: smartGoals = [], isLoading: isLoadingSmartGoals } = useSmartGoals();
 
   const { smartGoalId } = useLocalSearchParams<{ smartGoalId?: string }>();
-  const parsedSmartGoalId = parseInt(smartGoalId || '', 10)
+  const parsedSmartGoalId = parseInt(smartGoalId || '', 10);
+  const initialSmartGoalId = Number.isInteger(parsedSmartGoalId) && parsedSmartGoalId > 0 ? parsedSmartGoalId : null;
 
-  const [selectedSmartGoalId, setSelectedSmartGoalId] = useState<number | null>(parsedSmartGoalId);
+  const [selectedSmartGoalId, setSelectedSmartGoalId] = useState<number | null>(initialSmartGoalId);
 
   const { control, handleSubmit, formState: { errors, isValid } } = useForm<AddTaskFormValues>({
     resolver: zodResolver(addTaskFormSchema),
@@ -180,57 +182,13 @@ function AddTaskContent() {
               />
             </View>
 
-            <View className="mb-5" testID="add-task-goal-linking-section">
-              <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Linked Goal (optional):</Text>
-              {isLoadingSmartGoals ? (
-                <Text className="text-[#708090] text-sm" testID="add-task-goal-loading">
-                  Loading goals...
-                </Text>
-              ) : (
-                <View className="gap-2">
-                  <Pressable
-                    onPress={() => setSelectedSmartGoalId(null)}
-                    className={`py-3 px-4 rounded-lg border ${selectedSmartGoalId === null
-                      ? 'border-cyan-400 bg-cyan-400'
-                      : 'border-[#708090] bg-[#13203a]'
-                      }`}
-                    disabled={createTaskMutation.isPending}
-                    testID="add-task-goal-option-none"
-                  >
-                    <Text
-                      className={`font-medium ${selectedSmartGoalId === null
-                        ? 'text-[#021A40]'
-                        : 'text-[#E6FAFF]'
-                        }`}
-                    >
-                      None
-                    </Text>
-                  </Pressable>
-
-                  {smartGoals.map(goal => (
-                    <Pressable
-                      key={goal.id}
-                      onPress={() => setSelectedSmartGoalId(goal.id ?? null)}
-                      className={`py-3 px-4 rounded-lg border ${selectedSmartGoalId === goal.id
-                        ? 'border-cyan-400 bg-cyan-400'
-                        : 'border-[#708090] bg-[#13203a]'
-                        }`}
-                      disabled={createTaskMutation.isPending}
-                      testID={`add-task-goal-option-${goal.id}`}
-                    >
-                      <Text
-                        className={`font-medium ${selectedSmartGoalId === goal.id
-                          ? 'text-[#021A40]'
-                          : 'text-[#E6FAFF]'
-                          }`}
-                      >
-                        {goal.title}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </View>
-              )}
-            </View>
+            <LinkedGoalSelector
+              goals={smartGoals}
+              isLoading={isLoadingSmartGoals}
+              selectedGoalId={selectedSmartGoalId}
+              onSelectGoal={setSelectedSmartGoalId}
+              disabled={createTaskMutation.isPending}
+            />
 
             <View className="gap-4">
               <PrimaryButton
