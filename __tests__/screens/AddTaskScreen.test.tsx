@@ -6,9 +6,13 @@ import AddTaskScreen from '../../app/addTask';
 
 // Mock the API module
 jest.mock('../../api/tasks');
+jest.mock('../../hooks/useSmartGoals', () => ({
+  useSmartGoals: jest.fn(),
+}));
 
 // Mock expo-router
 jest.mock('expo-router', () => ({
+  useLocalSearchParams: jest.fn(() => ({})),
   useRouter: () => ({
     push: jest.fn(),
     back: jest.fn(),
@@ -17,7 +21,6 @@ jest.mock('expo-router', () => ({
     push: jest.fn(),
     back: jest.fn(),
   },
-  useLocalSearchParams: () => ({}),
 }));
 
 // Mock Alert
@@ -30,6 +33,8 @@ jest.mock('@tanstack/react-query', () => ({
 }));
 
 const mockUseMutation = require('@tanstack/react-query').useMutation;
+const mockUseLocalSearchParams = require('expo-router').useLocalSearchParams;
+const mockUseSmartGoals = require('../../hooks/useSmartGoals').useSmartGoals;
 
 describe('AddTaskScreen', () => {
   let queryClient: QueryClient;
@@ -44,6 +49,12 @@ describe('AddTaskScreen', () => {
 
     // Reset all mocks
     jest.clearAllMocks();
+    mockUseLocalSearchParams.mockReturnValue({});
+    mockUseSmartGoals.mockReturnValue({
+      data: [],
+      isLoading: false,
+      error: null,
+    });
   });
 
   it('renders form fields', () => {
@@ -107,7 +118,97 @@ describe('AddTaskScreen', () => {
           action_category: 'do',
           completed: false,
           priority: 1,
+          smart_goal_id: null,
         },
+        expect.objectContaining({
+          onSuccess: expect.any(Function),
+        })
+      );
+    });
+  });
+
+  it('passes smart_goal_id when navigating from a smart goal', async () => {
+    const mockMutate = jest.fn();
+    mockUseLocalSearchParams.mockReturnValue({ smartGoalId: '42' });
+
+    mockUseMutation.mockReturnValue({
+      mutate: mockMutate,
+      isLoading: false,
+      isError: false,
+      isSuccess: false,
+      error: null,
+      reset: jest.fn(),
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <AddTaskScreen />
+      </QueryClientProvider>
+    );
+
+    const titleInput = screen.getByTestId('add-task-task-name-input');
+    const submitButton = screen.getByTestId('add-task-add-button');
+
+    fireEvent.changeText(titleInput, 'Task for goal');
+
+    await waitFor(() => {
+      expect(submitButton.props.accessibilityState?.disabled).toBe(false);
+    });
+
+    fireEvent.press(submitButton);
+
+    await waitFor(() => {
+      expect(mockMutate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Task for goal',
+          smart_goal_id: 42,
+        }),
+        expect.objectContaining({
+          onSuccess: expect.any(Function),
+        })
+      );
+    });
+  });
+
+  it('allows selecting a goal and submits smart_goal_id', async () => {
+    const mockMutate = jest.fn();
+    mockUseSmartGoals.mockReturnValue({
+      data: [{ id: 7, title: 'Run a 5k', profile_id: 1, timeframe: '1_month', specific: '', measurable: '', achievable: '', relevant: '', time_bound: '', completed: false }],
+      isLoading: false,
+      error: null,
+    });
+
+    mockUseMutation.mockReturnValue({
+      mutate: mockMutate,
+      isPending: false,
+      isError: false,
+      isSuccess: false,
+      error: null,
+      reset: jest.fn(),
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <AddTaskScreen />
+      </QueryClientProvider>
+    );
+
+    const submitButton = screen.getByTestId('add-task-add-button');
+    fireEvent.press(screen.getByTestId('add-task-goal-option-7'));
+    fireEvent.changeText(screen.getByTestId('add-task-task-name-input'), 'Linked task');
+
+    await waitFor(() => {
+      expect(submitButton.props.accessibilityState?.disabled).toBe(false);
+    });
+
+    fireEvent.press(submitButton);
+
+    await waitFor(() => {
+      expect(mockMutate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Linked task',
+          smart_goal_id: 7,
+        }),
         expect.objectContaining({
           onSuccess: expect.any(Function),
         })

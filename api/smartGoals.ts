@@ -1,5 +1,13 @@
 // API client for Rails server smart goals endpoints
 import { apiDelete, apiGet, apiPatch, apiPost, type ApiResponse } from '../utils/apiRequest';
+import type { Task } from './tasks';
+
+export interface SmartGoalDetail extends SmartGoal {
+  tasks: {
+    open: Task[];
+    completed: Task[];
+  };
+}
 
 export interface SmartGoal {
   id?: number;
@@ -50,8 +58,8 @@ export class SmartGoalsAPI {
     return apiGet<SmartGoal[]>('/smart_goals');
   }
 
-  async getSmartGoal(id: number): Promise<ApiResponse<SmartGoal>> {
-    return apiGet<SmartGoal>(`/smart_goals/${id}`);
+  async getSmartGoal(id: number): Promise<ApiResponse<SmartGoalDetail>> {
+    return apiGet<SmartGoalDetail>(`/smart_goals/${id}`);
   }
 
   async createSmartGoal(data: CreateSmartGoalParams): Promise<ApiResponse<SmartGoal>> {

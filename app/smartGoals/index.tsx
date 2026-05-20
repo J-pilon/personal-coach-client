@@ -2,7 +2,6 @@ import AiOnboardingWizard from '@/components/AiOnboardingWizard';
 import { PrimaryButton } from '@/components/buttons/';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { LoadingSpinner } from '@/components/loading';
-import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useSmartGoals } from '@/hooks/useSmartGoals';
@@ -29,7 +28,6 @@ function SmartGoalsContent() {
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: goals, isLoading: goalsLoading, error } = useSmartGoals();
   const [showWizard, setShowWizard] = useState(false);
-  const toast = useToast();
 
   const handleStartOnboarding = () => {
     setShowWizard(true);
@@ -160,7 +158,13 @@ function SmartGoalsContent() {
   };
 
   const renderGoal = (goal: any) => (
-    <View key={goal.id} className="bg-[#2B42B6] rounded-2xl p-5 mb-4 shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
+    <Pressable
+      key={goal.id}
+      className="bg-[#2B42B6] rounded-2xl p-5 mb-4 shadow-lg border border-[#33CFFF]"
+      style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
+      onPress={() => router.push(`/smartGoals/${goal.id}`)}
+      testID={`smart-goals-goal-card-${goal.id}`}
+    >
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-semibold text-[#F1F5F9] flex-1 mr-4" testID={`smart-goals-goal-title-${goal.id}`}>{goal.title}</Text>
         <View className={`px-3 py-1 rounded-full ${goal.completed ? 'bg-green-500' : 'bg-orange-500'}`}>
@@ -190,21 +194,11 @@ function SmartGoalsContent() {
         <Text className="text-[#E6FAFF] text-base">{goal.relevant}</Text>
       </View>
 
-      <View className="mb-4">
+      <View>
         <Text className="text-[#708090] text-sm font-medium mb-1">Time-bound:</Text>
         <Text className="text-[#E6FAFF] text-base">{goal.time_bound}</Text>
       </View>
-
-      <Pressable
-        className="border-2 border-[#33CFFF] rounded-xl py-3 px-4 items-center"
-        onPress={() => {
-          // TODO: Navigate to edit goal screen
-          toast.info('Edit functionality coming soon!');
-        }}
-      >
-        <Text className="text-[#33CFFF] font-semibold text-base">Edit Goal</Text>
-      </Pressable>
-    </View>
+    </Pressable>
   );
 
   const renderTimeframeSection = (timeframe: string, goals: any[]) => (

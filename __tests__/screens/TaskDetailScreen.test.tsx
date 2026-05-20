@@ -36,10 +36,14 @@ jest.mock('../../hooks/useTasks', () => ({
   useUpdateTask: jest.fn(),
   useDeleteTask: jest.fn(),
 }));
+jest.mock('../../hooks/useSmartGoals', () => ({
+  useSmartGoal: jest.fn(),
+}));
 
 const mockUseTask = require('../../hooks/useTasks').useTask;
 const mockUseUpdateTask = require('../../hooks/useTasks').useUpdateTask;
 const mockUseDeleteTask = require('../../hooks/useTasks').useDeleteTask;
+const mockUseSmartGoal = require('../../hooks/useSmartGoals').useSmartGoal;
 
 describe('TaskDetailScreen', () => {
   let queryClient: QueryClient;
@@ -54,6 +58,11 @@ describe('TaskDetailScreen', () => {
 
     // Reset all mocks
     jest.clearAllMocks();
+    mockUseSmartGoal.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+    });
   });
 
   it('renders loading state', () => {
@@ -398,6 +407,78 @@ describe('TaskDetailScreen', () => {
     );
 
     expect(screen.getByTestId('task-detail-status')).toBeTruthy();
+  });
+
+  it('shows linked goal section when task has smart_goal_id', () => {
+    const mockTask = {
+      id: 1,
+      title: 'Task with goal',
+      description: 'Linked',
+      completed: false,
+      action_category: 'do' as const,
+      smart_goal_id: 12,
+      created_at: '2024-01-01T00:00:00Z',
+    };
+
+    mockUseTask.mockReturnValue({
+      data: mockTask,
+      isLoading: false,
+      error: null,
+      isError: false,
+      isSuccess: true,
+      isFetching: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    });
+    mockUseUpdateTask.mockReturnValue({ mutate: jest.fn(), isPending: false, isError: false, isSuccess: false, error: null, reset: jest.fn() });
+    mockUseDeleteTask.mockReturnValue({ mutate: jest.fn(), isPending: false, isError: false, isSuccess: false, error: null, reset: jest.fn() });
+    mockUseSmartGoal.mockReturnValue({
+      data: { id: 12, title: 'Complete Marathon Plan' },
+      isLoading: false,
+      error: null,
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <TaskDetailScreen />
+      </QueryClientProvider>
+    );
+
+    expect(screen.getByTestId('task-detail-linked-goal-section')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-linked-goal-title')).toBeTruthy();
+  });
+
+  it('hides linked goal section when task has no smart_goal_id', () => {
+    const mockTask = {
+      id: 1,
+      title: 'Task without goal',
+      description: 'Not linked',
+      completed: false,
+      action_category: 'do' as const,
+      smart_goal_id: null,
+      created_at: '2024-01-01T00:00:00Z',
+    };
+
+    mockUseTask.mockReturnValue({
+      data: mockTask,
+      isLoading: false,
+      error: null,
+      isError: false,
+      isSuccess: true,
+      isFetching: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    });
+    mockUseUpdateTask.mockReturnValue({ mutate: jest.fn(), isPending: false, isError: false, isSuccess: false, error: null, reset: jest.fn() });
+    mockUseDeleteTask.mockReturnValue({ mutate: jest.fn(), isPending: false, isError: false, isSuccess: false, error: null, reset: jest.fn() });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <TaskDetailScreen />
+      </QueryClientProvider>
+    );
+
+    expect(screen.queryByTestId('task-detail-linked-goal-section')).toBeNull();
   });
 
   it('refetches task after successful mutation', async () => {

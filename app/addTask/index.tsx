@@ -4,11 +4,12 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { PriorityInput } from '@/components/inputs';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
+import { useSmartGoals } from '@/hooks/useSmartGoals';
 import { useCreateTask } from '@/hooks/useTasks';
 import { taskSchema } from '@/models';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { router } from 'expo-router';
-import React from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { z } from 'zod';
@@ -34,6 +35,12 @@ export default function AddTaskScreen() {
 
 function AddTaskContent() {
   const createTaskMutation = useCreateTask();
+  const { data: smartGoals = [], isLoading: isLoadingSmartGoals } = useSmartGoals();
+
+  const { smartGoalId } = useLocalSearchParams<{ smartGoalId?: string }>();
+  const parsedSmartGoalId = parseInt(smartGoalId || '', 10)
+
+  const [selectedSmartGoalId, setSelectedSmartGoalId] = useState<number | null>(parsedSmartGoalId);
 
   const { control, handleSubmit, formState: { errors, isValid } } = useForm<AddTaskFormValues>({
     resolver: zodResolver(addTaskFormSchema),
@@ -53,6 +60,7 @@ function AddTaskContent() {
       priority: values.priority,
       action_category: values.action_category,
       completed: false,
+      smart_goal_id: selectedSmartGoalId,
     };
 
     createTaskMutation.mutate(newTask, {
@@ -170,6 +178,58 @@ function AddTaskContent() {
                   </View>
                 )}
               />
+            </View>
+
+            <View className="mb-5" testID="add-task-goal-linking-section">
+              <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Linked Goal (optional):</Text>
+              {isLoadingSmartGoals ? (
+                <Text className="text-[#708090] text-sm" testID="add-task-goal-loading">
+                  Loading goals...
+                </Text>
+              ) : (
+                <View className="gap-2">
+                  <Pressable
+                    onPress={() => setSelectedSmartGoalId(null)}
+                    className={`py-3 px-4 rounded-lg border ${selectedSmartGoalId === null
+                      ? 'border-cyan-400 bg-cyan-400'
+                      : 'border-[#708090] bg-[#13203a]'
+                      }`}
+                    disabled={createTaskMutation.isPending}
+                    testID="add-task-goal-option-none"
+                  >
+                    <Text
+                      className={`font-medium ${selectedSmartGoalId === null
+                        ? 'text-[#021A40]'
+                        : 'text-[#E6FAFF]'
+                        }`}
+                    >
+                      None
+                    </Text>
+                  </Pressable>
+
+                  {smartGoals.map(goal => (
+                    <Pressable
+                      key={goal.id}
+                      onPress={() => setSelectedSmartGoalId(goal.id ?? null)}
+                      className={`py-3 px-4 rounded-lg border ${selectedSmartGoalId === goal.id
+                        ? 'border-cyan-400 bg-cyan-400'
+                        : 'border-[#708090] bg-[#13203a]'
+                        }`}
+                      disabled={createTaskMutation.isPending}
+                      testID={`add-task-goal-option-${goal.id}`}
+                    >
+                      <Text
+                        className={`font-medium ${selectedSmartGoalId === goal.id
+                          ? 'text-[#021A40]'
+                          : 'text-[#E6FAFF]'
+                          }`}
+                      >
+                        {goal.title}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              )}
             </View>
 
             <View className="gap-4">

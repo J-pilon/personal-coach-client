@@ -21,6 +21,20 @@ export const useSmartGoals = () => {
   });
 };
 
+export const useSmartGoal = (id: number) => {
+  return useQuery({
+    queryKey: ['smartGoal', id],
+    queryFn: async () => {
+      const response = await smartGoalsApi.getSmartGoal(id);
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      return response.data;
+    },
+    enabled: id > 0,
+  });
+};
+
 export const useCreateSmartGoal = () => {
   const queryClient = useQueryClient();
   
