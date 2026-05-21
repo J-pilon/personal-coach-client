@@ -4,6 +4,9 @@ on:
   push:
     branches: ["main"]
 
+env:
+  EXPO_DEBUG: "1"
+
 jobs:
   fingerprint:
     name: Fingerprint
@@ -34,8 +37,6 @@ jobs:
     type: submit
     params:
       build_id: ${{ needs.get_ios_build.outputs.build_id }}
-    env:
-      EXPO_DEBUG: "1"
 
   submit_ios_new_build:
     name: Submit new iOS build
