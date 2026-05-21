@@ -11,6 +11,7 @@ export interface Task {
   priority?: number;
   profile_id: number;
   smart_goal_id?: number | null;
+  smart_goal?: { id: number; title: string } | null;
   due_at?: string | null;
   created_at?: string;
   updated_at?: string;
