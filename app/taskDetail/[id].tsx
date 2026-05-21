@@ -1,10 +1,12 @@
 import { UpdateTaskParams } from '@/api/tasks';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { LinkedGoalSelector } from '@/components/goals/LinkedGoalSelector';
 import { PRIORITY_OPTIONS, PriorityInput } from '@/components/inputs';
 import { LoadingSpinner } from '@/components/loading';
 import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
+import { useSmartGoal, useSmartGoals } from '@/hooks/useSmartGoals';
 import { useDeleteTask, useTask, useUpdateTask } from '@/hooks/useTasks';
 import { taskSchema } from '@/models';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -47,6 +49,13 @@ function TaskDetailContent() {
   const toast = useToast();
 
   const { data: task, isLoading, error, refetch } = useTask(taskId);
+  const linkedGoalId = task?.smart_goal_id ?? null;
+  const {
+    data: linkedGoal,
+    isLoading: isLinkedGoalLoading,
+    error: linkedGoalError,
+  } = useSmartGoal(linkedGoalId ?? 0);
+  const { data: smartGoals = [], isLoading: isLoadingSmartGoals } = useSmartGoals();
 
   const { control, handleSubmit, formState: { errors, isValid }, reset } = useForm<EditTaskFormValues>({
     resolver: zodResolver(editTaskFormSchema),
@@ -61,6 +70,7 @@ function TaskDetailContent() {
 
   // editingMode: separate ref-like state via reset + a flag
   const [isEditing, setIsEditing] = React.useState(false);
+  const [selectedSmartGoalId, setSelectedSmartGoalId] = React.useState<number | null>(null);
 
   useEffect(() => {
     if (task) {
@@ -70,6 +80,7 @@ function TaskDetailContent() {
         action_category: task.action_category,
         priority: task.priority || 1,
       });
+      setSelectedSmartGoalId(task.smart_goal_id ?? null);
     }
   }, [task, reset]);
 
@@ -79,6 +90,7 @@ function TaskDetailContent() {
       description: values.description || undefined,
       action_category: values.action_category,
       priority: values.priority,
+      smart_goal_id: selectedSmartGoalId,
     };
 
     updateTaskMutation.mutate(
@@ -100,6 +112,7 @@ function TaskDetailContent() {
         action_category: task.action_category,
         priority: task.priority || 1,
       });
+      setSelectedSmartGoalId(task.smart_goal_id ?? null);
     }
     setIsEditing(false);
   };
@@ -377,6 +390,45 @@ function TaskDetailContent() {
                 </View>
               )}
             </View>
+
+            {isEditing ? (
+              <LinkedGoalSelector
+                goals={smartGoals}
+                isLoading={isLoadingSmartGoals}
+                selectedGoalId={selectedSmartGoalId}
+                onSelectGoal={setSelectedSmartGoalId}
+                disabled={updateTaskMutation.isPending}
+              />
+            ) : null}
+
+            {linkedGoalId ? (
+              <View className="mb-6" testID="task-detail-linked-goal-section">
+                <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Linked Goal</Text>
+                {isLinkedGoalLoading ? (
+                  <View className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]">
+                    <Text className="text-[#708090] text-base" testID="task-detail-linked-goal-loading">
+                      Loading goal...
+                    </Text>
+                  </View>
+                ) : linkedGoalError || !linkedGoal ? (
+                  <View className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]">
+                    <Text className="text-[#E6FAFF] text-base" testID="task-detail-linked-goal-error">
+                      Linked goal unavailable
+                    </Text>
+                  </View>
+                ) : (
+                  <Pressable
+                    className="px-4 py-3 rounded-xl bg-[#13203a] border border-[#708090]"
+                    onPress={() => router.push(`/smartGoals/${linkedGoal.id}`)}
+                    testID="task-detail-linked-goal-button"
+                  >
+                    <Text className="text-[#F1F5F9] text-base" testID="task-detail-linked-goal-title">
+                      {linkedGoal.title}
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
+            ) : null}
 
             <View className="p-4 rounded-xl bg-[#2B42B6] border border-[#708090]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
               <Text className="text-[#E6FAFF] text-sm mb-2">Created: {new Date(task.created_at || '').toLocaleDateString()}</Text>

@@ -10,6 +10,9 @@ export interface Task {
   action_category: 'do' | 'defer' | 'delegate';
   priority?: number;
   profile_id: number;
+  smart_goal_id?: number | null;
+  smart_goal?: { id: number; title: string } | null;
+  due_at?: string | null;
   created_at?: string;
   updated_at?: string;
   isAiSuggestion?: boolean;
@@ -22,6 +25,8 @@ export interface CreateTaskParams {
   completed?: boolean;
   priority?: number;
   action_category: 'do' | 'defer' | 'delegate';
+  smart_goal_id?: number | null;
+  due_at?: string | null;
 }
 
 // Update task parameters (all fields optional except id)
@@ -31,6 +36,8 @@ export interface UpdateTaskParams {
   completed?: boolean;
   priority?: number;
   action_category?: 'do' | 'defer' | 'delegate';
+  smart_goal_id?: number | null;
+  due_at?: string | null;
 }
 
 // Tasks API class

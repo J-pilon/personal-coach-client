@@ -9,6 +9,13 @@ interface TaskItemProps {
   onToggle: (taskId: number, completed: boolean) => void;
 }
 
+const GOAL_PILL_MAX_CHARS = 25;
+
+function truncateGoalTitle(title: string): string {
+  if (title.length <= GOAL_PILL_MAX_CHARS) return title;
+  return `${title.slice(0, GOAL_PILL_MAX_CHARS).trimEnd()}…`;
+}
+
 export default function TaskItem({ task, onToggle }: TaskItemProps) {
   const getCheckboxClassName = () => {
     const baseClasses = 'h-7 w-7 rounded-full border-2 mr-4';
@@ -39,6 +46,21 @@ export default function TaskItem({ task, onToggle }: TaskItemProps) {
 
       <View className="flex-1">
         <Text className={`font-bold ${task.completed ? 'text-[#708090]' : 'text-[#F1F5F9]'} text-[17px] mb-0.5 ${task.completed ? 'line-through' : ''} tracking-tight`} testID={`home-task-title-${task.id}`}>{task.title}</Text>
+        {task.smart_goal ? (
+          <Pressable
+            onPress={() => router.push(`/smartGoals/${task.smart_goal!.id}`)}
+            className="self-start flex-row items-center bg-[#13203a] border border-[#33CFFF] rounded-full px-2 py-0.5 mt-0.5 mb-0.5"
+            testID={`home-task-goal-pill-${task.id}`}
+          >
+            <FontAwesome name="flag" size={10} color="#33CFFF" />
+            <Text
+              className="text-[#E6FAFF] text-xs ml-1.5"
+              testID={`home-task-goal-pill-title-${task.id}`}
+            >
+              {truncateGoalTitle(task.smart_goal.title)}
+            </Text>
+          </Pressable>
+        ) : null}
         {task.description ? (
           <Text className={`${task.completed ? 'text-[#708090]' : 'text-[#E6FAFF]'} text-[15px] tracking-tight`} testID={`home-task-description-${task.id}`}>{task.description}</Text>
         ) : null}

@@ -93,6 +93,13 @@ function AppContent() {
                   headerBackTitle: "Menu"
                 }} />
               <Stack.Screen
+                name="smartGoals/[id]"
+                options={{
+                  headerShown: true,
+                  headerTitle: "Goal Details",
+                  headerBackTitle: "Goals"
+                }} />
+              <Stack.Screen
                 name="taskDetail/[id]"
                 options={{
                   headerShown: true,

@@ -1,14 +1,16 @@
 import { CreateTaskParams } from '@/api/tasks';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { LinkedGoalSelector } from '@/components/goals/LinkedGoalSelector';
 import { PriorityInput } from '@/components/inputs';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
+import { useSmartGoals } from '@/hooks/useSmartGoals';
 import { useCreateTask } from '@/hooks/useTasks';
 import { taskSchema } from '@/models';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { router } from 'expo-router';
-import React from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { z } from 'zod';
@@ -34,6 +36,13 @@ export default function AddTaskScreen() {
 
 function AddTaskContent() {
   const createTaskMutation = useCreateTask();
+  const { data: smartGoals = [], isLoading: isLoadingSmartGoals } = useSmartGoals();
+
+  const { smartGoalId } = useLocalSearchParams<{ smartGoalId?: string }>();
+  const parsedSmartGoalId = parseInt(smartGoalId || '', 10);
+  const initialSmartGoalId = Number.isInteger(parsedSmartGoalId) && parsedSmartGoalId > 0 ? parsedSmartGoalId : null;
+
+  const [selectedSmartGoalId, setSelectedSmartGoalId] = useState<number | null>(initialSmartGoalId);
 
   const { control, handleSubmit, formState: { errors, isValid } } = useForm<AddTaskFormValues>({
     resolver: zodResolver(addTaskFormSchema),
@@ -53,6 +62,7 @@ function AddTaskContent() {
       priority: values.priority,
       action_category: values.action_category,
       completed: false,
+      smart_goal_id: selectedSmartGoalId,
     };
 
     createTaskMutation.mutate(newTask, {
@@ -171,6 +181,14 @@ function AddTaskContent() {
                 )}
               />
             </View>
+
+            <LinkedGoalSelector
+              goals={smartGoals}
+              isLoading={isLoadingSmartGoals}
+              selectedGoalId={selectedSmartGoalId}
+              onSelectGoal={setSelectedSmartGoalId}
+              disabled={createTaskMutation.isPending}
+            />
 
             <View className="gap-4">
               <PrimaryButton
