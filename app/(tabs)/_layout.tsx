@@ -55,8 +55,16 @@ export default function TabLayout() {
           name="todaysFocus"
           options={{
             headerShown: false,
-            title: "Today's Focus",
+            title: "Focus",
             tabBarIcon: ({ color }) => <Ionicons name="compass" size={28} color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="journal"
+          options={{
+            title: 'Journal',
+            headerShown: false,
+            tabBarIcon: ({ color }) => <Ionicons name="book-outline" size={26} color={color} />,
           }}
         />
         <Tabs.Screen
