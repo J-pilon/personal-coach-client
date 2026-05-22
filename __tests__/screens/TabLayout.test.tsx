@@ -73,7 +73,8 @@ describe('TabLayout', () => {
     const { getByText } = render(<TabLayout />);
 
     expect(getByText('Tasks')).toBeTruthy();
-    expect(getByText("Today's Focus")).toBeTruthy();
+    expect(getByText('Focus')).toBeTruthy();
+    expect(getByText('Journal')).toBeTruthy();
     expect(getByText('Menu')).toBeTruthy();
   });
 
@@ -168,6 +169,7 @@ describe('TabLayout', () => {
     expect(getByTestId('tabs-container')).toBeTruthy();
     expect(getByTestId('tab-index')).toBeTruthy();
     expect(getByTestId('tab-todaysFocus')).toBeTruthy();
+    expect(getByTestId('tab-journal')).toBeTruthy();
     expect(getByTestId('tab-menu')).toBeTruthy();
   });
 }); 
