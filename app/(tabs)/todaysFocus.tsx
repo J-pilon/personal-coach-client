@@ -22,6 +22,14 @@ export default function TodaysFocusScreen() {
   const createTaskMutation = useCreateTask();
   const toast = useToast();
 
+  const {
+    suggestions: aiSuggestions,
+    isLoading: aiLoading,
+    error: aiError,
+    generateSuggestions,
+    dismissSuggestion,
+  } = useAiSuggestedTasks();
+
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState<Set<string>>(new Set());
@@ -30,7 +38,7 @@ export default function TodaysFocusScreen() {
   if (!profile) {
     return (
       <LinearGradient>
-        <View className="flex-1 items-center justify-center px-5">
+        <View className="flex-1 justify-center items-center px-5">
           <LoadingSpinner
             size="medium"
             text="Loading your profile..."
@@ -41,14 +49,6 @@ export default function TodaysFocusScreen() {
       </LinearGradient>
     );
   }
-
-  const {
-    suggestions: aiSuggestions,
-    isLoading: aiLoading,
-    error: aiError,
-    generateSuggestions,
-    dismissSuggestion,
-  } = useAiSuggestedTasks();
 
   const sortSelectedTasks = (): Task[] => {
     const combinedTasks = [...selectedTasks, ...incompleteTasks];
