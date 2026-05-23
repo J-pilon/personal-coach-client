@@ -91,12 +91,6 @@ function AddGoalContent() {
             paddingBottom: 40
           }}
         >
-          <View className="flex-row items-center mb-8">
-            <Text className="text-2xl font-semibold text-[#F1F5F9]">
-              Confirm Your Goal
-            </Text>
-          </View>
-
           {selectedTimeframe && (
             <GoalPreviewCard
               goalData={formatTimeframeForAiResponse(selectedTimeframe, aiResponse)}
@@ -142,12 +136,6 @@ function AddGoalContent() {
           }}
         >
           <View className="mb-8">
-            <View className="flex-row items-center mb-6">
-              <Text className="text-2xl font-semibold text-[#F1F5F9]">
-                Create New Goal
-              </Text>
-            </View>
-
             <View className="p-6 bg-[#2B42B6] rounded-2xl shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
               <View className="flex-row items-center mb-3">
                 <View className="p-2 mr-3 bg-cyan-400 rounded-full">

@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import NewJournalEntryScreen from '../../app/journal/new';
+import NewJournalEntryScreen from '../../app/journal/[journalId]/journalEntries/new';
 
 jest.mock('../../api/journals');
 

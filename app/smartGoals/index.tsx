@@ -222,13 +222,6 @@ function SmartGoalsContent() {
     <LinearGradient>
       <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
         <View className="mb-8">
-          <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-2 tracking-wide" testID="smart-goals-title">My SMART Goals</Text>
-          <Text className="text-lg text-center text-[#E6FAFF] opacity-80" testID="smart-goals-subtitle">
-            Track your progress towards achieving your goals
-          </Text>
-        </View>
-
-        <View className="mb-8">
           {Object.entries(goalsByTimeframe).map(([timeframe, goals]) =>
             renderTimeframeSection(timeframe, goals)
           )}

@@ -85,8 +85,6 @@ function AddTaskContent() {
           }}
         >
           <View className="gap-4">
-            <Text className="mt-8 mb-5 font-semibold text-center text-3xl text-[#F1F5F9]">What do you need to get done?</Text>
-
             <View>
               <Controller
                 control={control}
