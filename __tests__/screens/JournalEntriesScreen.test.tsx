@@ -80,7 +80,6 @@ describe('JournalEntriesScreen', () => {
     });
 
     renderScreen();
-    expect(screen.getByTestId('journal-home-title')).toBeTruthy();
     expect(screen.getByTestId('journal-home-prompt')).toBeTruthy();
     expect(screen.getByTestId('journal-home-empty')).toBeTruthy();
   });

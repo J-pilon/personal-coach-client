@@ -251,8 +251,6 @@ describe('SmartGoalsScreen', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByTestId('smart-goals-title')).toBeTruthy();
-    expect(screen.getByTestId('smart-goals-subtitle')).toBeTruthy();
     expect(screen.getByTestId('smart-goals-timeframe-3_months')).toBeTruthy();
     expect(screen.getByTestId('smart-goals-timeframe-6_months')).toBeTruthy();
     expect(screen.getByTestId('smart-goals-goal-title-1')).toBeTruthy();

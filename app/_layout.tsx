@@ -5,8 +5,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import '../global.css';
 
+import { BackButton } from '@/components/buttons';
 import SplashScreen from '@/components/SplashScreen';
 import { ToastProvider } from '@/components/ToastManager';
+import ScreenHeader from '@/components/ui/screenHeader/ScreenHeader';
+import { Colors } from '@/constants/Colors';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { NotificationProvider } from '@/hooks/useNotifications';
@@ -70,7 +73,52 @@ function AppContent() {
           }
         >
           <ToastProvider>
-            <Stack>
+            <Stack
+              screenOptions={{
+                header: ({ navigation, options }) => {
+                  const title = typeof options.headerTitle === 'string'
+                    ? options.headerTitle
+                    : typeof options.title === 'string'
+                      ? options.title
+                      : '';
+
+                  if (title === 'Menu') {
+                    return null;
+                  }
+
+                  return (
+                    <ScreenHeader
+                      title={title}
+                      backButton={
+                        navigation.canGoBack() || title === 'Entries' ? (
+                          <BackButton
+                            onPress={() => {
+                              if (navigation.canGoBack()) {
+                                navigation.goBack();
+                                return;
+                              }
+
+                              router.replace('/(tabs)');
+                            }}
+                          />
+                        ) : null
+                      }
+                      style={{
+                        backgroundColor: Colors.background.secondary,
+                        borderBottomWidth: 1,
+                        borderBottomColor: 'rgba(51, 207, 255, 0.18)',
+                        shadowColor: '#000000',
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: 0.16,
+                        shadowRadius: 10,
+                        elevation: 4,
+                      }}
+                    />
+                  );
+                },
+              }}
+
+            >
               {/* Define all screens at layout level */}
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="onboarding" options={{ headerShown: false }} />
@@ -83,63 +131,66 @@ function AppContent() {
                 options={{
                   headerShown: true,
                   headerTitle: "Profile",
-                  headerBackTitle: "Menu"
                 }} />
               <Stack.Screen
                 name="smartGoals/index"
                 options={{
                   headerShown: true,
-                  headerTitle: "Goals",
-                  headerBackTitle: "Menu"
+                  headerTitle: "My Smart Goals",
                 }} />
               <Stack.Screen
                 name="smartGoals/[id]"
                 options={{
                   headerShown: true,
                   headerTitle: "Goal Details",
-                  headerBackTitle: "Goals"
                 }} />
               <Stack.Screen
                 name="taskDetail/[id]"
                 options={{
                   headerShown: true,
                   headerTitle: "Task Details",
-                  headerBackTitle: "Tasks"
                 }} />
               <Stack.Screen
                 name="addTask/index"
                 options={{
                   headerShown: true,
                   headerTitle: "New Task",
-                  headerBackTitle: "Tasks"
                 }} />
               <Stack.Screen
                 name="about/index"
                 options={{
                   headerShown: true,
                   headerTitle: "How to Use",
-                  headerBackTitle: "Menu"
                 }} />
               <Stack.Screen
                 name="support-feedback/index"
                 options={{
                   headerShown: true,
                   headerTitle: "Support & Feedback",
-                  headerBackTitle: "Menu"
                 }} />
               <Stack.Screen
                 name="settings/index"
                 options={{
                   headerShown: true,
                   headerTitle: "Settings",
-                  headerBackTitle: "Menu"
                 }} />
               <Stack.Screen
                 name="addGoal/index"
                 options={{
                   headerShown: true,
                   headerTitle: "New Goal",
-                  headerBackTitle: "SMART Goals"
+                }} />
+              <Stack.Screen
+                name="journal/[journalId]/journalEntries/index"
+                options={{
+                  headerShown: true,
+                  headerTitle: "Entries"
+                }} />
+              <Stack.Screen
+                name="journal/[journalId]/journalEntries/[entryId]/index"
+                options={{
+                  headerShown: true,
+                  headerTitle: "Entry Details",
                 }} />
               <Stack.Screen name="+not-found" />
             </Stack>

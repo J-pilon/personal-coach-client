@@ -127,13 +127,6 @@ function JournalEntriesContent() {
   return (
     <LinearGradient>
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-        <Text
-          className="text-[28px] font-semibold mb-6 text-center text-[#F1F5F9] tracking-wide"
-          testID="journal-home-title"
-        >
-          Journal
-        </Text>
-
         <View
           className="rounded-2xl p-5 mb-6 bg-[#2B42B6] border border-[#274B8E]"
           testID="journal-home-prompt"
