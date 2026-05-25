@@ -337,6 +337,71 @@ describe('SmartGoalsScreen', () => {
     expect(mockPush).toHaveBeenCalledWith('/addGoal');
   });
 
+  it('shows due badge on goal cards based on target_date', () => {
+    const mockProfile = { id: 1, onboarding_status: 'complete' };
+
+    // Pin the system clock so date-diff is deterministic
+    jest.useFakeTimers({ now: new Date('2026-05-25T12:00:00') });
+
+    const mockGoals = [
+      {
+        id: 10,
+        title: 'Past Due Goal',
+        timeframe: '1_month',
+        specific: 'S', measurable: 'M', achievable: 'A', relevant: 'R', time_bound: 'T',
+        completed: false,
+        target_date: '2026-05-23',
+        profile_id: 1,
+        created_at: '2026-01-01T00:00:00Z',
+        updated_at: '2026-01-01T00:00:00Z',
+      },
+      {
+        id: 11,
+        title: 'Due Soon Goal',
+        timeframe: '1_month',
+        specific: 'S', measurable: 'M', achievable: 'A', relevant: 'R', time_bound: 'T',
+        completed: false,
+        target_date: '2026-05-30',
+        profile_id: 1,
+        created_at: '2026-01-01T00:00:00Z',
+        updated_at: '2026-01-01T00:00:00Z',
+      },
+      {
+        id: 12,
+        title: 'Completed Past-Due Goal',
+        timeframe: '1_month',
+        specific: 'S', measurable: 'M', achievable: 'A', relevant: 'R', time_bound: 'T',
+        completed: true,
+        target_date: '2026-05-20',
+        profile_id: 1,
+        created_at: '2026-01-01T00:00:00Z',
+        updated_at: '2026-01-01T00:00:00Z',
+      },
+    ];
+
+    mockUseProfile.mockReturnValue({ data: mockProfile, isLoading: false, error: null });
+    mockUseSmartGoals.mockReturnValue({ data: mockGoals, isLoading: false, error: null });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <SmartGoalsScreen />
+      </QueryClientProvider>
+    );
+
+    // Goal 10: 2 days past due, not completed → danger badge
+    expect(screen.getByTestId('smart-goals-due-badge-10')).toBeTruthy();
+    expect(screen.getByText('2 days past due')).toBeTruthy();
+
+    // Goal 11: 5 days until due, not completed → warning badge
+    expect(screen.getByTestId('smart-goals-due-badge-11')).toBeTruthy();
+    expect(screen.getByText('5 days until due')).toBeTruthy();
+
+    // Goal 12: completed + past date → badge hidden (no element for this goal)
+    expect(screen.queryByTestId('smart-goals-due-badge-12')).toBeNull();
+
+    jest.useRealTimers();
+  });
+
   it('handles onboarding wizard completion', () => {
     const mockProfile = {
       id: 1,
