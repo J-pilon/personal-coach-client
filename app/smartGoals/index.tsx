@@ -1,6 +1,7 @@
 import AiOnboardingWizard from '@/components/AiOnboardingWizard';
 import { PrimaryButton } from '@/components/buttons/';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { GoalDueBadge } from '@/components/goals/GoalDueBadge';
 import { LoadingSpinner } from '@/components/loading';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
@@ -167,10 +168,17 @@ function SmartGoalsContent() {
     >
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-semibold text-[#F1F5F9] flex-1 mr-4" testID={`smart-goals-goal-title-${goal.id}`}>{goal.title}</Text>
-        <View className={`px-3 py-1 rounded-full ${goal.completed ? 'bg-green-500' : 'bg-orange-500'}`}>
-          <Text className="text-sm font-semibold text-white">
-            {goal.completed ? 'Complete' : 'In Progress'}
-          </Text>
+        <View className="items-end gap-1">
+          <View className={`px-3 py-1 rounded-full ${goal.completed ? 'bg-green-500' : 'bg-orange-500'}`}>
+            <Text className="text-sm font-semibold text-white">
+              {goal.completed ? 'Complete' : 'In Progress'}
+            </Text>
+          </View>
+          <GoalDueBadge
+            targetDate={goal.target_date}
+            completed={goal.completed}
+            testID={`smart-goals-due-badge-${goal.id}`}
+          />
         </View>
       </View>
 
