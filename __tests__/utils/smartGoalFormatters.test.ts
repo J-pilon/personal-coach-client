@@ -2,6 +2,7 @@ import {
   TIMEFRAME_MAPPER,
   TIMEFRAME_OPTIONS,
   formatTimeframeForAiResponse,
+  getGoalDueStatus,
   getServerTimeframe,
   validateGoalData,
   type TimeframeOption
@@ -120,6 +121,107 @@ describe('smartGoalFormatters', () => {
       expect(() => {
         getServerTimeframe('invalid');
       }).toThrow('Invalid timeframe: invalid');
+    });
+  });
+
+  describe('getGoalDueStatus', () => {
+    const TODAY = new Date('2026-05-25T12:00:00');
+
+    const dateAtOffset = (days: number): string => {
+      const d = new Date('2026-05-25');
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split('T')[0];
+    };
+
+    it('returns "none" for missing target date', () => {
+      const result = getGoalDueStatus(undefined, false, TODAY);
+      expect(result.kind).toBe('none');
+    });
+
+    it('returns "none" for invalid target date', () => {
+      const result = getGoalDueStatus('not-a-date', false, TODAY);
+      expect(result.kind).toBe('none');
+    });
+
+    it('returns formatted date for dayDiff > 30 (31 days away)', () => {
+      const result = getGoalDueStatus(dateAtOffset(31), false, TODAY);
+      expect(result.kind).toBe('date');
+      expect(result.variant).toBe('neutral');
+      expect(result.label).toMatch(/\d{4}/);
+    });
+
+    it('returns "30 days until due" for dayDiff === 30', () => {
+      const result = getGoalDueStatus(dateAtOffset(30), false, TODAY);
+      expect(result.kind).toBe('due_soon');
+      expect(result.variant).toBe('warning');
+      expect(result.label).toBe('30 days until due');
+    });
+
+    it('returns "2 days until due" for dayDiff === 2', () => {
+      const result = getGoalDueStatus(dateAtOffset(2), false, TODAY);
+      expect(result.kind).toBe('due_soon');
+      expect(result.label).toBe('2 days until due');
+    });
+
+    it('returns "1 day until due" (singular) for dayDiff === 1', () => {
+      const result = getGoalDueStatus(dateAtOffset(1), false, TODAY);
+      expect(result.kind).toBe('due_soon');
+      expect(result.label).toBe('1 day until due');
+    });
+
+    it('returns "Due today" for dayDiff === 0', () => {
+      const result = getGoalDueStatus(dateAtOffset(0), false, TODAY);
+      expect(result.kind).toBe('due_today');
+      expect(result.variant).toBe('warning');
+      expect(result.label).toBe('Due today');
+    });
+
+    it('returns "Due today" even when completed (today is not past)', () => {
+      const result = getGoalDueStatus(dateAtOffset(0), true, TODAY);
+      expect(result.kind).toBe('due_today');
+      expect(result.label).toBe('Due today');
+    });
+
+    it('returns "Due yesterday" for dayDiff === -1 and not completed', () => {
+      const result = getGoalDueStatus(dateAtOffset(-1), false, TODAY);
+      expect(result.kind).toBe('due_yesterday');
+      expect(result.variant).toBe('danger');
+      expect(result.label).toBe('Due yesterday');
+    });
+
+    it('returns "none" for dayDiff === -1 and completed', () => {
+      const result = getGoalDueStatus(dateAtOffset(-1), true, TODAY);
+      expect(result.kind).toBe('none');
+    });
+
+    it('returns "2 days past due" for dayDiff === -2 and not completed', () => {
+      const result = getGoalDueStatus(dateAtOffset(-2), false, TODAY);
+      expect(result.kind).toBe('past_due');
+      expect(result.variant).toBe('danger');
+      expect(result.label).toBe('2 days past due');
+    });
+
+    it('returns "10 days past due" for dayDiff === -10 and not completed', () => {
+      const result = getGoalDueStatus(dateAtOffset(-10), false, TODAY);
+      expect(result.kind).toBe('past_due');
+      expect(result.label).toBe('10 days past due');
+    });
+
+    it('returns "1 day past due" (singular) for dayDiff === -1... wait this is tested above', () => {
+      // dayDiff === -1 shows "Due yesterday" (not "1 day past due")
+      const result = getGoalDueStatus(dateAtOffset(-1), false, TODAY);
+      expect(result.label).toBe('Due yesterday');
+    });
+
+    it('returns "none" for dayDiff === -10 and completed (hide badge for completed past-due)', () => {
+      const result = getGoalDueStatus(dateAtOffset(-10), true, TODAY);
+      expect(result.kind).toBe('none');
+    });
+
+    it('returns formatted date for dayDiff > 30 even when completed', () => {
+      const result = getGoalDueStatus(dateAtOffset(60), true, TODAY);
+      expect(result.kind).toBe('date');
+      expect(result.variant).toBe('neutral');
     });
   });
 

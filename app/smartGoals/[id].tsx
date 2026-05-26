@@ -1,15 +1,17 @@
 import { type Task } from '@/api/tasks';
 import { PrimaryButton } from '@/components/buttons/';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { GoalDueBadge } from '@/components/goals/GoalDueBadge';
 import { LoadingSpinner } from '@/components/loading';
+import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
-import { useSmartGoal } from '@/hooks/useSmartGoals';
+import { useSmartGoal, useUpdateSmartGoal } from '@/hooks/useSmartGoals';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native';
 
 export default function GoalDetailScreen() {
   const queryClient = useQueryClient();
@@ -28,6 +30,8 @@ export default function GoalDetailScreen() {
 
 function GoalDetailContent({ goalId }: { goalId: number }) {
   const { data: goal, isLoading, error } = useSmartGoal(goalId);
+  const updateMutation = useUpdateSmartGoal();
+  const toast = useToast();
 
   if (isLoading) {
     return (
@@ -61,6 +65,49 @@ function GoalDetailContent({ goalId }: { goalId: number }) {
   const completedTasks = goal.tasks?.completed ?? [];
   const hasAnyTasks = openTasks.length > 0 || completedTasks.length > 0;
 
+  const performToggle = (completed: boolean) => {
+    updateMutation.mutate(
+      { id: goalId, data: { completed } },
+      {
+        onSuccess: () => {
+          toast.success(completed ? 'Goal marked complete!' : 'Goal reopened');
+        },
+        onError: () => {
+          toast.error('Failed to update goal. Please try again.');
+        },
+      }
+    );
+  };
+
+  const handleToggleCompletion = () => {
+    if (goal.completed) {
+      Alert.alert(
+        'Reopen Goal',
+        'Set this goal back to In Progress?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Reopen', onPress: () => performToggle(false) },
+        ]
+      );
+    } else {
+      Alert.alert(
+        'Mark Goal Complete',
+        'Mark this goal as complete?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Complete', onPress: () => performToggle(true) },
+        ]
+      );
+    }
+  };
+
+  const completionButtonLabel = () => {
+    if (updateMutation.isPending) {
+      return goal.completed ? 'Reopening...' : 'Completing...';
+    }
+    return goal.completed ? 'Reopen Goal' : 'Mark as Complete';
+  };
+
   return (
     <LinearGradient>
       <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
@@ -72,10 +119,17 @@ function GoalDetailContent({ goalId }: { goalId: number }) {
             >
               {goal.title}
             </Text>
-            <View className={`px-3 py-1 rounded-full ${goal.completed ? 'bg-green-500' : 'bg-orange-500'}`}>
-              <Text className="text-sm font-semibold text-white" testID="goal-detail-status">
-                {goal.completed ? 'Complete' : 'In Progress'}
-              </Text>
+            <View className="items-end gap-1">
+              <View className={`px-3 py-1 rounded-full ${goal.completed ? 'bg-green-500' : 'bg-orange-500'}`}>
+                <Text className="text-sm font-semibold text-white" testID="goal-detail-status">
+                  {goal.completed ? 'Complete' : 'In Progress'}
+                </Text>
+              </View>
+              <GoalDueBadge
+                targetDate={goal.target_date}
+                completed={goal.completed}
+                testID="goal-detail-due-badge"
+              />
             </View>
           </View>
 
@@ -103,6 +157,34 @@ function GoalDetailContent({ goalId }: { goalId: number }) {
           <SmartField label="Relevant" value={goal.relevant} testID="goal-detail-relevant" />
           <SmartField label="Time-bound" value={goal.time_bound} testID="goal-detail-time-bound" last />
         </View>
+
+        <Pressable
+          className={`flex-row justify-center items-center p-4 rounded-2xl mb-6 ${goal.completed ? 'border border-orange-500' : 'bg-green-600'}`}
+          onPress={handleToggleCompletion}
+          disabled={updateMutation.isPending}
+          testID="goal-detail-complete-button"
+        >
+          {updateMutation.isPending ? (
+            <ActivityIndicator
+              size="small"
+              color={goal.completed ? '#f97316' : 'white'}
+              style={{ marginRight: 8 }}
+            />
+          ) : (
+            <Ionicons
+              name={goal.completed ? 'refresh-outline' : 'checkmark-circle-outline'}
+              size={20}
+              color={goal.completed ? '#f97316' : 'white'}
+              style={{ marginRight: 8 }}
+            />
+          )}
+          <Text
+            className={`font-semibold text-base ${goal.completed ? 'text-orange-500' : 'text-white'}`}
+            testID="goal-detail-complete-button-text"
+          >
+            {completionButtonLabel()}
+          </Text>
+        </Pressable>
 
         <View className="mb-6">
           <View className="flex-row justify-between items-center mb-3">

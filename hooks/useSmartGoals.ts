@@ -80,8 +80,9 @@ export const useUpdateSmartGoal = () => {
       }
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['smartGoals'] });
+      queryClient.invalidateQueries({ queryKey: ['smartGoal', id] });
     },
   });
 };

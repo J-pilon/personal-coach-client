@@ -101,3 +101,98 @@ export const validateGoalData = (
 
   return { isValid: true };
 };
+
+// ---------------------------------------------------------------------------
+// Due-status badge logic
+// ---------------------------------------------------------------------------
+
+const MS_PER_DAY = 86_400_000;
+
+export type GoalDueVariant = 'neutral' | 'warning' | 'danger';
+export type GoalDueKind = 'date' | 'due_soon' | 'due_today' | 'due_yesterday' | 'past_due' | 'none';
+
+export interface GoalDueStatus {
+  label: string;
+  variant: GoalDueVariant;
+  kind: GoalDueKind;
+}
+
+const NONE_STATUS: GoalDueStatus = { label: '', variant: 'neutral', kind: 'none' };
+
+function startOfDay(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+/**
+ * Parses a YYYY-MM-DD date string as a local-time date, avoiding the
+ * UTC-midnight shift that `new Date('YYYY-MM-DD')` produces in most timezones.
+ */
+function parseLocalDate(dateStr: string): Date | null {
+  const parts = dateStr.split('T')[0].split('-').map(Number);
+  if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+  const [year, month, day] = parts;
+  const d = new Date(year, month - 1, day);
+  if (Number.isNaN(d.getTime())) return null;
+  return d;
+}
+
+function formatDisplayDate(date: Date): string {
+  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+/**
+ * Returns the due-status label and styling variant for a goal card/badge.
+ *
+ * Day-diff rules (targetStart - todayStart in whole days):
+ *   > 30            → formatted date (neutral)
+ *   1 – 30          → "X day(s) until due" (warning)
+ *   0               → "Due today" (warning)
+ *   -1, !completed  → "Due yesterday" (danger)
+ *   ≤ -2, !completed → "X day(s) past due" (danger)
+ *   past + completed → none (hide badge)
+ *   missing/invalid  → none
+ */
+export function getGoalDueStatus(
+  targetDate: string | undefined,
+  completed: boolean,
+  now: Date = new Date()
+): GoalDueStatus {
+  if (!targetDate) return NONE_STATUS;
+
+  const target = parseLocalDate(targetDate);
+  if (!target) return NONE_STATUS;
+
+  const todayStart = startOfDay(now);
+  const targetStart = startOfDay(target);
+  const dayDiff = Math.floor((targetStart.getTime() - todayStart.getTime()) / MS_PER_DAY);
+
+  if (dayDiff > 30) {
+    return { label: formatDisplayDate(target), variant: 'neutral', kind: 'date' };
+  }
+
+  if (dayDiff >= 1) {
+    const days = dayDiff;
+    return {
+      label: `${days} ${days === 1 ? 'day' : 'days'} until due`,
+      variant: 'warning',
+      kind: 'due_soon',
+    };
+  }
+
+  if (dayDiff === 0) {
+    return { label: 'Due today', variant: 'warning', kind: 'due_today' };
+  }
+
+  if (completed) return NONE_STATUS;
+
+  if (dayDiff === -1) {
+    return { label: 'Due yesterday', variant: 'danger', kind: 'due_yesterday' };
+  }
+
+  const absDays = Math.abs(dayDiff);
+  return {
+    label: `${absDays} ${absDays === 1 ? 'day' : 'days'} past due`,
+    variant: 'danger',
+    kind: 'past_due',
+  };
+}
