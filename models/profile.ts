@@ -14,6 +14,7 @@ export const profileSchema = z.object({
   timezone: z.string().trim().max(64).optional(),
   onboarding_status: onboardingStatusSchema,
   onboarding_completed_at: z.string().optional(),
+  onboarding_version: z.enum(['v1', 'v2']).optional(),
   created_at: z.string(),
   updated_at: z.string(),
 });
