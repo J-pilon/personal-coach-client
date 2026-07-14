@@ -1,4 +1,4 @@
-import AiOnboardingWizard from '@/components/AiOnboardingWizard';
+import AiOnboardingWizard from '@/components/AiOnboardingWizard_v1';
 import { PrimaryButton } from '@/components/buttons/';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { GoalDueBadge } from '@/components/goals/GoalDueBadge';
