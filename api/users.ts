@@ -21,6 +21,7 @@ export interface Profile {
   timezone?: string;
   onboarding_status: 'incomplete' | 'complete';
   onboarding_completed_at?: string;
+  onboarding_version?: 'v1' | 'v2';
   user_id: number;
   created_at: string;
   updated_at: string;
@@ -42,6 +43,7 @@ export interface ProfileUpdateData {
   limiting_beliefs?: string;
   timezone?: string;
   onboarding_status?: 'incomplete' | 'complete';
+  onboarding_version?: 'v1' | 'v2';
 }
 
 // Users API class

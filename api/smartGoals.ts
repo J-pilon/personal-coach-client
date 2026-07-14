@@ -21,6 +21,8 @@ export interface SmartGoal {
   relevant: string;
   time_bound: string;
   completed: boolean;
+  primary?: boolean;
+  why?: string | null;
   target_date?: string;
   created_at?: string;
   updated_at?: string;
@@ -49,6 +51,8 @@ export interface UpdateSmartGoalParams {
   relevant?: string;
   time_bound?: string;
   completed?: boolean;
+  primary?: boolean;
+  why?: string | null;
   target_date?: string;
 }
 
