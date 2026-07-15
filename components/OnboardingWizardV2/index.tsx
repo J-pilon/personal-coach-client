@@ -2,6 +2,7 @@ import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
 import { useOnboardingResume } from '@/hooks/useOnboardingResume';
 import type { HabitModel } from '@/models/habit';
+import type { ResumeStep } from '@/models/onboardingDiscovery';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
@@ -15,6 +16,15 @@ import ReminderStep from './steps/ReminderStep';
 import TodaysActionStep from './steps/TodaysActionStep';
 
 type StepIndex = 1 | 2 | 3 | 4 | 5;
+
+const STEP_FROM_SERVER: Record<ResumeStep, StepIndex | 'complete'> = {
+  goal_discovery: 1,
+  habits: 2,
+  todays_action: 3,
+  reminder: 4,
+  profile: 5,
+  complete: 'complete',
+};
 
 const STEP_TITLES: Record<StepIndex, { title: string; subtitle: string }> = {
   1: {
@@ -56,9 +66,14 @@ export default function OnboardingWizardV2({
     if (resumeApplied || !resume.data) return;
     const { current_step, smart_goal_id } = resume.data;
     if (smart_goal_id) setSmartGoalId(smart_goal_id);
-    if (current_step >= 1 && current_step <= 5) {
-      setStep(current_step as StepIndex);
+    const mapped = STEP_FROM_SERVER[current_step];
+    if (mapped === 'complete') {
+      router.replace('/(tabs)');
+      return;
     }
+    // Step 3 needs hydrated habits which no GET endpoint provides yet;
+    // fall back to Step 2 so the user re-selects rather than seeing a blank screen.
+    setStep(mapped === 3 ? 2 : mapped);
     setResumeApplied(true);
   }, [resume.data, resumeApplied]);
 

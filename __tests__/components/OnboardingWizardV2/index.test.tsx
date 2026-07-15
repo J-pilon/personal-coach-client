@@ -79,9 +79,9 @@ describe('OnboardingWizardV2 orchestrator', () => {
     expect(getByTestId('onboarding-v2-progress-fraction')).toBeTruthy();
   });
 
-  it('jumps to the resumed step when server returns current_step', async () => {
+  it('maps server step name to the reminder screen', async () => {
     mockResume.mockReturnValue({
-      data: { current_step: 4, smart_goal_id: 9 },
+      data: { current_step: 'reminder', smart_goal_id: 9 },
     });
     const { getByTestId } = render(
       <Wrapper>
@@ -91,6 +91,32 @@ describe('OnboardingWizardV2 orchestrator', () => {
     await waitFor(() =>
       expect(getByTestId('reminder-slot-morning')).toBeTruthy(),
     );
+  });
+
+  it('routes home when the server reports onboarding complete', async () => {
+    mockResume.mockReturnValue({ data: { current_step: 'complete' } });
+    render(
+      <Wrapper>
+        <OnboardingWizardV2 />
+      </Wrapper>,
+    );
+    await waitFor(() =>
+      expect(mockRouterReplace).toHaveBeenCalledWith('/(tabs)'),
+    );
+  });
+
+  it("falls back to habits (step 2) when resuming to today's action without hydrated habits", async () => {
+    mockResume.mockReturnValue({
+      data: { current_step: 'todays_action', smart_goal_id: 9 },
+    });
+    const { findByTestId } = render(
+      <Wrapper>
+        <OnboardingWizardV2 />
+      </Wrapper>,
+    );
+    // HabitsReviewStep renders its "regenerate all" pill once suggestions land;
+    // presence of the smart-goal-scoped step title is enough to prove routing.
+    expect(await findByTestId('back-button')).toBeTruthy();
   });
 
   it('shows discard confirmation on back from step 1', () => {

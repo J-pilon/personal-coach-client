@@ -28,10 +28,21 @@ export type DiscoveryQuestion = z.infer<typeof discoveryQuestionSchema>;
 export type SmartGoalDraft = z.infer<typeof smartGoalDraftSchema>;
 export type DiscoveryTurn = z.infer<typeof discoveryTurnSchema>;
 
+export const resumeStepSchema = z.enum([
+  'goal_discovery',
+  'habits',
+  'todays_action',
+  'reminder',
+  'profile',
+  'complete',
+]);
+
+export type ResumeStep = z.infer<typeof resumeStepSchema>;
+
 export const onboardingResumeSchema = z.object({
-  current_step: z.number().int().min(0).max(5),
+  current_step: resumeStepSchema,
   smart_goal_id: z.number().int().positive().nullable().optional(),
-  habit_ids: z.array(z.number().int().positive()).optional(),
+  habit_ids: z.array(z.number().int().positive()).nullable().optional(),
   completion_id: z.number().int().positive().nullable().optional(),
   schedule_id: z.number().int().positive().nullable().optional(),
 });
