@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { z } from 'zod';
-import { AiResponseStep, ConfirmationStep, GoalDescriptionStep, ProfileDetailsStep } from './AiOnboardingWizardSteps';
+import { AiResponseStep, ConfirmationStep, GoalDescriptionStep, ProfileDetailsStep } from './AiOnboardingWizardSteps_v1';
 import ProgressBar from './ProgressBar';
 
 export const onboardingProfileSchema = profileSchema

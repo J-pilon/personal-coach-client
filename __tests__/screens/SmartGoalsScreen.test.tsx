@@ -17,7 +17,7 @@ jest.mock('../../hooks/useUser', () => ({
 jest.spyOn(Alert, 'alert').mockImplementation(() => { });
 
 // Mock AiOnboardingWizard component
-jest.mock('../../components/AiOnboardingWizard', () => {
+jest.mock('../../components/AiOnboardingWizard_v1', () => {
   const React = require('react');
   const { Pressable, Text } = require('react-native');
   return function MockAiOnboardingWizard({ onComplete }: { onComplete: () => void }) {

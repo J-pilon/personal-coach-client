@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
-import AiOnboardingWizard from '../components/AiOnboardingWizard';
+import AiOnboardingWizard from '../components/AiOnboardingWizard_v1';
 
 // Mock the hooks
 jest.mock('@/hooks/useUser', () => ({

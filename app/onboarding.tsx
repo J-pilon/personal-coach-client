@@ -1,4 +1,4 @@
-import AiOnboardingWizard from '@/components/AiOnboardingWizard';
+import OnboardingWizardV2 from '@/components/OnboardingWizardV2';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons/';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import LinearGradient from '@/components/ui/LinearGradient';
@@ -38,7 +38,7 @@ function OnboardingContent() {
   }
 
   if (showWizard) {
-    return <AiOnboardingWizard onComplete={handleWizardComplete} onSkip={handleSkippingOnboarding} />;
+    return <OnboardingWizardV2 onComplete={handleWizardComplete} />;
   }
 
   return (

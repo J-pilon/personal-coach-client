@@ -14,6 +14,8 @@ export const smartGoalSchema = z.object({
   relevant: z.string().trim().min(1),
   time_bound: z.string().trim().min(1),
   completed: z.boolean(),
+  primary: z.boolean().default(false),
+  why: z.string().trim().max(2000).nullable().optional(),
   target_date: z.string().optional(),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),

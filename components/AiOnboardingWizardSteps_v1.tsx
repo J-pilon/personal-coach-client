@@ -12,7 +12,7 @@ import {
   OnboardingProfileFormValues,
   onboardingGoalSchema,
   onboardingProfileSchema,
-} from './AiOnboardingWizard';
+} from './AiOnboardingWizard_v1';
 
 export interface ProfileDetailsStepProps {
   initialValues: OnboardingProfileFormValues;
