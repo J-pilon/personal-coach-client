@@ -1,4 +1,3 @@
-import AiOnboardingWizard from '@/components/AiOnboardingWizard_v1';
 import { PrimaryButton } from '@/components/buttons/';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { GoalDueBadge } from '@/components/goals/GoalDueBadge';
@@ -10,7 +9,7 @@ import { useProfile } from '@/hooks/useUser';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 export default function SmartGoalsScreen() {
@@ -28,22 +27,11 @@ export default function SmartGoalsScreen() {
 function SmartGoalsContent() {
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: goals, isLoading: goalsLoading, error } = useSmartGoals();
-  const [showWizard, setShowWizard] = useState(false);
 
   const handleStartOnboarding = () => {
-    setShowWizard(true);
+    router.replace('/onboarding');
   };
 
-  const handleOnboardingComplete = () => {
-    setShowWizard(false);
-    // The goals will be automatically refreshed due to React Query invalidation
-  };
-
-  if (showWizard) {
-    return <AiOnboardingWizard onComplete={handleOnboardingComplete} onSkip={() => setShowWizard(false)} />;
-  }
-
-  // Check if onboarding is incomplete
   const isOnboardingIncomplete = profile?.onboarding_status !== 'complete';
 
   // Show loading while profile is loading
@@ -70,10 +58,10 @@ function SmartGoalsContent() {
               <Ionicons name="flag" size={80} color="#021A40" />
             </View>
             <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-4 tracking-wide" testID="smart-goals-create-title">
-              Create Your SMART Goals
+              Set Your First Goal
             </Text>
             <Text className="text-lg text-center text-[#E6FAFF] opacity-90 leading-6" testID="smart-goals-create-subtitle">
-              Let&apos;s set up your personalized goals to help you achieve success. We&apos;ll guide you through creating specific, measurable, achievable, relevant, and time-bound objectives.
+              In under 10 minutes we&apos;ll help you pick one meaningful goal, choose three small habits to support it, and commit to a first action for today.
             </Text>
           </View>
 
@@ -84,24 +72,24 @@ function SmartGoalsContent() {
                   <View className="p-2 mr-3 bg-cyan-400 rounded-full">
                     <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                   </View>
-                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-timeframes">
-                    Set goals for 1 month, 3 months, and 6 months
+                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-primary-goal">
+                    One primary goal to focus on
                   </Text>
                 </View>
                 <View className="flex-row items-center mb-3">
                   <View className="p-2 mr-3 bg-cyan-400 rounded-full">
                     <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                   </View>
-                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-framework">
-                    Follow the proven SMART framework
+                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-habits">
+                    Three small supporting habits
                   </Text>
                 </View>
                 <View className="flex-row items-center">
                   <View className="p-2 mr-3 bg-cyan-400 rounded-full">
                     <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                   </View>
-                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-progress">
-                    Track your progress over time
+                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-today">
+                    A first action committed for today
                   </Text>
                 </View>
               </View>
@@ -113,7 +101,7 @@ function SmartGoalsContent() {
             onPress={handleStartOnboarding}
             testID="smart-goals-start-button"
           >
-            <Text className="text-[#021A40] font-semibold text-lg mr-2" testID="smart-goals-start-text">Start Creating Goals</Text>
+            <Text className="text-[#021A40] font-semibold text-lg mr-2" testID="smart-goals-start-text">Start Onboarding</Text>
             <Ionicons name="arrow-forward" size={20} color="#021A40" />
           </Pressable>
         </View>

@@ -16,25 +16,13 @@ jest.mock('../../hooks/useUser', () => ({
 // Mock Alert
 jest.spyOn(Alert, 'alert').mockImplementation(() => { });
 
-// Mock AiOnboardingWizard component
-jest.mock('../../components/AiOnboardingWizard_v1', () => {
-  const React = require('react');
-  const { Pressable, Text } = require('react-native');
-  return function MockAiOnboardingWizard({ onComplete }: { onComplete: () => void }) {
-    return (
-      <Pressable onPress={onComplete} testID="onboarding-wizard">
-        <Text>Complete Onboarding</Text>
-      </Pressable>
-    );
-  };
-});
-
 const mockUseSmartGoals = require('../../hooks/useSmartGoals').useSmartGoals;
 const mockUseProfile = require('../../hooks/useUser').useProfile;
 
 // Get the mock router from the jest setup
 const mockRouter = require('expo-router').router;
 const mockPush = mockRouter.push;
+const mockReplace = mockRouter.replace;
 
 describe('SmartGoalsScreen', () => {
   let queryClient: QueryClient;
@@ -99,12 +87,12 @@ describe('SmartGoalsScreen', () => {
 
     expect(screen.getByTestId('smart-goals-create-title')).toBeTruthy();
     expect(screen.getByTestId('smart-goals-start-text')).toBeTruthy();
-    expect(screen.getByTestId('smart-goals-feature-timeframes')).toBeTruthy();
-    expect(screen.getByTestId('smart-goals-feature-framework')).toBeTruthy();
-    expect(screen.getByTestId('smart-goals-feature-progress')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-feature-primary-goal')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-feature-habits')).toBeTruthy();
+    expect(screen.getByTestId('smart-goals-feature-today')).toBeTruthy();
   });
 
-  it('shows onboarding wizard when start button is pressed', () => {
+  it('redirects to /onboarding when start button is pressed', () => {
     const mockProfile = {
       id: 1,
       onboarding_status: 'incomplete',
@@ -131,8 +119,7 @@ describe('SmartGoalsScreen', () => {
     const startButton = screen.getByTestId('smart-goals-start-button');
     fireEvent.press(startButton);
 
-    // Instead of getByTestId, check for the wizard's button
-    expect(screen.getByText('Complete Onboarding')).toBeTruthy();
+    expect(mockReplace).toHaveBeenCalledWith('/onboarding');
   });
 
   it('renders loading state when goals are loading and onboarding is complete', () => {
@@ -402,39 +389,4 @@ describe('SmartGoalsScreen', () => {
     jest.useRealTimers();
   });
 
-  it('handles onboarding wizard completion', () => {
-    const mockProfile = {
-      id: 1,
-      onboarding_status: 'incomplete',
-    };
-
-    mockUseProfile.mockReturnValue({
-      data: mockProfile,
-      isLoading: false,
-      error: null,
-    });
-
-    mockUseSmartGoals.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      error: null,
-    });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <SmartGoalsScreen />
-      </QueryClientProvider>
-    );
-
-    // Start onboarding
-    const startButton = screen.getByTestId('smart-goals-start-button');
-    fireEvent.press(startButton);
-
-    // Complete onboarding (use click for the mock)
-    const completeButton = screen.getByText('Complete Onboarding');
-    fireEvent.press(completeButton);
-
-    // Should return to the main screen
-    expect(screen.getByTestId('smart-goals-create-title')).toBeTruthy();
-  });
 }); 
