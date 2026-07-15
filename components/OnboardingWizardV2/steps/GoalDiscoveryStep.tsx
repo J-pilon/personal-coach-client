@@ -129,7 +129,9 @@ export default function GoalDiscoveryStep({
         time_bound: draft.time_bound,
         timeframe: draft.timeframe,
         target_date: draft.target_date,
-      } as any);
+        primary: true,
+        why: draft.why ?? null,
+      });
       if (created?.id) {
         onGoalCommitted(created.id);
       } else {

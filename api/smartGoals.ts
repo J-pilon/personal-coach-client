@@ -38,6 +38,8 @@ export interface CreateSmartGoalParams {
   relevant: string;
   time_bound: string;
   completed?: boolean;
+  primary?: boolean;
+  why?: string | null;
   target_date?: string;
 }
 
