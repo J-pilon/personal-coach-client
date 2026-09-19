@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 const inputClassName =
-  'border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800';
+  'border border-accent rounded-lg p-3 text-base text-ink-secondary bg-slate-800';
 
 interface ProfileDeferredStepProps {
   onFinished: () => void;
@@ -44,7 +44,7 @@ export default function ProfileDeferredStep({
 
   return (
     <View>
-      <Text className="mb-4 text-sm text-[#E6FAFF] opacity-80">
+      <Text className="mb-4 text-sm text-ink-secondary opacity-80">
         Tell us a bit more so coaching gets sharper. All optional.
       </Text>
 

@@ -30,7 +30,7 @@ export default function SecondaryButton({
       disabled={isDisabled}
       testID={testID}
     >
-      <Text className="text-lg font-semibold text-cyan-400" testID="ai-onboarding-skip-button-text">
+      <Text className="text-lg font-semibold text-accent" testID="ai-onboarding-skip-button-text">
         {displayText}
       </Text>
     </TouchableOpacity>

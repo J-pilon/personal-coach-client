@@ -122,7 +122,7 @@ const NotificationSettings = () => {
     return (
       <View className="mb-6">
         <Text className="mb-4 text-xl font-semibold text-white">Notification Preferences</Text>
-        <View className="rounded-2xl bg-[#2B42B6] p-4">
+        <View className="rounded-2xl bg-surface-card p-4">
           <LoadingSkeleton type="text" count={3} height={24} testID="notification-settings-skeleton" />
         </View>
       </View>
@@ -133,15 +133,15 @@ const NotificationSettings = () => {
     <View className="mb-8">
       <Text className="mb-4 text-xl font-semibold text-white">Notification Preferences</Text>
 
-      <View className="rounded-2xl bg-[#2B42B6] p-4">
+      <View className="rounded-2xl bg-surface-card p-4">
         {/* Enabled Toggle */}
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-base font-medium text-[#E6FAFF]">Enabled</Text>
+          <Text className="text-base font-medium text-ink-secondary">Enabled</Text>
           <Switch
             value={pushEnabled}
             onValueChange={handlePushEnabledChange}
             disabled={isUpdating}
-            trackColor={{ false: '#154FA6', true: '#22d3ee' }}
+            trackColor={{ false: '#154FA6', true: '#33CFFF' }}
             thumbColor="#fff"
             testID="push-enabled-switch"
           />
@@ -149,13 +149,13 @@ const NotificationSettings = () => {
 
         {/* Daily Reminder Toggle with Time */}
         <View className="flex-row justify-between items-center">
-          <Text className="text-base font-medium text-[#E6FAFF]">Daily Reminders</Text>
+          <Text className="text-base font-medium text-ink-secondary">Daily Reminders</Text>
           <View className="flex-row gap-3 items-center">
             <Switch
               value={dailyReminderEnabled}
               onValueChange={handleDailyReminderChange}
               disabled={isUpdating}
-              trackColor={{ false: '#154FA6', true: '#22d3ee' }}
+              trackColor={{ false: '#154FA6', true: '#33CFFF' }}
               thumbColor="#fff"
               testID="daily-reminder-switch"
             />

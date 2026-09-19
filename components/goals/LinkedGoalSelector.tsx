@@ -23,9 +23,9 @@ export function LinkedGoalSelector({
 }: LinkedGoalSelectorProps) {
   return (
     <View className="mb-5" testID="add-task-goal-linking-section">
-      <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Linked Goal (optional):</Text>
+      <Text className="text-ink-secondary text-base mb-3 font-medium">Linked Goal (optional):</Text>
       {isLoading ? (
-        <Text className="text-[#708090] text-sm" testID="add-task-goal-loading">
+        <Text className="text-ink-muted text-sm" testID="add-task-goal-loading">
           Loading goals...
         </Text>
       ) : (
@@ -35,16 +35,16 @@ export function LinkedGoalSelector({
               key={goal.id}
               onPress={() => onSelectGoal(goal.id ?? null)}
               className={`py-3 px-4 rounded-lg border ${selectedGoalId === goal.id
-                ? 'border-cyan-400 bg-cyan-400'
-                : 'border-[#708090] bg-[#13203a]'
+                ? 'border-accent bg-accent'
+                : 'border-border-muted bg-surface-input'
                 }`}
               disabled={disabled}
               testID={`add-task-goal-option-${goal.id}`}
             >
               <Text
                 className={`font-medium ${selectedGoalId === goal.id
-                  ? 'text-[#021A40]'
-                  : 'text-[#E6FAFF]'
+                  ? 'text-ink-onAccent'
+                  : 'text-ink-secondary'
                   }`}
               >
                 {goal.title}
@@ -55,16 +55,16 @@ export function LinkedGoalSelector({
           <Pressable
             onPress={() => onSelectGoal(null)}
             className={`py-3 px-4 rounded-lg border ${selectedGoalId === null
-              ? 'border-cyan-400 bg-cyan-400'
-              : 'border-[#708090] bg-[#13203a]'
+              ? 'border-accent bg-accent'
+              : 'border-border-muted bg-surface-input'
               }`}
             disabled={disabled}
             testID="add-task-goal-option-none"
           >
             <Text
               className={`font-medium ${selectedGoalId === null
-                ? 'text-[#021A40]'
-                : 'text-[#E6FAFF]'
+                ? 'text-ink-onAccent'
+                : 'text-ink-secondary'
                 }`}
             >
               None

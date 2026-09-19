@@ -18,11 +18,11 @@ export const GoalDescriptionInput = ({
 }: GoalDescriptionInputProps) => {
   return (
     <View className="mb-8">
-      <Text className="text-lg font-semibold text-[#F1F5F9] mb-3">
+      <Text className="text-lg font-semibold text-ink-primary mb-3">
         {headerTextProp}
       </Text>
       <View
-        className="bg-[#2B42B6] rounded-2xl p-4 border border-[#33CFFF]"
+        className="bg-surface-card rounded-2xl p-4 border border-accent"
         style={{
           shadowColor: '#274B8E',
           shadowOpacity: 0.10,
@@ -31,7 +31,7 @@ export const GoalDescriptionInput = ({
         }}
       >
         <TextInput
-          className="text-[#F1F5F9] text-base"
+          className="text-ink-primary text-base"
           placeholder=""
           placeholderTextColor={headerPlaceholderTextProp}
           value={value}

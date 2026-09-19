@@ -34,16 +34,16 @@ export default function TaskItemsAccordion({
     <View className="mb-9">
       <Pressable
         onPress={onToggleAccordion}
-        className="flex flex-row items-center justify-between px-5 py-4 rounded-2xl mb-2 bg-[#2B42B6] shadow-md"
+        className="flex flex-row items-center justify-between px-5 py-4 rounded-2xl mb-2 bg-surface-card shadow-md"
         style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
       >
         <View className="flex-row gap-2 items-center">
-          <Text className="text-lg font-semibold capitalize text-[#E6FAFF] tracking-wide">{category}</Text>
-          <Text className="bg-[#2E84FD] text-[#021A40] px-2 py-0.5 rounded-full min-w-[28px] text-center font-bold text-[15px]">
+          <Text className="text-lg font-semibold capitalize text-ink-secondary tracking-wide">{category}</Text>
+          <Text className="bg-[#2E84FD] text-ink-onAccent px-2 py-0.5 rounded-full min-w-[28px] text-center font-bold text-[15px]">
             {items.filter((item) => !item.completed).length}
           </Text>
         </View>
-        <Text className="text-2xl text-[#E6FAFF]">
+        <Text className="text-2xl text-ink-secondary">
           {isOpen ? <FontAwesome name="angle-down" size={26} color="#E6FAFF" /> : <FontAwesome name="angle-up" size={26} color="#E6FAFF" />}
         </Text>
       </Pressable>

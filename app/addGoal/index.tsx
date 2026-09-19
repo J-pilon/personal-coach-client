@@ -107,7 +107,7 @@ function AddGoalContent() {
             <SecondaryButton
               onPress={handleEditGoal}
               title="Edit Goal"
-              className='border border-cyan-400'
+              className='border border-accent'
               testID="edit-goal-button"
             />
             <SecondaryButton
@@ -136,16 +136,16 @@ function AddGoalContent() {
           }}
         >
           <View className="mb-8">
-            <View className="p-6 bg-[#2B42B6] rounded-2xl shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
+            <View className="p-6 bg-surface-card rounded-2xl shadow-lg border border-accent" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
               <View className="flex-row items-center mb-3">
-                <View className="p-2 mr-3 bg-cyan-400 rounded-full">
+                <View className="p-2 mr-3 bg-accent rounded-full">
                   <Ionicons name="flag" size={20} color="#021A40" />
                 </View>
-                <Text className="text-[#F1F5F9] text-base font-semibold">
+                <Text className="text-ink-primary text-base font-semibold">
                   Let&apos;s create a SMART goal together
                 </Text>
               </View>
-              <Text className="text-[#E6FAFF] text-sm leading-5">
+              <Text className="text-ink-secondary text-sm leading-5">
                 Describe what you want to achieve and we&apos;ll help you break it down into specific, measurable, achievable, relevant, and time-bound objectives.
               </Text>
             </View>

@@ -64,18 +64,18 @@ function EditJournalEntryContent() {
     return (
       <LinearGradient>
         <View className="flex-1 justify-center px-6">
-          <Text className="text-[#F1F5F9] text-lg text-center mb-2" testID="journal-form-error-title">
+          <Text className="text-ink-primary text-lg text-center mb-2" testID="journal-form-error-title">
             Could not load this entry
           </Text>
-          <Text className="text-[#E6FAFF] text-center mb-6" testID="journal-form-error-message">
+          <Text className="text-ink-secondary text-center mb-6" testID="journal-form-error-message">
             {error instanceof Error ? error.message : 'Entry not found'}
           </Text>
           <Pressable
             onPress={() => router.back()}
-            className="border border-[#708090] px-6 py-3 rounded-lg self-center"
+            className="border border-border-muted px-6 py-3 rounded-lg self-center"
             testID="journal-form-error-back-button"
           >
-            <Text className="text-[#E6FAFF] font-semibold">Back</Text>
+            <Text className="text-ink-secondary font-semibold">Back</Text>
           </Pressable>
         </View>
       </LinearGradient>

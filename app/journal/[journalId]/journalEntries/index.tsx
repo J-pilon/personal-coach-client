@@ -103,14 +103,14 @@ function JournalEntriesContent() {
     return (
       <LinearGradient>
         <View className="flex-1 justify-center px-6">
-          <Text className="text-[#F1F5F9] text-lg text-center mb-2" testID="journal-home-error-title">
+          <Text className="text-ink-primary text-lg text-center mb-2" testID="journal-home-error-title">
             Could not load your journal
           </Text>
-          <Text className="text-[#E6FAFF] text-center mb-6" testID="journal-home-error-message">
+          <Text className="text-ink-secondary text-center mb-6" testID="journal-home-error-message">
             {error instanceof Error ? error.message : 'Unknown error'}
           </Text>
-          <Pressable onPress={() => refetch()} className="bg-[#154FA6] px-6 py-3 rounded-lg self-center">
-            <Text className="text-[#021A40] font-semibold">Retry</Text>
+          <Pressable onPress={() => refetch()} className="bg-surface-muted px-6 py-3 rounded-lg self-center">
+            <Text className="text-ink-onAccent font-semibold">Retry</Text>
           </Pressable>
         </View>
       </LinearGradient>
@@ -128,39 +128,39 @@ function JournalEntriesContent() {
     <LinearGradient>
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
         <View
-          className="rounded-2xl p-5 mb-6 bg-[#2B42B6] border border-[#274B8E]"
+          className="rounded-2xl p-5 mb-6 bg-surface-card border border-border-strong"
           testID="journal-home-prompt"
         >
-          <Text className="text-[#22d3ee] text-xs uppercase tracking-wider mb-2">Today&apos;s prompt</Text>
-          <Text className="text-[#F1F5F9] text-base leading-6">{prompt.copy}</Text>
+          <Text className="text-accent text-xs uppercase tracking-wider mb-2">Today&apos;s prompt</Text>
+          <Text className="text-ink-primary text-base leading-6">{prompt.copy}</Text>
         </View>
 
         <View className="gap-3 mb-8">
           <Pressable
             onPress={() => startNewEntry('daily_journal')}
-            className="rounded-2xl p-4 bg-[#154FA6] flex-row items-center"
+            className="rounded-2xl p-4 bg-surface-muted flex-row items-center"
             testID="journal-home-cta-daily"
           >
-            <Ionicons name="sunny-outline" size={22} color="#22d3ee" />
-            <Text className="text-[#F1F5F9] text-base font-semibold ml-3">Write daily journal</Text>
+            <Ionicons name="sunny-outline" size={22} color="#33CFFF" />
+            <Text className="text-ink-primary text-base font-semibold ml-3">Write daily journal</Text>
           </Pressable>
 
           <Pressable
             onPress={() => startNewEntry('weekly_reflection')}
-            className="rounded-2xl p-4 bg-[#13203a] border border-[#274B8E] flex-row items-center"
+            className="rounded-2xl p-4 bg-surface-input border border-border-strong flex-row items-center"
             testID="journal-home-cta-weekly"
           >
-            <Ionicons name="calendar-outline" size={22} color="#22d3ee" />
-            <Text className="text-[#F1F5F9] text-base font-semibold ml-3">Weekly reflection</Text>
+            <Ionicons name="calendar-outline" size={22} color="#33CFFF" />
+            <Text className="text-ink-primary text-base font-semibold ml-3">Weekly reflection</Text>
           </Pressable>
         </View>
 
         <View className="mb-6" testID="journal-home-filters">
           <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-[#E6FAFF] text-sm font-medium">Filters</Text>
+            <Text className="text-ink-secondary text-sm font-medium">Filters</Text>
             {hasActiveFilters ? (
               <Pressable onPress={clearFilters} testID="journal-home-filters-clear">
-                <Text className="text-[#22d3ee] text-xs font-medium">Clear</Text>
+                <Text className="text-accent text-xs font-medium">Clear</Text>
               </Pressable>
             ) : null}
           </View>
@@ -173,11 +173,11 @@ function JournalEntriesContent() {
                   key={value}
                   onPress={() => setEntryTypeFilter(value)}
                   className={`py-2 px-3 rounded-lg border ${
-                    selected ? 'border-cyan-400 bg-cyan-400' : 'border-[#708090] bg-[#13203a]'
+                    selected ? 'border-accent bg-accent' : 'border-border-muted bg-surface-input'
                   }`}
                   testID={`journal-home-filter-type-${value}`}
                 >
-                  <Text className={`font-medium ${selected ? 'text-[#021A40]' : 'text-[#E6FAFF]'}`}>
+                  <Text className={`font-medium ${selected ? 'text-ink-onAccent' : 'text-ink-secondary'}`}>
                     {label}
                   </Text>
                 </Pressable>
@@ -188,21 +188,21 @@ function JournalEntriesContent() {
           <View className="flex-row gap-2">
             <Pressable
               onPress={() => setActivePicker('start')}
-              className="flex-1 py-2 px-3 rounded-lg border border-[#708090] bg-[#13203a]"
+              className="flex-1 py-2 px-3 rounded-lg border border-border-muted bg-surface-input"
               testID="journal-home-filter-start-button"
             >
-              <Text className="text-[#708090] text-xs uppercase tracking-wider mb-1">From</Text>
-              <Text className="text-[#E6FAFF] font-medium" testID="journal-home-filter-start-value">
+              <Text className="text-ink-muted text-xs uppercase tracking-wider mb-1">From</Text>
+              <Text className="text-ink-secondary font-medium" testID="journal-home-filter-start-value">
                 {formatDateLabel(startDate)}
               </Text>
             </Pressable>
             <Pressable
               onPress={() => setActivePicker('end')}
-              className="flex-1 py-2 px-3 rounded-lg border border-[#708090] bg-[#13203a]"
+              className="flex-1 py-2 px-3 rounded-lg border border-border-muted bg-surface-input"
               testID="journal-home-filter-end-button"
             >
-              <Text className="text-[#708090] text-xs uppercase tracking-wider mb-1">To</Text>
-              <Text className="text-[#E6FAFF] font-medium" testID="journal-home-filter-end-value">
+              <Text className="text-ink-muted text-xs uppercase tracking-wider mb-1">To</Text>
+              <Text className="text-ink-secondary font-medium" testID="journal-home-filter-end-value">
                 {formatDateLabel(endDate)}
               </Text>
             </Pressable>
@@ -219,16 +219,16 @@ function JournalEntriesContent() {
           )}
         </View>
 
-        <Text className="text-[#E6FAFF] text-base font-semibold mb-3">
+        <Text className="text-ink-secondary text-base font-semibold mb-3">
           {hasActiveFilters ? 'Filtered entries' : 'All entries'}
         </Text>
 
         {entries.length === 0 ? (
-          <View className="rounded-2xl p-6 bg-[#13203a] border border-[#274B8E]" testID="journal-home-empty">
-            <Text className="text-[#F1F5F9] text-base mb-1">
+          <View className="rounded-2xl p-6 bg-surface-input border border-border-strong" testID="journal-home-empty">
+            <Text className="text-ink-primary text-base mb-1">
               {hasActiveFilters ? 'No entries match these filters' : 'No entries yet'}
             </Text>
-            <Text className="text-[#708090] text-sm">
+            <Text className="text-ink-muted text-sm">
               {hasActiveFilters
                 ? 'Try clearing filters or adjusting the date range.'
                 : 'Tap a prompt above to write your first reflection.'}
@@ -258,19 +258,19 @@ function JournalEntryRow({
   return (
     <Pressable
       onPress={() => onPress(entry.id)}
-      className="rounded-2xl p-4 bg-[#2B42B6] border border-[#274B8E]"
+      className="rounded-2xl p-4 bg-surface-card border border-border-strong"
       testID={`journal-entry-row-${entry.id}`}
     >
       <View className="flex-row items-center justify-between mb-1">
-        <Text className="text-[#22d3ee] text-xs uppercase tracking-wider">
+        <Text className="text-accent text-xs uppercase tracking-wider">
           {ENTRY_TYPE_LABELS[entry.entry_type]}
         </Text>
-        <Text className="text-[#708090] text-xs">{entry.occurred_on}</Text>
+        <Text className="text-ink-muted text-xs">{entry.occurred_on}</Text>
       </View>
       {entry.title ? (
-        <Text className="text-[#F1F5F9] text-base font-semibold mb-1">{entry.title}</Text>
+        <Text className="text-ink-primary text-base font-semibold mb-1">{entry.title}</Text>
       ) : null}
-      <Text className="text-[#E6FAFF] text-sm leading-5">{preview}</Text>
+      <Text className="text-ink-secondary text-sm leading-5">{preview}</Text>
     </Pressable>
   );
 }

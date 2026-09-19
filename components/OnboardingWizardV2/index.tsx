@@ -112,10 +112,10 @@ export default function OnboardingWizardV2({
           </View>
           <ProgressFraction current={step} total={5} />
           <View className="items-center mb-6">
-            <Text className="mb-2 text-2xl font-bold text-center text-[#E6FAFF]">
+            <Text className="mb-2 text-2xl font-bold text-center text-ink-secondary">
               {info.title}
             </Text>
-            <Text className="text-base text-center text-[#E6FAFF] opacity-70">
+            <Text className="text-base text-center text-ink-secondary opacity-70">
               {info.subtitle}
             </Text>
           </View>

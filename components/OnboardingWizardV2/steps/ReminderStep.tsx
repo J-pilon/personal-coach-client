@@ -73,7 +73,7 @@ export default function ReminderStep({ onScheduleSaved }: ReminderStepProps) {
 
   return (
     <View>
-      <Text className="mb-4 text-sm text-[#E6FAFF] opacity-80">
+      <Text className="mb-4 text-sm text-ink-secondary opacity-80">
         When should we check in with you each day?
       </Text>
 
@@ -87,21 +87,21 @@ export default function ReminderStep({ onScheduleSaved }: ReminderStepProps) {
               onPress={() => setSelected(s.slot)}
               className={`flex-row justify-between items-center p-4 rounded-xl border ${
                 active
-                  ? 'bg-cyan-400 border-cyan-400'
-                  : 'bg-slate-800 border-cyan-400'
+                  ? 'bg-accent border-accent'
+                  : 'bg-slate-800 border-accent'
               }`}
             >
               <View>
                 <Text
                   className={`text-base font-bold ${
-                    active ? 'text-[#021A40]' : 'text-[#E6FAFF]'
+                    active ? 'text-ink-onAccent' : 'text-ink-secondary'
                   }`}
                 >
                   {s.label}
                 </Text>
                 <Text
                   className={`text-xs ${
-                    active ? 'text-[#021A40]' : 'text-slate-300'
+                    active ? 'text-ink-onAccent' : 'text-slate-300'
                   }`}
                 >
                   {s.time.slice(0, 5)}

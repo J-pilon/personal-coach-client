@@ -51,27 +51,27 @@ export function DateTimeField({
 
   return (
     <View>
-      <Text className="text-[#E6FAFF] text-sm mb-2 font-medium">{label}</Text>
-      <View className="rounded-2xl p-4 bg-[#13203a] border border-[#274B8E] gap-3">
-        <Text className="text-[#E6FAFF] text-sm" testID={`${testID}-value`}>
+      <Text className="text-ink-secondary text-sm mb-2 font-medium">{label}</Text>
+      <View className="rounded-2xl p-4 bg-surface-input border border-border-strong gap-3">
+        <Text className="text-ink-secondary text-sm" testID={`${testID}-value`}>
           {formatOccurrenceDate(value)} at {formatOccurrenceTime(value)}
         </Text>
         <View className="flex-row gap-2">
           <Pressable
             onPress={() => setShowDatePicker(true)}
-            className="flex-1 py-2 px-3 rounded-lg border border-[#708090] bg-[#1b2a4a]"
+            className="flex-1 py-2 px-3 rounded-lg border border-border-muted bg-[#1b2a4a]"
             disabled={disabled}
             testID={`${testID}-date-button`}
           >
-            <Text className="text-center font-medium text-[#E6FAFF]">Select date</Text>
+            <Text className="text-center font-medium text-ink-secondary">Select date</Text>
           </Pressable>
           <Pressable
             onPress={() => setShowTimePicker(true)}
-            className="flex-1 py-2 px-3 rounded-lg border border-[#708090] bg-[#1b2a4a]"
+            className="flex-1 py-2 px-3 rounded-lg border border-border-muted bg-[#1b2a4a]"
             disabled={disabled}
             testID={`${testID}-time-button`}
           >
-            <Text className="text-center font-medium text-[#E6FAFF]">Select time</Text>
+            <Text className="text-center font-medium text-ink-secondary">Select time</Text>
           </Pressable>
         </View>
       </View>

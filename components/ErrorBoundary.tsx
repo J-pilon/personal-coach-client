@@ -55,13 +55,13 @@ function DefaultFallback({ error, reset }: { error: Error; reset: () => void }) 
       <View className="items-center mb-6">
         <Ionicons name="alert-circle-outline" size={56} color="#33CFFF" />
         <Text
-          className="mt-4 text-2xl font-semibold text-[#F1F5F9] text-center"
+          className="mt-4 text-2xl font-semibold text-ink-primary text-center"
           testID="error-boundary-title"
         >
           Something went wrong
         </Text>
         <Text
-          className="mt-2 text-base text-[#E6FAFF] text-center"
+          className="mt-2 text-base text-ink-secondary text-center"
           testID="error-boundary-message"
         >
           {error.message || 'An unexpected error occurred. Please try again.'}
@@ -70,10 +70,10 @@ function DefaultFallback({ error, reset }: { error: Error; reset: () => void }) 
 
       <Pressable
         onPress={reset}
-        className="px-6 py-3 bg-cyan-400 rounded-xl"
+        className="px-6 py-3 bg-accent rounded-xl"
         testID="error-boundary-retry-button"
       >
-        <Text className="text-[#021A40] font-semibold text-base">Try Again</Text>
+        <Text className="text-ink-onAccent font-semibold text-base">Try Again</Text>
       </Pressable>
     </View>
   );

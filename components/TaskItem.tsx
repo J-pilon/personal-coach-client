@@ -20,15 +20,15 @@ export default function TaskItem({ task, onToggle }: TaskItemProps) {
   const getCheckboxClassName = () => {
     const baseClasses = 'h-7 w-7 rounded-full border-2 mr-4';
     if (task.completed) {
-      return `${baseClasses} border-[#154FA6] bg-[#154FA6]`;
+      return `${baseClasses} border-[#154FA6] bg-surface-muted`;
     }
     if (task.priority === 1) {
-      return `${baseClasses} border-[#EF4444] bg-[#021A40]`;
+      return `${baseClasses} border-status-danger bg-[#021A40]`;
     }
     if (task.priority === 2) {
-      return `${baseClasses} border-[#EAB308] bg-[#021A40]`;
+      return `${baseClasses} border-status-info bg-[#021A40]`;
     }
-    return `${baseClasses} border-[#708090] bg-[#021A40]`;
+    return `${baseClasses} border-border-muted bg-[#021A40]`;
   };
 
   return (
@@ -45,16 +45,16 @@ export default function TaskItem({ task, onToggle }: TaskItemProps) {
       </Pressable>
 
       <View className="flex-1">
-        <Text className={`font-bold ${task.completed ? 'text-[#708090]' : 'text-[#F1F5F9]'} text-[17px] mb-0.5 ${task.completed ? 'line-through' : ''} tracking-tight`} testID={`home-task-title-${task.id}`}>{task.title}</Text>
+        <Text className={`font-bold ${task.completed ? 'text-ink-muted' : 'text-ink-primary'} text-[17px] mb-0.5 ${task.completed ? 'line-through' : ''} tracking-tight`} testID={`home-task-title-${task.id}`}>{task.title}</Text>
         {task.smart_goal ? (
           <Pressable
             onPress={() => router.push(`/smartGoals/${task.smart_goal!.id}`)}
-            className="self-start flex-row items-center bg-[#13203a] border border-[#33CFFF] rounded-full px-2 py-0.5 mt-0.5 mb-0.5"
+            className="self-start flex-row items-center bg-surface-input border border-accent rounded-full px-2 py-0.5 mt-0.5 mb-0.5"
             testID={`home-task-goal-pill-${task.id}`}
           >
             <FontAwesome name="flag" size={10} color="#33CFFF" />
             <Text
-              className="text-[#E6FAFF] text-xs ml-1.5"
+              className="text-ink-secondary text-xs ml-1.5"
               testID={`home-task-goal-pill-title-${task.id}`}
             >
               {truncateGoalTitle(task.smart_goal.title)}
@@ -62,7 +62,7 @@ export default function TaskItem({ task, onToggle }: TaskItemProps) {
           </Pressable>
         ) : null}
         {task.description ? (
-          <Text className={`${task.completed ? 'text-[#708090]' : 'text-[#E6FAFF]'} text-[15px] tracking-tight`} testID={`home-task-description-${task.id}`}>{task.description}</Text>
+          <Text className={`${task.completed ? 'text-ink-muted' : 'text-ink-secondary'} text-[15px] tracking-tight`} testID={`home-task-description-${task.id}`}>{task.description}</Text>
         ) : null}
       </View>
 

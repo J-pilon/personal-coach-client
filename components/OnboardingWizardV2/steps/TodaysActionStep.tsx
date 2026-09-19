@@ -35,7 +35,7 @@ export default function TodaysActionStep({
 
   return (
     <View>
-      <Text className="mb-3 text-sm text-[#E6FAFF] opacity-80">
+      <Text className="mb-3 text-sm text-ink-secondary opacity-80">
         Pick one habit and choose how you&apos;ll show up today.
       </Text>
 
@@ -45,11 +45,11 @@ export default function TodaysActionStep({
           <View
             key={habit.id}
             testID={`todays-action-card-${habit.position}`}
-            className="p-4 mb-3 rounded-xl border border-cyan-400 bg-slate-800"
+            className="p-4 mb-3 rounded-xl border border-accent bg-slate-800"
           >
             <View className="flex-row items-center mb-2">
               <Ionicons name="star" size={18} color="#33CFFF" />
-              <Text className="ml-2 text-base font-bold text-[#E6FAFF]">
+              <Text className="ml-2 text-base font-bold text-ink-secondary">
                 {habit.title}
               </Text>
             </View>
@@ -58,9 +58,9 @@ export default function TodaysActionStep({
                 testID={`todays-action-minimum-${habit.position}`}
                 onPress={() => handleCommit(habit, 'minimum')}
                 disabled={busy}
-                className="flex-1 items-center py-3 rounded-lg border border-cyan-400"
+                className="flex-1 items-center py-3 rounded-lg border border-accent"
               >
-                <Text className="text-sm font-semibold text-cyan-400">
+                <Text className="text-sm font-semibold text-accent">
                   Minimum
                 </Text>
                 <Text className="text-xs text-slate-300 mt-1">
@@ -71,12 +71,12 @@ export default function TodaysActionStep({
                 testID={`todays-action-normal-${habit.position}`}
                 onPress={() => handleCommit(habit, 'normal')}
                 disabled={busy}
-                className="flex-1 items-center py-3 rounded-lg bg-cyan-400"
+                className="flex-1 items-center py-3 rounded-lg bg-accent"
               >
-                <Text className="text-sm font-semibold text-[#021A40]">
+                <Text className="text-sm font-semibold text-ink-onAccent">
                   Normal
                 </Text>
-                <Text className="text-xs text-[#021A40] mt-1">
+                <Text className="text-xs text-ink-onAccent mt-1">
                   {habit.normal_version}
                 </Text>
               </TouchableOpacity>

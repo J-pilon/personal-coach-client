@@ -50,4 +50,17 @@ export const Colors = {
     secondary: '#154FA6',
     tertiary: '#2E84FD',
   },
+  // Semantic status colors
+  status: {
+    success: '#22C55E',
+    warning: '#F97316',
+    danger: '#EF4444',
+    info: '#EAB308',
+  },
+  // Border colors
+  border: {
+    accent: '#33CFFF',
+    strong: '#274B8E',
+    muted: '#708090',
+  },
 };

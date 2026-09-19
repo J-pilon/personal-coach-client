@@ -83,7 +83,7 @@ const OpenAIApiKeyInput = () => {
   const renderUsageInfo = () => {
     if (isLoading) {
       return (
-        <View className="bg-[#2B42B6] rounded-2xl p-4 mb-4">
+        <View className="bg-surface-card rounded-2xl p-4 mb-4">
           <LoadingSkeleton
             type="text"
             count={2}
@@ -96,28 +96,28 @@ const OpenAIApiKeyInput = () => {
 
     if (usageInfo?.using_own_key) {
       return (
-        <View className="bg-[#2B42B6] rounded-2xl p-4 mb-4">
+        <View className="bg-surface-card rounded-2xl p-4 mb-4">
           <View className="flex-row justify-center items-center mb-2">
-            <Ionicons name="checkmark-circle" size={20} color="#22d3ee" />
-            <Text className="text-[#F1F5F9] text-lg font-semibold ml-2">
+            <Ionicons name="checkmark-circle" size={20} color="#33CFFF" />
+            <Text className="text-ink-primary text-lg font-semibold ml-2">
               Using your own key
             </Text>
           </View>
-          <Text className="text-[#E6FAFF] text-center">
+          <Text className="text-ink-secondary text-center">
             Unlimited requests
           </Text>
         </View>
       );
     }
     return (
-      <View className="bg-[#2B42B6] rounded-2xl p-4 mb-4">
+      <View className="bg-surface-card rounded-2xl p-4 mb-4">
         <View className="flex-row justify-center items-center mb-2">
-          <Ionicons name="time-outline" size={20} color="#22d3ee" />
-          <Text className="text-[#F1F5F9] text-lg font-semibold ml-2">
+          <Ionicons name="time-outline" size={20} color="#33CFFF" />
+          <Text className="text-ink-primary text-lg font-semibold ml-2">
             Using demo key
           </Text>
         </View>
-        <Text className="text-[#E6FAFF] text-center">
+        <Text className="text-ink-secondary text-center">
           {usageInfo?.remaining} requests remaining today
         </Text>
       </View>
@@ -128,11 +128,11 @@ const OpenAIApiKeyInput = () => {
     <View className="flex mb-8">
       <Text className="mb-4 text-xl font-semibold text-white">AI Settings</Text>
 
-      <View className="bg-[#2B42B6] rounded-2xl p-4 mb-4">
-        <Text className="text-[#F1F5F9] text-lg font-semibold mb-2">
+      <View className="bg-surface-card rounded-2xl p-4 mb-4">
+        <Text className="text-ink-primary text-lg font-semibold mb-2">
           AI Features
         </Text>
-        <Text className="text-[#E6FAFF] text-sm leading-5">
+        <Text className="text-ink-secondary text-sm leading-5">
           Our AI helps you create SMART goals and prioritize tasks.
           You can use the demo key (3 requests/day) or add your own OpenAI key for unlimited access.
         </Text>
@@ -141,30 +141,30 @@ const OpenAIApiKeyInput = () => {
       {renderUsageInfo()}
 
       {/* API Key Section */}
-      <View className="bg-[#2B42B6] rounded-2xl p-4 mb-6">
-        <Text className="text-[#F1F5F9] text-lg font-semibold mb-4">
+      <View className="bg-surface-card rounded-2xl p-4 mb-6">
+        <Text className="text-ink-primary text-lg font-semibold mb-4">
           OpenAI API Key
         </Text>
 
-        <Text className="text-[#E6FAFF] text-sm mb-4 leading-5">
+        <Text className="text-ink-secondary text-sm mb-4 leading-5">
           Don&apos;t want to wait? You can use your own OpenAI API key for unlimited access.
         </Text>
 
         <View className="mb-4">
-          <Text className="text-[#E6FAFF] text-sm mb-2 font-medium">
+          <Text className="text-ink-secondary text-sm mb-2 font-medium">
             How to get your key:
           </Text>
-          <View className="p-2 bg-transparent rounded-xl border border-cyan-400">
-            <Text className="text-sm text-cyan-400">1. Go to https://platform.openai.com/account/api-keys</Text>
-            <Text className="text-sm text-cyan-400">2. Log in or create a free OpenAI account</Text>
-            <Text className="text-sm text-cyan-400">3. Click &quot;Create new secret key&quot;</Text>
-            <Text className="text-sm text-cyan-400">4. Copy and paste the key below</Text>
-            <Text className="text-sm text-cyan-400">5. We&apos;ll save it securely and use it for your AI requests</Text>
+          <View className="p-2 bg-transparent rounded-xl border border-accent">
+            <Text className="text-sm text-accent">1. Go to https://platform.openai.com/account/api-keys</Text>
+            <Text className="text-sm text-accent">2. Log in or create a free OpenAI account</Text>
+            <Text className="text-sm text-accent">3. Click &quot;Create new secret key&quot;</Text>
+            <Text className="text-sm text-accent">4. Copy and paste the key below</Text>
+            <Text className="text-sm text-accent">5. We&apos;ll save it securely and use it for your AI requests</Text>
           </View>
         </View>
 
         {isLoadingApiKey ? (
-          <View className="bg-[#154FA6] rounded-xl p-4">
+          <View className="bg-surface-muted rounded-xl p-4">
             <LoadingSpinner
               size="small"
               text="Loading..."
@@ -179,7 +179,7 @@ const OpenAIApiKeyInput = () => {
               onChangeText={setInputKey}
               placeholder="Paste your OpenAI API key here"
               placeholderTextColor="#fff"
-              className="bg-[#154FA6] mb-4 rounded-xl p-4 text-white text-sm border border-cyan-400"
+              className="bg-surface-muted mb-4 rounded-xl p-4 text-white text-sm border border-accent"
               secureTextEntry
               testID="api-key-input"
             />
@@ -203,8 +203,8 @@ const OpenAIApiKeyInput = () => {
         ) : (
           <View className="space-y-3">
             {storedApiKey ? (
-              <View className="bg-[#154FA6] rounded-xl p-4">
-                <Text className="text-[#22d3ee] text-sm font-medium">
+              <View className="bg-surface-muted rounded-xl p-4">
+                <Text className="text-accent text-sm font-medium">
                   Key saved ✓
                 </Text>
                 <Text className="mt-1 text-xs text-white">
@@ -212,7 +212,7 @@ const OpenAIApiKeyInput = () => {
                 </Text>
               </View>
             ) : (
-              <View className="bg-[#154FA6] rounded-xl p-4 mb-4 border border-cyan-400">
+              <View className="bg-surface-muted rounded-xl p-4 mb-4 border border-accent">
                 <Text className="text-sm text-white">
                   No API key saved
                 </Text>

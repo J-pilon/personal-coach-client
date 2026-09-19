@@ -94,23 +94,23 @@ export default function MenuScreen() {
   return (
     <LinearGradient>
       <View className="flex-1 p-6">
-        <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-8 tracking-wide" testID="menu-title">Menu</Text>
+        <Text className="text-[28px] font-semibold text-center text-ink-primary mb-8 tracking-wide" testID="menu-title">Menu</Text>
 
         <View className="gap-4">
           {menuItems.map((item) => (
             <Pressable
               key={item.id}
-              className={`rounded-2xl p-5 shadow-lg border ${item.id === 'logout' ? 'bg-transparent border-cyan-400' : 'bg-[#2B42B6] border-[#2B42B6]'}`}
+              className={`rounded-2xl p-5 shadow-lg border ${item.id === 'logout' ? 'bg-transparent border-accent' : 'bg-surface-card border-surface-card'}`}
               style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
               onPress={item.onPress}
               testID={`menu-item-${item.id}`}
             >
               <View className="flex-row justify-between items-center">
                 <View className="flex-row flex-1 items-center">
-                  <View className={`rounded-xl p-3 mr-4 bg-[#154FA6]`}>
-                    <Ionicons name={item.icon} size={24} color="#22d3ee" />
+                  <View className={`rounded-xl p-3 mr-4 bg-surface-muted`}>
+                    <Ionicons name={item.icon} size={24} color="#33CFFF" />
                   </View>
-                  <Text className="text-[#F1F5F9] text-lg font-semibold" testID={`menu-item-text-${item.id}`}>
+                  <Text className="text-ink-primary text-lg font-semibold" testID={`menu-item-text-${item.id}`}>
                     {item.title}
                   </Text>
                 </View>

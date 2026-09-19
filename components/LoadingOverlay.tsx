@@ -80,15 +80,15 @@ export default function LoadingOverlay({
 
     return (
       <View className="mt-4 w-full">
-        <View className="w-full bg-[#2B42B6]/30 rounded-full h-2 overflow-hidden">
+        <View className="w-full bg-surface-card/30 rounded-full h-2 overflow-hidden">
           <Animated.View
-            className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"
+            className="h-full bg-gradient-to-r from-accent to-blue-500 rounded-full"
             style={{
               width: `${progress}%`,
             }}
           />
         </View>
-        <Text className="text-[#E6FAFF] text-sm text-center mt-2 font-medium">
+        <Text className="text-ink-secondary text-sm text-center mt-2 font-medium">
           {progress}%
         </Text>
       </View>
@@ -100,7 +100,7 @@ export default function LoadingOverlay({
 
     return (
       <TouchableOpacity
-        className="absolute top-4 right-4 w-8 h-8 items-center justify-center rounded-full bg-[#2B42B6]/30 border border-[#33CFFF]/20"
+        className="absolute top-4 right-4 w-8 h-8 items-center justify-center rounded-full bg-surface-card/30 border border-accent/20"
         onPress={onClose}
         testID={`${testID}-close-button`}
       >
@@ -136,7 +136,7 @@ export default function LoadingOverlay({
             >
               {renderCloseButton()}
 
-              <View className="bg-[#2B42B6]/20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-[#33CFFF]/20 min-w-[280px]">
+              <View className="bg-surface-card/20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-accent/20 min-w-[280px]">
                 <LoadingSpinner
                   size="large"
                   variant="inline"
@@ -144,7 +144,7 @@ export default function LoadingOverlay({
                 />
 
                 <Text
-                  className="text-[#F1F5F9] text-xl font-semibold text-center mt-4 tracking-wide"
+                  className="text-ink-primary text-xl font-semibold text-center mt-4 tracking-wide"
                   testID={`${testID}-text`}
                 >
                   {text}
@@ -152,7 +152,7 @@ export default function LoadingOverlay({
 
                 {subtitle && (
                   <Text
-                    className="text-[#708090] text-base text-center mt-2 tracking-wide"
+                    className="text-ink-muted text-base text-center mt-2 tracking-wide"
                     testID={`${testID}-subtitle`}
                   >
                     {subtitle}

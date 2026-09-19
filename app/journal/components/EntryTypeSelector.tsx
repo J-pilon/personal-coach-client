@@ -23,7 +23,7 @@ export function EntryTypeSelector({
 }: EntryTypeSelectorProps) {
   return (
     <View>
-      <Text className="text-[#E6FAFF] text-sm mb-2 font-medium">Entry type</Text>
+      <Text className="text-ink-secondary text-sm mb-2 font-medium">Entry type</Text>
       <View className="flex-row gap-2">
         {ENTRY_TYPES.map(({ value: optionValue, label }) => {
           const selected = value === optionValue;
@@ -32,14 +32,14 @@ export function EntryTypeSelector({
               key={optionValue}
               onPress={() => onChange(optionValue)}
               className={`flex-1 py-2 px-3 rounded-lg border ${
-                selected ? 'border-cyan-400 bg-cyan-400' : 'border-[#708090] bg-[#13203a]'
+                selected ? 'border-accent bg-accent' : 'border-border-muted bg-surface-input'
               }`}
               disabled={disabled}
               testID={`${testIDPrefix}-${optionValue}`}
             >
               <Text
                 className={`text-center font-medium ${
-                  selected ? 'text-[#021A40]' : 'text-[#E6FAFF]'
+                  selected ? 'text-ink-onAccent' : 'text-ink-secondary'
                 }`}
               >
                 {label}

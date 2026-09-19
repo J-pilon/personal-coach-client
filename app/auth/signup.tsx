@@ -74,17 +74,17 @@ export default function SignupScreen() {
         >
           <View>
             <View className="mb-8">
-              <Text testID="signup-title" className="text-[28px] font-semibold text-center text-[#F1F5F9] tracking-wide mb-2">
+              <Text testID="signup-title" className="text-[28px] font-semibold text-center text-ink-primary tracking-wide mb-2">
                 Create Account
               </Text>
-              <Text testID="signup-subtitle" className="text-center text-[#E6FAFF] text-lg">
+              <Text testID="signup-subtitle" className="text-center text-ink-secondary text-lg">
                 Sign up to get started
               </Text>
             </View>
 
             <View className="mb-8">
               <View className="mb-4">
-                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                <Text className="mb-2 text-sm font-medium text-ink-secondary">
                   Email
                 </Text>
                 <Controller
@@ -93,7 +93,7 @@ export default function SignupScreen() {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextInput
                       testID="signup-email-input"
-                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      className="px-4 py-4 w-full rounded-xl border border-surface-card bg-surface-input text-ink-primary placeholder:text-ink-muted"
                       placeholder="Enter your email"
                       value={value}
                       onChangeText={onChange}
@@ -118,7 +118,7 @@ export default function SignupScreen() {
               </View>
 
               <View className="mb-4">
-                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                <Text className="mb-2 text-sm font-medium text-ink-secondary">
                   Password
                 </Text>
                 <Controller
@@ -127,7 +127,7 @@ export default function SignupScreen() {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextInput
                       testID="signup-password-input"
-                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      className="px-4 py-4 w-full rounded-xl border border-surface-card bg-surface-input text-ink-primary placeholder:text-ink-muted"
                       placeholder="Enter your password"
                       value={value}
                       onChangeText={onChange}
@@ -152,7 +152,7 @@ export default function SignupScreen() {
               </View>
 
               <View>
-                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                <Text className="mb-2 text-sm font-medium text-ink-secondary">
                   Confirm Password
                 </Text>
                 <Controller
@@ -161,7 +161,7 @@ export default function SignupScreen() {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextInput
                       testID="signup-password-confirmation-input"
-                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      className="px-4 py-4 w-full rounded-xl border border-surface-card bg-surface-input text-ink-primary placeholder:text-ink-muted"
                       placeholder="Confirm your password"
                       value={value}
                       onChangeText={onChange}
@@ -188,7 +188,7 @@ export default function SignupScreen() {
 
             <TouchableOpacity
               testID="signup-signup-button"
-              className={`w-full py-4 rounded-xl shadow-md mb-8 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-cyan-400'}`}
+              className={`w-full py-4 rounded-xl shadow-md mb-8 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-accent'}`}
               onPress={handleSubmit(onSubmit)}
               disabled={isLoading || !isValid}
               style={{
@@ -201,16 +201,16 @@ export default function SignupScreen() {
               {isLoading ? (
                 <ActivityIndicator testID="signup-loading-indicator" color="#021A40" />
               ) : (
-                <Text className="text-lg font-semibold text-center text-[#021A40]">
+                <Text className="text-lg font-semibold text-center text-ink-onAccent">
                   Sign Up
                 </Text>
               )}
             </TouchableOpacity>
 
             <View className="flex-row justify-center">
-              <Text className="text-[#E6FAFF]">Already have an account? </Text>
+              <Text className="text-ink-secondary">Already have an account? </Text>
               <TouchableOpacity testID="signup-signin-link" onPress={handleSignIn}>
-                <Text className="font-semibold text-cyan-400">Sign In</Text>
+                <Text className="font-semibold text-accent">Sign In</Text>
               </TouchableOpacity>
             </View>
           </View>

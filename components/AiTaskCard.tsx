@@ -21,12 +21,12 @@ export function AiTaskCard({
   isLoading = false
 }: AiTaskCardProps) {
   return (
-    <View className="p-4 mx-4 my-2 rounded-2xl border border-cyan-400 border-solid shadow-lg">
+    <View className="p-4 mx-4 my-2 rounded-2xl border border-accent border-solid shadow-lg">
       {/* AI Badge */}
       <View className="absolute top-3 right-3 z-10">
-        <View className="flex-row items-center px-2 py-1 rounded-xl border border-cyan-400 bg-cyan-400/10">
+        <View className="flex-row items-center px-2 py-1 rounded-xl border border-accent bg-accent/10">
           <Ionicons name="bulb" size={12} color={Colors.accent.primary} />
-          <Text className="ml-1 text-xs font-semibold text-cyan-400">AI</Text>
+          <Text className="ml-1 text-xs font-semibold text-accent">AI</Text>
         </View>
       </View>
 
@@ -55,7 +55,7 @@ export function AiTaskCard({
       {/* Action Buttons */}
       <View className="flex-row gap-2 justify-between">
         <TouchableOpacity
-          className={`flex-row flex-1 justify-center items-center px-3 py-2 rounded-lg border ${isLoading ? 'border-slate-400 bg-slate-400/10' : 'border-cyan-400 bg-cyan-400/10'
+          className={`flex-row flex-1 justify-center items-center px-3 py-2 rounded-lg border ${isLoading ? 'border-slate-400 bg-slate-400/10' : 'border-accent bg-accent/10'
             }`}
           onPress={() => !isLoading && onAddToToday(suggestion)}
           disabled={isLoading}
@@ -65,7 +65,7 @@ export function AiTaskCard({
           ) : (
             <Ionicons name="checkmark-circle" size={16} color={Colors.accent.primary} />
           )}
-          <Text className={`ml-1 text-xs font-medium ${isLoading ? 'text-slate-400' : 'text-cyan-400'
+          <Text className={`ml-1 text-xs font-medium ${isLoading ? 'text-slate-400' : 'text-accent'
             }`}>
             {isLoading ? 'Adding...' : 'Add to Today'}
           </Text>

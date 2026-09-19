@@ -3,7 +3,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 const VARIANT_STYLES: Record<GoalDueVariant, { container: string; text: string }> = {
-  neutral: { container: 'bg-[#274B8E]', text: 'text-[#33CFFF]' },
+  neutral: { container: 'bg-[#274B8E]', text: 'text-accent' },
   warning: { container: 'bg-orange-800', text: 'text-orange-300' },
   danger: { container: 'bg-red-900', text: 'text-red-400' },
 };
