@@ -13,7 +13,7 @@ interface SmartGoalCardProps {
 }
 
 const inputClassName =
-  'border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800';
+  'border border-accent rounded-lg p-3 text-base text-ink-secondary bg-slate-800';
 
 export default function SmartGoalCard({
   draft,
@@ -32,26 +32,26 @@ export default function SmartGoalCard({
   return (
     <View
       testID={testID ?? 'smart-goal-card'}
-      className="p-4 mb-4 rounded-xl border border-cyan-400 bg-slate-800"
+      className="p-4 mb-4 rounded-xl border border-accent bg-slate-800"
     >
       <View className="flex-row justify-between items-center mb-3">
         <View className="flex-row items-center">
           <Ionicons name="flag" size={20} color="#33CFFF" />
-          <Text className="ml-2 text-lg font-bold text-[#E6FAFF]">
+          <Text className="ml-2 text-lg font-bold text-ink-secondary">
             Your goal
           </Text>
         </View>
         <TouchableOpacity
           testID="smart-goal-card-edit-toggle"
           onPress={() => setEditing((e) => !e)}
-          className="flex-row items-center px-3 py-1 rounded-full border border-cyan-400"
+          className="flex-row items-center px-3 py-1 rounded-full border border-accent"
         >
           <Ionicons
             name={editing ? 'checkmark' : 'create-outline'}
             size={16}
             color="#33CFFF"
           />
-          <Text className="ml-1 text-xs font-semibold text-cyan-400">
+          <Text className="ml-1 text-xs font-semibold text-accent">
             {editing ? 'Done' : 'Edit'}
           </Text>
         </TouchableOpacity>
@@ -147,7 +147,7 @@ function ReadRow({ label, value }: { label: string; value: string }) {
   return (
     <View>
       <Text className="text-xs font-medium text-slate-300">{label}</Text>
-      <Text className="ml-2 text-sm text-[#E6FAFF]">{value}</Text>
+      <Text className="ml-2 text-sm text-ink-secondary">{value}</Text>
     </View>
   );
 }

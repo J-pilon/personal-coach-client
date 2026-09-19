@@ -91,7 +91,7 @@ export default function SupportFeedbackScreen() {
           }}
         >
           <View className="mb-6">
-            <Text className="text-[#E6FAFF] text-lg font-semibold mb-4">
+            <Text className="text-ink-secondary text-lg font-semibold mb-4">
               What can we help you with?
             </Text>
 
@@ -99,8 +99,8 @@ export default function SupportFeedbackScreen() {
               <Pressable
                 onPress={() => setSelectedKind('bug')}
                 className={`flex-1 rounded-2xl p-4 border-2 ${selectedKind === 'bug'
-                  ? 'border-[#33CFFF] bg-[#154FA6]'
-                  : 'border-[#274B8E] bg-[#2B42B6]'
+                  ? 'border-accent bg-surface-muted'
+                  : 'border-border-strong bg-surface-card'
                   }`}
               >
                 <View className="items-center">
@@ -110,7 +110,7 @@ export default function SupportFeedbackScreen() {
                     color={selectedKind === 'bug' ? '#33CFFF' : '#E6FAFF'}
                   />
                   <Text
-                    className={`text-center mt-2 font-semibold ${selectedKind === 'bug' ? 'text-[#33CFFF]' : 'text-[#E6FAFF]'
+                    className={`text-center mt-2 font-semibold ${selectedKind === 'bug' ? 'text-accent' : 'text-ink-secondary'
                       }`}
                   >
                     Report a Bug
@@ -121,8 +121,8 @@ export default function SupportFeedbackScreen() {
               <Pressable
                 onPress={() => setSelectedKind('feedback')}
                 className={`flex-1 rounded-2xl p-4 border-2 ${selectedKind === 'feedback'
-                  ? 'border-[#33CFFF] bg-[#154FA6]'
-                  : 'border-[#274B8E] bg-[#2B42B6]'
+                  ? 'border-accent bg-surface-muted'
+                  : 'border-border-strong bg-surface-card'
                   }`}
               >
                 <View className="items-center">
@@ -132,7 +132,7 @@ export default function SupportFeedbackScreen() {
                     color={selectedKind === 'feedback' ? '#33CFFF' : '#E6FAFF'}
                   />
                   <Text
-                    className={`text-center mt-2 font-semibold ${selectedKind === 'feedback' ? 'text-[#33CFFF]' : 'text-[#E6FAFF]'
+                    className={`text-center mt-2 font-semibold ${selectedKind === 'feedback' ? 'text-accent' : 'text-ink-secondary'
                       }`}
                   >
                     Share Feedback
@@ -143,7 +143,7 @@ export default function SupportFeedbackScreen() {
           </View>
 
           <View className="mb-6">
-            <Text className="text-[#E6FAFF] text-lg font-semibold mb-3">
+            <Text className="text-ink-secondary text-lg font-semibold mb-3">
               Title
             </Text>
             <TextInput
@@ -151,13 +151,13 @@ export default function SupportFeedbackScreen() {
               onChangeText={(text) => setFormData({ ...formData, title: text })}
               placeholder="Brief summary of your issue or feedback"
               placeholderTextColor="#708090"
-              className="bg-[#2B42B6] rounded-2xl p-4 text-[#F1F5F9] text-base border border-[#274B8E]"
+              className="bg-surface-card rounded-2xl p-4 text-ink-primary text-base border border-border-strong"
               style={{ shadowColor: '#274B8E', shadowOpacity: 0.1, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
             />
           </View>
 
           <View className="mb-8">
-            <Text className="text-[#E6FAFF] text-lg font-semibold mb-3">
+            <Text className="text-ink-secondary text-lg font-semibold mb-3">
               Description
             </Text>
             <TextInput
@@ -168,7 +168,7 @@ export default function SupportFeedbackScreen() {
               multiline
               numberOfLines={8}
               textAlignVertical="top"
-              className="bg-[#2B42B6] rounded-2xl p-4 text-[#F1F5F9] text-base border border-[#274B8E]"
+              className="bg-surface-card rounded-2xl p-4 text-ink-primary text-base border border-border-strong"
               style={{ shadowColor: '#274B8E', shadowOpacity: 0.1, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
             />
           </View>
@@ -180,7 +180,7 @@ export default function SupportFeedbackScreen() {
               }`}
             style={{ shadowColor: '#33CFFF', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
           >
-            <Text className="text-center text-[#021A40] font-semibold text-lg">
+            <Text className="text-center text-ink-onAccent font-semibold text-lg">
               {isSubmitting ? 'Submitting...' : 'Submit'}
             </Text>
           </Pressable>

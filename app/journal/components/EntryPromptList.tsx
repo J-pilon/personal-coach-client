@@ -31,12 +31,12 @@ export function EntryPromptList({
 
   return (
     <View
-      className="rounded-2xl p-4 bg-[#13203a] border border-[#274B8E]"
+      className="rounded-2xl p-4 bg-surface-input border border-border-strong"
       testID={testID}
     >
-      <Text className="text-[#22d3ee] text-xs uppercase tracking-wider mb-2">Prompts</Text>
+      <Text className="text-accent text-xs uppercase tracking-wider mb-2">Prompts</Text>
       {prompts.map((prompt) => (
-        <Text key={prompt} className="text-[#E6FAFF] text-sm leading-5 mb-1">
+        <Text key={prompt} className="text-ink-secondary text-sm leading-5 mb-1">
           • {prompt}
         </Text>
       ))}

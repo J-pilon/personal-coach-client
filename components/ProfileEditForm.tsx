@@ -79,7 +79,7 @@ interface ProfileEditFormProps {
 }
 
 const fieldErrorClassName = 'text-red-400 text-xs mt-1 mb-3';
-const inputClassName = 'bg-[#1A2B5C] rounded-xl p-3 text-[#F1F5F9] text-base mb-1';
+const inputClassName = 'bg-surface-input rounded-xl p-3 text-ink-primary text-base mb-1';
 
 export default function ProfileEditForm({ profile, isLoading, onCancel, onSuccess }: ProfileEditFormProps) {
   const deviceTimezone = getDeviceTimezone();
@@ -116,10 +116,10 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
           }}
         >
           <View className="mb-6">
-            <Text className="text-xl font-semibold text-[#E6FAFF] mb-4" testID="profile-edit-title">Edit Profile</Text>
+            <Text className="text-xl font-semibold text-ink-secondary mb-4" testID="profile-edit-title">Edit Profile</Text>
 
-            <View className="bg-[#2B42B6] rounded-2xl p-5 mb-4 shadow-md border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
-              <Text className="text-[#708090] text-sm font-medium mb-1">First Name</Text>
+            <View className="bg-surface-card rounded-2xl p-5 mb-4 shadow-md border border-accent" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
+              <Text className="text-ink-muted text-sm font-medium mb-1">First Name</Text>
               <Controller
                 control={control}
                 name="first_name"
@@ -141,7 +141,7 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
                 </Text>
               )}
 
-              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Last Name</Text>
+              <Text className="text-ink-muted text-sm font-medium mb-1 mt-3">Last Name</Text>
               <Controller
                 control={control}
                 name="last_name"
@@ -163,7 +163,7 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
                 </Text>
               )}
 
-              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Work Role</Text>
+              <Text className="text-ink-muted text-sm font-medium mb-1 mt-3">Work Role</Text>
               <Controller
                 control={control}
                 name="work_role"
@@ -185,7 +185,7 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
                 </Text>
               )}
 
-              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Education</Text>
+              <Text className="text-ink-muted text-sm font-medium mb-1 mt-3">Education</Text>
               <Controller
                 control={control}
                 name="education"
@@ -207,18 +207,18 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
                 </Text>
               )}
 
-              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Timezone</Text>
+              <Text className="text-ink-muted text-sm font-medium mb-1 mt-3">Timezone</Text>
               <Controller
                 control={control}
                 name="timezone"
                 render={({ field: { value, onChange } }) => (
                   <>
                     <TouchableOpacity
-                      className="bg-[#1A2B5C] rounded-xl p-3 flex-row items-center justify-between"
+                      className="bg-surface-input rounded-xl p-3 flex-row items-center justify-between"
                       onPress={() => setShowTimezonePicker(true)}
                       testID="profile-edit-timezone-button"
                     >
-                      <Text className="text-[#F1F5F9] text-base">
+                      <Text className="text-ink-primary text-base">
                         {getTimezoneLabel(value || deviceTimezone)}
                       </Text>
                       <Ionicons name="chevron-down" size={20} color="#708090" />
@@ -271,10 +271,10 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
           </View>
 
           <View className="mb-6">
-            <Text className="text-xl font-semibold text-[#E6FAFF] mb-4" testID="profile-edit-goals-title">Goals & Aspirations</Text>
+            <Text className="text-xl font-semibold text-ink-secondary mb-4" testID="profile-edit-goals-title">Goals & Aspirations</Text>
 
-            <View className="bg-[#2B42B6] rounded-2xl p-5 mb-4 shadow-md border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
-              <Text className="text-[#708090] text-sm font-medium mb-1">Desires</Text>
+            <View className="bg-surface-card rounded-2xl p-5 mb-4 shadow-md border border-accent" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
+              <Text className="text-ink-muted text-sm font-medium mb-1">Desires</Text>
               <Controller
                 control={control}
                 name="desires"
@@ -298,7 +298,7 @@ export default function ProfileEditForm({ profile, isLoading, onCancel, onSucces
                 </Text>
               )}
 
-              <Text className="text-[#708090] text-sm font-medium mb-1 mt-3">Limiting Beliefs</Text>
+              <Text className="text-ink-muted text-sm font-medium mb-1 mt-3">Limiting Beliefs</Text>
               <Controller
                 control={control}
                 name="limiting_beliefs"

@@ -100,8 +100,6 @@ describe('GoalDiscoveryStep', () => {
         <GoalDiscoveryStep onGoalCommitted={jest.fn()} />
       </Wrapper>,
     );
-    await waitFor(() =>
-      expect(findByTestId('goal-discovery-manual-fallback')).toBeTruthy(),
-    );
+    expect(await findByTestId('goal-discovery-manual-fallback')).toBeTruthy();
   });
 });

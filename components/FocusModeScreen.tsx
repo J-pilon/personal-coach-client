@@ -175,7 +175,7 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
         <View className="absolute right-5 left-5 z-10 top-15">
           <View className="mb-2 h-1 rounded bg-white/10">
             <View
-              className="h-full bg-cyan-400 rounded"
+              className="h-full bg-accent rounded"
               style={{ width: `${progressPercentage}%` }}
             />
           </View>
@@ -223,11 +223,11 @@ export function FocusModeScreen({ selectedTasks, onComplete, onExit }: FocusMode
           <View className="flex-row justify-around px-5 w-full">
             <Pressable onPress={handleComplete} testID="focus-mode-complete-button">
               <Animated.View
-                className="justify-center items-center px-5 py-4 rounded-xl border border-cyan-400 bg-cyan-400/10 min-w-20"
+                className="justify-center items-center px-5 py-4 rounded-xl border border-accent bg-accent/10 min-w-20"
                 style={completeButtonStyle}
               >
                 <Ionicons name="checkmark-circle" size={24} color={Colors.accent.primary} />
-                <Text className="mt-2 text-sm font-semibold text-cyan-400">Complete</Text>
+                <Text className="mt-2 text-sm font-semibold text-accent">Complete</Text>
               </Animated.View>
             </Pressable>
 

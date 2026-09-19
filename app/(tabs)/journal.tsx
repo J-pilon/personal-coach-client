@@ -34,26 +34,26 @@ function JournalTabContent() {
     return (
       <LinearGradient>
         <View className="flex-1 justify-center px-6">
-          <Text className="text-[#F1F5F9] text-lg text-center mb-2" testID="journal-tab-error-title">
+          <Text className="text-ink-primary text-lg text-center mb-2" testID="journal-tab-error-title">
             Could not load your journal
           </Text>
-          <Text className="text-[#E6FAFF] text-center mb-6" testID="journal-tab-error-message">
+          <Text className="text-ink-secondary text-center mb-6" testID="journal-tab-error-message">
             {error instanceof Error ? error.message : 'Journal not available'}
           </Text>
           <View className="flex-row gap-3 self-center">
             <Pressable
               onPress={() => refetch()}
-              className="bg-[#154FA6] px-6 py-3 rounded-lg"
+              className="bg-surface-muted px-6 py-3 rounded-lg"
               testID="journal-tab-retry-button"
             >
-              <Text className="text-[#021A40] font-semibold">Retry</Text>
+              <Text className="text-ink-onAccent font-semibold">Retry</Text>
             </Pressable>
             <Pressable
               onPress={() => router.back()}
-              className="border border-[#708090] px-6 py-3 rounded-lg"
+              className="border border-border-muted px-6 py-3 rounded-lg"
               testID="journal-tab-back-button"
             >
-              <Text className="text-[#E6FAFF] font-semibold">Back</Text>
+              <Text className="text-ink-secondary font-semibold">Back</Text>
             </Pressable>
           </View>
         </View>

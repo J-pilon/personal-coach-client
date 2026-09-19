@@ -9,6 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "deploymentTarget": "16.4",
       "supportsTablet": true,
       "bundleIdentifier": "com.personalcoach.app",
       "infoPlist": {
@@ -51,10 +52,7 @@
           "color": "#021A40",
           "enableBackgroundRemoteNotifications": true
         }
-      ],
-      "expo-font",
-      "expo-secure-store",
-      "expo-web-browser"
+      ]
     ],
     "experiments": {
       "typedRoutes": true

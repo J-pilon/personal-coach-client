@@ -187,6 +187,12 @@ function AppContent() {
                   headerTitle: "Entries"
                 }} />
               <Stack.Screen
+                name="journal/[journalId]/journalEntries/new"
+                options={{
+                  headerShown: true,
+                  headerTitle: "New Entry"
+                }} />
+              <Stack.Screen
                 name="journal/[journalId]/journalEntries/[entryId]/index"
                 options={{
                   headerShown: true,

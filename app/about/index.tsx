@@ -12,14 +12,14 @@ interface FeatureSectionProps {
 }
 
 const FeatureSection: React.FC<FeatureSectionProps> = ({ title, description, icon, testID }) => (
-  <View className="bg-[#2B42B6]/20 backdrop-blur-sm rounded-3xl p-6 mb-6 border border-[#33CFFF]/20" testID={testID}>
+  <View className="bg-surface-card/20 backdrop-blur-sm rounded-3xl p-6 mb-6 border border-accent/20" testID={testID}>
     <View className="flex-row items-center mb-4">
-      <View className="rounded-xl p-3 mr-4 bg-[#154FA6]">
-        <Ionicons name={icon} size={24} color="#22d3ee" />
+      <View className="rounded-xl p-3 mr-4 bg-surface-muted">
+        <Ionicons name={icon} size={24} color="#33CFFF" />
       </View>
-      <Text className="text-[#F1F5F9] text-xl font-semibold flex-1">{title}</Text>
+      <Text className="text-ink-primary text-xl font-semibold flex-1">{title}</Text>
     </View>
-    <Text className="text-[#E6FAFF] text-base leading-6">{description}</Text>
+    <Text className="text-ink-secondary text-base leading-6">{description}</Text>
   </View>
 );
 
@@ -28,11 +28,11 @@ export default function AboutScreen() {
     <LinearGradient>
       <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
         {/* App Description */}
-        <View className="bg-[#2B42B6]/20 backdrop-blur-sm rounded-3xl p-6 mb-8 border border-[#33CFFF]/20" testID="about-app-description">
-          <Text className="text-[#F1F5F9] text-2xl font-semibold mb-4 text-center">
+        <View className="bg-surface-card/20 backdrop-blur-sm rounded-3xl p-6 mb-8 border border-accent/20" testID="about-app-description">
+          <Text className="text-ink-primary text-2xl font-semibold mb-4 text-center">
             Personal Coach
           </Text>
-          <Text className="text-[#E6FAFF] text-base leading-6 text-center">
+          <Text className="text-ink-secondary text-base leading-6 text-center">
             Turn intention into action with AI-powered task management and focused productivity.
           </Text>
         </View>
@@ -62,35 +62,35 @@ export default function AboutScreen() {
         />
 
         {/* Tips Section */}
-        <View className="bg-[#2B42B6]/20 backdrop-blur-sm rounded-3xl p-6 mb-8 border border-[#33CFFF]/20" testID="about-tips-section">
+        <View className="bg-surface-card/20 backdrop-blur-sm rounded-3xl p-6 mb-8 border border-accent/20" testID="about-tips-section">
           <View className="flex-row items-center mb-4">
-            <View className="rounded-xl p-3 mr-4 bg-[#154FA6]">
-              <Ionicons name="bulb-outline" size={24} color="#22d3ee" />
+            <View className="rounded-xl p-3 mr-4 bg-surface-muted">
+              <Ionicons name="bulb-outline" size={24} color="#33CFFF" />
             </View>
-            <Text className="text-[#F1F5F9] text-xl font-semibold">Pro Tips</Text>
+            <Text className="text-ink-primary text-xl font-semibold">Pro Tips</Text>
           </View>
           <View className="space-y-3">
             <View className="flex-row items-start">
-              <Text className="text-[#22d3ee] text-lg mr-3">•</Text>
-              <Text className="text-[#E6FAFF] text-base flex-1">
+              <Text className="text-accent text-lg mr-3">•</Text>
+              <Text className="text-ink-secondary text-base flex-1">
                 Use AI suggestions regularly to discover tasks you might have missed
               </Text>
             </View>
             <View className="flex-row items-start">
-              <Text className="text-[#22d3ee] text-lg mr-3">•</Text>
-              <Text className="text-[#E6FAFF] text-base flex-1">
+              <Text className="text-accent text-lg mr-3">•</Text>
+              <Text className="text-ink-secondary text-base flex-1">
                 Enter Focus Mode when you need to eliminate distractions
               </Text>
             </View>
             <View className="flex-row items-start">
-              <Text className="text-[#22d3ee] text-lg mr-3">•</Text>
-              <Text className="text-[#E6FAFF] text-base flex-1">
+              <Text className="text-accent text-lg mr-3">•</Text>
+              <Text className="text-ink-secondary text-base flex-1">
                 Review your SMART goals weekly to stay aligned with your vision
               </Text>
             </View>
             <View className="flex-row items-start">
-              <Text className="text-[#22d3ee] text-lg mr-3">•</Text>
-              <Text className="text-[#E6FAFF] text-base flex-1">
+              <Text className="text-accent text-lg mr-3">•</Text>
+              <Text className="text-ink-secondary text-base flex-1">
                 Keep your daily task list manageable - quality over quantity
               </Text>
             </View>
@@ -99,8 +99,8 @@ export default function AboutScreen() {
 
         {/* Version Info */}
         <View className="items-center py-4" testID="about-version-info">
-          <Text className="text-[#708090] text-sm">Version 1.0.0</Text>
-          <Text className="text-[#708090] text-sm mt-1">Built with ❤️ for productivity</Text>
+          <Text className="text-ink-muted text-sm">Version 1.0.0</Text>
+          <Text className="text-ink-muted text-sm mt-1">Built with ❤️ for productivity</Text>
         </View>
       </ScrollView>
     </LinearGradient>

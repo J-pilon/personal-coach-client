@@ -38,16 +38,16 @@ export function PriorityInput({
           key={`priority-${option.value}`}
           onPress={() => onChange(option.value)}
           className={`flex-1 py-3 px-4 rounded-lg border ${value === option.value
-            ? 'border-cyan-400 bg-cyan-400'
-            : 'border-[#708090] bg-[#13203a]'
+            ? 'border-accent bg-accent'
+            : 'border-border-muted bg-surface-input'
             }`}
           disabled={disabled}
           testID={testID ? `${testID}-option-${option.value}` : undefined}
         >
           <Text
             className={`text-center font-medium capitalize ${value === option.value
-              ? 'text-[#021A40]'
-              : 'text-[#E6FAFF]'
+              ? 'text-ink-onAccent'
+              : 'text-ink-secondary'
               }`}
           >
             {option.label}
@@ -60,7 +60,7 @@ export function PriorityInput({
   if (showLabel) {
     return (
       <View className="mb-5" testID={testID}>
-        <Text className="text-[#E6FAFF] text-base mb-3 font-medium">{label}</Text>
+        <Text className="text-ink-secondary text-base mb-3 font-medium">{label}</Text>
         {content}
       </View>
     );

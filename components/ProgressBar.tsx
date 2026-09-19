@@ -14,13 +14,13 @@ export default function ProgressBar({ currentStep, totalSteps, className = "" }:
     <View className={`mb-8 ${className}`}>
       <View className="h-1.5 bg-slate-800 rounded-sm mb-2">
         <View
-          className="h-full bg-cyan-400 rounded-sm"
+          className="h-full bg-accent rounded-sm"
           style={{
             width: `${progressPercentage}%`,
           }}
         />
       </View>
-      <Text className="text-sm font-medium text-center text-[#E6FAFF]">
+      <Text className="text-sm font-medium text-center text-ink-secondary">
         Step {currentStep + 1} of {totalSteps}
       </Text>
     </View>

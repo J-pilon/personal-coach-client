@@ -182,7 +182,7 @@ export default function GoalDiscoveryStep({
           testID="goal-discovery-manual-fallback"
           className="p-4 mb-4 rounded-xl border border-amber-400 bg-slate-800"
         >
-          <Text className="mb-2 text-sm text-[#E6FAFF]">
+          <Text className="mb-2 text-sm text-ink-secondary">
             We&apos;re having trouble reaching the AI. You can write your goal
             yourself.
           </Text>
@@ -201,7 +201,7 @@ export default function GoalDiscoveryStep({
         <View>
           <TextInput
             testID="goal-discovery-input"
-            className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800 min-h-[80px]"
+            className="border border-accent rounded-lg p-3 text-base text-ink-secondary bg-slate-800 min-h-[80px]"
             placeholder="Type your reply…"
             placeholderTextColor="#708090"
             value={input}
@@ -225,7 +225,7 @@ export default function GoalDiscoveryStep({
         <View className="mt-3">
           <TextInput
             testID="goal-discovery-more-input"
-            className="border border-cyan-400 rounded-lg p-3 text-base text-[#E6FAFF] bg-slate-800"
+            className="border border-accent rounded-lg p-3 text-base text-ink-secondary bg-slate-800"
             placeholder="Ask me more questions…"
             placeholderTextColor="#708090"
             value={input}

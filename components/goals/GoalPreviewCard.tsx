@@ -13,10 +13,10 @@ export const GoalPreviewCard = ({
 }: GoalPreviewCardProps) => {
   const renderSmartCriteria = (label: string, value: string, testID: string) => (
     <View key={label}>
-      <Text className="mb-1 text-sm font-medium text-[#708090]">
+      <Text className="mb-1 text-sm font-medium text-ink-muted">
         {label}
       </Text>
-      <Text className="text-[#E6FAFF]" testID={testID}>
+      <Text className="text-ink-secondary" testID={testID}>
         {value}
       </Text>
     </View>
@@ -24,7 +24,7 @@ export const GoalPreviewCard = ({
 
   return (
     <View
-      className="p-6 mb-6 bg-[#2B42B6] rounded-2xl shadow-lg border border-[#33CFFF]"
+      className="p-6 mb-6 bg-surface-card rounded-2xl shadow-lg border border-accent"
       style={{
         shadowColor: '#274B8E',
         shadowOpacity: 0.10,
@@ -33,7 +33,7 @@ export const GoalPreviewCard = ({
       }}
       testID={testIDProp}
     >
-      <Text className="text-lg font-semibold text-[#F1F5F9] mb-4">
+      <Text className="text-lg font-semibold text-ink-primary mb-4">
         Your SMART Goal
       </Text>
 
@@ -44,7 +44,7 @@ export const GoalPreviewCard = ({
         {renderSmartCriteria('Relevant', goalData.relevant, `${testIDProp}-relevant`)}
 
         <View>
-          <Text className="text-[#E6FAFF]" testID={`${testIDProp}-time-bound`}>
+          <Text className="text-ink-secondary" testID={`${testIDProp}-time-bound`}>
             {goalData.time_bound}
           </Text>
         </View>

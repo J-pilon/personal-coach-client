@@ -54,41 +54,41 @@ function SmartGoalsContent() {
       <LinearGradient>
         <View className="flex-1 justify-center p-6">
           <View className="items-center mb-8">
-            <View className="p-6 mb-6 bg-cyan-400 rounded-full shadow-lg">
+            <View className="p-6 mb-6 bg-accent rounded-full shadow-lg">
               <Ionicons name="flag" size={80} color="#021A40" />
             </View>
-            <Text className="text-[28px] font-semibold text-center text-[#F1F5F9] mb-4 tracking-wide" testID="smart-goals-create-title">
+            <Text className="text-[28px] font-semibold text-center text-ink-primary mb-4 tracking-wide" testID="smart-goals-create-title">
               Set Your First Goal
             </Text>
-            <Text className="text-lg text-center text-[#E6FAFF] opacity-90 leading-6" testID="smart-goals-create-subtitle">
+            <Text className="text-lg text-center text-ink-secondary opacity-90 leading-6" testID="smart-goals-create-subtitle">
               In under 10 minutes we&apos;ll help you pick one meaningful goal, choose three small habits to support it, and commit to a first action for today.
             </Text>
           </View>
 
           <View className="mb-8">
-            <View className="bg-[#2B42B6] rounded-2xl p-6 shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
+            <View className="bg-surface-card rounded-2xl p-6 shadow-lg border border-accent" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
               <View className="mb-3">
                 <View className="flex-row items-center mb-3">
-                  <View className="p-2 mr-3 bg-cyan-400 rounded-full">
+                  <View className="p-2 mr-3 bg-accent rounded-full">
                     <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                   </View>
-                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-primary-goal">
+                  <Text className="text-ink-primary text-base font-semibold" testID="smart-goals-feature-primary-goal">
                     One primary goal to focus on
                   </Text>
                 </View>
                 <View className="flex-row items-center mb-3">
-                  <View className="p-2 mr-3 bg-cyan-400 rounded-full">
+                  <View className="p-2 mr-3 bg-accent rounded-full">
                     <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                   </View>
-                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-habits">
+                  <Text className="text-ink-primary text-base font-semibold" testID="smart-goals-feature-habits">
                     Three small supporting habits
                   </Text>
                 </View>
                 <View className="flex-row items-center">
-                  <View className="p-2 mr-3 bg-cyan-400 rounded-full">
+                  <View className="p-2 mr-3 bg-accent rounded-full">
                     <Ionicons name="checkmark-circle" size={20} color="#021A40" />
                   </View>
-                  <Text className="text-[#F1F5F9] text-base font-semibold" testID="smart-goals-feature-today">
+                  <Text className="text-ink-primary text-base font-semibold" testID="smart-goals-feature-today">
                     A first action committed for today
                   </Text>
                 </View>
@@ -97,11 +97,11 @@ function SmartGoalsContent() {
           </View>
 
           <Pressable
-            className="flex-row justify-center items-center px-8 py-5 bg-cyan-400 rounded-2xl shadow-lg"
+            className="flex-row justify-center items-center px-8 py-5 bg-accent rounded-2xl shadow-lg"
             onPress={handleStartOnboarding}
             testID="smart-goals-start-button"
           >
-            <Text className="text-[#021A40] font-semibold text-lg mr-2" testID="smart-goals-start-text">Start Onboarding</Text>
+            <Text className="text-ink-onAccent font-semibold text-lg mr-2" testID="smart-goals-start-text">Start Onboarding</Text>
             <Ionicons name="arrow-forward" size={20} color="#021A40" />
           </Pressable>
         </View>
@@ -126,8 +126,8 @@ function SmartGoalsContent() {
   if (error) {
     return (
       <LinearGradient>
-        <Text className="text-[#F1F5F9] text-lg text-center mb-4" testID="smart-goals-error-title">Failed to load goals</Text>
-        <Text className="text-[#E6FAFF] text-center mb-6" testID="smart-goals-error-message">
+        <Text className="text-ink-primary text-lg text-center mb-4" testID="smart-goals-error-title">Failed to load goals</Text>
+        <Text className="text-ink-secondary text-center mb-6" testID="smart-goals-error-message">
           {error instanceof Error ? error.message : 'Unknown error occurred'}
         </Text>
       </LinearGradient>
@@ -149,13 +149,13 @@ function SmartGoalsContent() {
   const renderGoal = (goal: any) => (
     <Pressable
       key={goal.id}
-      className="bg-[#2B42B6] rounded-2xl p-5 mb-4 shadow-lg border border-[#33CFFF]"
+      className="bg-surface-card rounded-2xl p-5 mb-4 shadow-lg border border-accent"
       style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}
       onPress={() => router.push(`/smartGoals/${goal.id}`)}
       testID={`smart-goals-goal-card-${goal.id}`}
     >
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-semibold text-[#F1F5F9] flex-1 mr-4" testID={`smart-goals-goal-title-${goal.id}`}>{goal.title}</Text>
+        <Text className="text-xl font-semibold text-ink-primary flex-1 mr-4" testID={`smart-goals-goal-title-${goal.id}`}>{goal.title}</Text>
         <View className="items-end gap-1">
           <View className={`px-3 py-1 rounded-full ${goal.completed ? 'bg-green-500' : 'bg-orange-500'}`}>
             <Text className="text-sm font-semibold text-white">
@@ -171,40 +171,40 @@ function SmartGoalsContent() {
       </View>
 
       <View className="mb-3">
-        <Text className="text-[#708090] text-sm font-medium mb-1">Specific:</Text>
-        <Text className="text-[#E6FAFF] text-base">{goal.specific}</Text>
+        <Text className="text-ink-muted text-sm font-medium mb-1">Specific:</Text>
+        <Text className="text-ink-secondary text-base">{goal.specific}</Text>
       </View>
 
       <View className="mb-3">
-        <Text className="text-[#708090] text-sm font-medium mb-1">Measurable:</Text>
-        <Text className="text-[#E6FAFF] text-base">{goal.measurable}</Text>
+        <Text className="text-ink-muted text-sm font-medium mb-1">Measurable:</Text>
+        <Text className="text-ink-secondary text-base">{goal.measurable}</Text>
       </View>
 
       <View className="mb-3">
-        <Text className="text-[#708090] text-sm font-medium mb-1">Achievable:</Text>
-        <Text className="text-[#E6FAFF] text-base">{goal.achievable}</Text>
+        <Text className="text-ink-muted text-sm font-medium mb-1">Achievable:</Text>
+        <Text className="text-ink-secondary text-base">{goal.achievable}</Text>
       </View>
 
       <View className="mb-3">
-        <Text className="text-[#708090] text-sm font-medium mb-1">Relevant:</Text>
-        <Text className="text-[#E6FAFF] text-base">{goal.relevant}</Text>
+        <Text className="text-ink-muted text-sm font-medium mb-1">Relevant:</Text>
+        <Text className="text-ink-secondary text-base">{goal.relevant}</Text>
       </View>
 
       <View>
-        <Text className="text-[#708090] text-sm font-medium mb-1">Time-bound:</Text>
-        <Text className="text-[#E6FAFF] text-base">{goal.time_bound}</Text>
+        <Text className="text-ink-muted text-sm font-medium mb-1">Time-bound:</Text>
+        <Text className="text-ink-secondary text-base">{goal.time_bound}</Text>
       </View>
     </Pressable>
   );
 
   const renderTimeframeSection = (timeframe: string, goals: any[]) => (
     <View key={timeframe} className="mb-8">
-      <Text className="text-2xl font-semibold text-[#F1F5F9] mb-4" testID={`smart-goals-timeframe-${timeframe}`}>
+      <Text className="text-2xl font-semibold text-ink-primary mb-4" testID={`smart-goals-timeframe-${timeframe}`}>
         {timeframeLabels[timeframe as keyof typeof timeframeLabels]} Goals
       </Text>
       {goals.length === 0 ? (
-        <View className="bg-[#2B42B6] rounded-2xl p-8 items-center shadow-lg border border-[#33CFFF]" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
-          <Text className="text-[#708090] text-lg text-center italic" testID={`smart-goals-empty-${timeframe}`}>
+        <View className="bg-surface-card rounded-2xl p-8 items-center shadow-lg border border-accent" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
+          <Text className="text-ink-muted text-lg text-center italic" testID={`smart-goals-empty-${timeframe}`}>
             No {timeframeLabels[timeframe as keyof typeof timeframeLabels].toLowerCase()} goals yet.
           </Text>
         </View>

@@ -49,17 +49,17 @@ export default function HomeScreen() {
   if (error) {
     return (
       <LinearGradient>
-        <Text className="text-[#F1F5F9] text-lg text-center mb-4" testID="home-error-title">
+        <Text className="text-ink-primary text-lg text-center mb-4" testID="home-error-title">
           Failed to load tasks
         </Text>
-        <Text className="text-[#E6FAFF] text-center mb-6" testID="home-error-message">
+        <Text className="text-ink-secondary text-center mb-6" testID="home-error-message">
           {error instanceof Error ? error.message : 'Unknown error occurred'}
         </Text>
         <Pressable
           onPress={() => refetch()}
-          className="bg-[#154FA6] px-6 py-3 rounded-lg"
+          className="bg-surface-muted px-6 py-3 rounded-lg"
         >
-          <Text className="text-[#021A40] font-semibold">Retry</Text>
+          <Text className="text-ink-onAccent font-semibold">Retry</Text>
         </Pressable>
       </LinearGradient>
     );
@@ -69,12 +69,12 @@ export default function HomeScreen() {
     <LinearGradient>
       <View className='flex-1'>
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-          <Text className="text-[28px] font-semibold mb-8 text-center text-[#F1F5F9] tracking-wide">Task List</Text>
+          <Text className="text-[28px] font-semibold mb-8 text-center text-ink-primary tracking-wide">Task List</Text>
 
           {tasks.length === 0 ? (
             <View className="flex-1 justify-center items-center py-20">
-              <Text className="text-[#E6FAFF] text-lg text-center mb-2" testID="home-empty-title">No tasks found</Text>
-              <Text className="text-[#708090] text-center" testID="home-empty-message">Create your first task to get started</Text>
+              <Text className="text-ink-secondary text-lg text-center mb-2" testID="home-empty-title">No tasks found</Text>
+              <Text className="text-ink-muted text-center" testID="home-empty-message">Create your first task to get started</Text>
             </View>
           ) : (
             groupedTasks.map(({ category, items }) => (

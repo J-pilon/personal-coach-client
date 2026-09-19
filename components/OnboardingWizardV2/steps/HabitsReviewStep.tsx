@@ -154,8 +154,8 @@ export default function HabitsReviewStep({
   return (
     <View>
       {habits.length === 0 && isLoading && (
-        <View className="p-4 mb-4 rounded-xl border border-cyan-400 bg-slate-800">
-          <Text className="text-sm text-[#E6FAFF]">
+        <View className="p-4 mb-4 rounded-xl border border-accent bg-slate-800">
+          <Text className="text-sm text-ink-secondary">
             Suggesting three starter habits…
           </Text>
         </View>
@@ -178,7 +178,7 @@ export default function HabitsReviewStep({
             onPress={handleRegenerateAll}
             disabled={regenerateUsed || isLoading}
             className={`flex-row items-center px-3 py-2 rounded-full border ${
-              regenerateUsed ? 'border-slate-600' : 'border-cyan-400'
+              regenerateUsed ? 'border-slate-600' : 'border-accent'
             }`}
           >
             <Ionicons
@@ -188,7 +188,7 @@ export default function HabitsReviewStep({
             />
             <Text
               className={`ml-1 text-xs font-semibold ${
-                regenerateUsed ? 'text-slate-500' : 'text-cyan-400'
+                regenerateUsed ? 'text-slate-500' : 'text-accent'
               }`}
             >
               Regenerate all

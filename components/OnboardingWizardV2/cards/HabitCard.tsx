@@ -12,7 +12,7 @@ interface HabitCardProps {
 }
 
 const inputClassName =
-  'border border-cyan-400 rounded-lg p-2 text-sm text-[#E6FAFF] bg-slate-800';
+  'border border-accent rounded-lg p-2 text-sm text-ink-secondary bg-slate-800';
 
 export default function HabitCard({
   habit,
@@ -31,11 +31,11 @@ export default function HabitCard({
   return (
     <View
       testID={testID ?? `habit-card-${habit.position}`}
-      className="p-4 mb-3 rounded-xl border border-cyan-400 bg-slate-800"
+      className="p-4 mb-3 rounded-xl border border-accent bg-slate-800"
     >
       <View className="flex-row justify-between items-center mb-2">
         <View className="flex-row items-center">
-          <Text className="mr-2 px-2 py-0.5 rounded-full bg-cyan-500 text-xs font-bold text-[#021A40]">
+          <Text className="mr-2 px-2 py-0.5 rounded-full bg-cyan-500 text-xs font-bold text-ink-onAccent">
             #{habit.position}
           </Text>
           {editing ? (
@@ -43,11 +43,11 @@ export default function HabitCard({
               testID={`habit-title-input-${habit.position}`}
               value={habit.title}
               onChangeText={(v) => set('title', v)}
-              className="flex-1 text-base font-bold text-[#E6FAFF]"
+              className="flex-1 text-base font-bold text-ink-secondary"
               placeholderTextColor="#708090"
             />
           ) : (
-            <Text className="flex-1 text-base font-bold text-[#E6FAFF]">
+            <Text className="flex-1 text-base font-bold text-ink-secondary">
               {habit.title}
             </Text>
           )}
@@ -113,10 +113,10 @@ export default function HabitCard({
           testID={`habit-swap-${habit.position}`}
           onPress={onSwap}
           disabled={isSwapping}
-          className="flex-row items-center self-start mt-3 px-3 py-1 rounded-full border border-cyan-400"
+          className="flex-row items-center self-start mt-3 px-3 py-1 rounded-full border border-accent"
         >
           <Ionicons name="swap-horizontal" size={14} color="#33CFFF" />
-          <Text className="ml-1 text-xs font-semibold text-cyan-400">
+          <Text className="ml-1 text-xs font-semibold text-accent">
             {isSwapping ? 'Swapping...' : 'Swap this'}
           </Text>
         </TouchableOpacity>

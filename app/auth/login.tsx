@@ -69,17 +69,17 @@ export default function LoginScreen() {
         >
           <View>
             <View className="mb-8">
-              <Text testID="login-title" className="text-[28px] font-semibold text-center text-[#F1F5F9] tracking-wide mb-2">
+              <Text testID="login-title" className="text-[28px] font-semibold text-center text-ink-primary tracking-wide mb-2">
                 Welcome Back
               </Text>
-              <Text testID="login-subtitle" className="text-center text-[#E6FAFF] text-lg">
+              <Text testID="login-subtitle" className="text-center text-ink-secondary text-lg">
                 Sign in to your account
               </Text>
             </View>
 
             <View className="mb-8">
               <View className="mb-4">
-                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                <Text className="mb-2 text-sm font-medium text-ink-secondary">
                   Email
                 </Text>
                 <Controller
@@ -88,7 +88,7 @@ export default function LoginScreen() {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextInput
                       testID="login-email-input"
-                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      className="px-4 py-4 w-full rounded-xl border border-surface-card bg-surface-input text-ink-primary placeholder:text-ink-muted"
                       placeholder="Enter your email"
                       value={value}
                       onChangeText={onChange}
@@ -113,7 +113,7 @@ export default function LoginScreen() {
               </View>
 
               <View>
-                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                <Text className="mb-2 text-sm font-medium text-ink-secondary">
                   Password
                 </Text>
                 <Controller
@@ -122,7 +122,7 @@ export default function LoginScreen() {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextInput
                       testID="login-password-input"
-                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      className="px-4 py-4 w-full rounded-xl border border-surface-card bg-surface-input text-ink-primary placeholder:text-ink-muted"
                       placeholder="Enter your password"
                       value={value}
                       onChangeText={onChange}
@@ -148,14 +148,14 @@ export default function LoginScreen() {
 
               <View className="items-end mt-3">
                 <TouchableOpacity testID="login-forgot-password-link" onPress={handleForgotPassword}>
-                  <Text className="text-sm font-semibold text-cyan-400">Forgot password?</Text>
+                  <Text className="text-sm font-semibold text-accent">Forgot password?</Text>
                 </TouchableOpacity>
               </View>
             </View>
 
             <TouchableOpacity
               testID="login-signin-button"
-              className={`w-full py-4 rounded-xl shadow-md mb-8 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-cyan-400'}`}
+              className={`w-full py-4 rounded-xl shadow-md mb-8 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-accent'}`}
               onPress={handleSubmit(onSubmit)}
               disabled={isLoading || !isValid}
               style={{
@@ -168,16 +168,16 @@ export default function LoginScreen() {
               {isLoading ? (
                 <ActivityIndicator testID="login-loading-indicator" color="#021A40" />
               ) : (
-                <Text className="text-lg font-semibold text-center text-[#021A40]">
+                <Text className="text-lg font-semibold text-center text-ink-onAccent">
                   Sign In
                 </Text>
               )}
             </TouchableOpacity>
 
             <View className="flex-row justify-center">
-              <Text className="text-[#E6FAFF]">Don&apos;t have an account? </Text>
+              <Text className="text-ink-secondary">Don&apos;t have an account? </Text>
               <TouchableOpacity testID="login-signup-link" onPress={handleSignUp}>
-                <Text className="font-semibold text-cyan-400">Sign Up</Text>
+                <Text className="font-semibold text-accent">Sign Up</Text>
               </TouchableOpacity>
             </View>
           </View>

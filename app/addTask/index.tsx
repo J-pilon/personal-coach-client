@@ -91,7 +91,7 @@ function AddTaskContent() {
                 name="title"
                 render={({ field: { value, onChange, onBlur } }) => (
                   <TextInput
-                    className="bg-[#2B42B6] rounded-2xl p-4 text-[#F1F5F9] text-base border border-[#274B8E]"
+                    className="bg-surface-card rounded-2xl p-4 text-ink-primary text-base border border-border-strong"
                     placeholder="Name"
                     placeholderTextColor="#708090"
                     value={value}
@@ -116,7 +116,7 @@ function AddTaskContent() {
                 name="description"
                 render={({ field: { value, onChange, onBlur } }) => (
                   <TextInput
-                    className="bg-[#2B42B6] rounded-2xl p-4 text-[#F1F5F9] text-base border border-[#274B8E]"
+                    className="bg-surface-card rounded-2xl p-4 text-ink-primary text-base border border-border-strong"
                     placeholder="Description (optional)"
                     placeholderTextColor="#708090"
                     value={value ?? ''}
@@ -149,7 +149,7 @@ function AddTaskContent() {
             />
 
             <View className="mb-5">
-              <Text className="text-[#E6FAFF] text-base mb-3 font-medium">Action Category:</Text>
+              <Text className="text-ink-secondary text-base mb-3 font-medium">Action Category:</Text>
               <Controller
                 control={control}
                 name="action_category"
@@ -160,15 +160,15 @@ function AddTaskContent() {
                         key={category}
                         onPress={() => onChange(category)}
                         className={`flex-1 py-2 px-3 rounded-lg border ${value === category
-                          ? 'border-cyan-400 bg-cyan-400'
-                          : 'border-[#708090] bg-[#13203a]'
+                          ? 'border-accent bg-accent'
+                          : 'border-border-muted bg-surface-input'
                           }`}
                         disabled={createTaskMutation.isPending}
                       >
                         <Text
                           className={`text-center font-medium capitalize ${value === category
-                            ? 'text-[#021A40]'
-                            : 'text-[#E6FAFF]'
+                            ? 'text-ink-onAccent'
+                            : 'text-ink-secondary'
                             }`}
                         >
                           {category}

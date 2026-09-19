@@ -6,6 +6,7 @@ import { LoadingSpinner } from '@/components/loading';
 import { useToast } from '@/components/ToastManager';
 import LinearGradient from '@/components/ui/LinearGradient';
 import ScrollView from '@/components/util/ScrollView';
+import { Colors } from '@/constants/Colors';
 import { useSmartGoal, useUpdateSmartGoal } from '@/hooks/useSmartGoals';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
@@ -50,10 +51,10 @@ function GoalDetailContent({ goalId }: { goalId: number }) {
     return (
       <LinearGradient>
         <View className="flex-1 justify-center items-center p-6">
-          <Text className="text-[#F1F5F9] text-lg text-center mb-4" testID="goal-detail-error-title">
+          <Text className="text-ink-primary text-lg text-center mb-4" testID="goal-detail-error-title">
             Could not load goal
           </Text>
-          <Text className="text-[#E6FAFF] text-center mb-6" testID="goal-detail-error-message">
+          <Text className="text-ink-secondary text-center mb-6" testID="goal-detail-error-message">
             {error instanceof Error ? error.message : 'Goal not found.'}
           </Text>
         </View>
@@ -111,10 +112,10 @@ function GoalDetailContent({ goalId }: { goalId: number }) {
   return (
     <LinearGradient>
       <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
-        <View className="bg-[#2B42B6] rounded-2xl p-5 mb-6 shadow-lg border border-[#33CFFF]" style={cardShadow}>
+        <View className="bg-surface-card rounded-2xl p-5 mb-6 shadow-lg border border-accent" style={cardShadow}>
           <View className="flex-row justify-between items-start mb-4">
             <Text
-              className="text-2xl font-semibold text-[#F1F5F9] flex-1 mr-4"
+              className="text-2xl font-semibold text-ink-primary flex-1 mr-4"
               testID="goal-detail-title"
             >
               {goal.title}
@@ -136,21 +137,21 @@ function GoalDetailContent({ goalId }: { goalId: number }) {
           {goal.target_date ? (
             <View className="flex-row items-center mb-3">
               <Ionicons name="calendar-outline" size={16} color="#E6FAFF" />
-              <Text className="text-[#E6FAFF] text-base ml-2" testID="goal-detail-target-date">
+              <Text className="text-ink-secondary text-base ml-2" testID="goal-detail-target-date">
                 Target: {formatTargetDate(goal.target_date)}
               </Text>
             </View>
           ) : null}
 
           {goal.description ? (
-            <Text className="text-[#E6FAFF] text-base mt-2" testID="goal-detail-description">
+            <Text className="text-ink-secondary text-base mt-2" testID="goal-detail-description">
               {goal.description}
             </Text>
           ) : null}
         </View>
 
-        <View className="bg-[#2B42B6] rounded-2xl p-5 mb-6 shadow-lg border border-[#33CFFF]" style={cardShadow}>
-          <Text className="text-lg font-semibold text-[#F1F5F9] mb-4">SMART Breakdown</Text>
+        <View className="bg-surface-card rounded-2xl p-5 mb-6 shadow-lg border border-accent" style={cardShadow}>
+          <Text className="text-lg font-semibold text-ink-primary mb-4">SMART Breakdown</Text>
           <SmartField label="Specific" value={goal.specific} testID="goal-detail-specific" />
           <SmartField label="Measurable" value={goal.measurable} testID="goal-detail-measurable" />
           <SmartField label="Achievable" value={goal.achievable} testID="goal-detail-achievable" />
@@ -167,14 +168,14 @@ function GoalDetailContent({ goalId }: { goalId: number }) {
           {updateMutation.isPending ? (
             <ActivityIndicator
               size="small"
-              color={goal.completed ? '#f97316' : 'white'}
+              color={goal.completed ? Colors.status.warning : 'white'}
               style={{ marginRight: 8 }}
             />
           ) : (
             <Ionicons
               name={goal.completed ? 'refresh-outline' : 'checkmark-circle-outline'}
               size={20}
-              color={goal.completed ? '#f97316' : 'white'}
+              color={goal.completed ? Colors.status.warning : 'white'}
               style={{ marginRight: 8 }}
             />
           )}
@@ -188,7 +189,7 @@ function GoalDetailContent({ goalId }: { goalId: number }) {
 
         <View className="mb-6">
           <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-xl font-semibold text-[#F1F5F9]" testID="goal-detail-open-heading">
+            <Text className="text-xl font-semibold text-ink-primary" testID="goal-detail-open-heading">
               Open Tasks ({openTasks.length})
             </Text>
           </View>
@@ -204,7 +205,7 @@ function GoalDetailContent({ goalId }: { goalId: number }) {
 
         {completedTasks.length > 0 ? (
           <View className="mb-6">
-            <Text className="text-xl font-semibold text-[#F1F5F9] mb-3" testID="goal-detail-completed-heading">
+            <Text className="text-xl font-semibold text-ink-primary mb-3" testID="goal-detail-completed-heading">
               Completed ({completedTasks.length})
             </Text>
             {completedTasks.map(task => <TaskRow key={task.id} task={task} muted />)}
@@ -227,8 +228,8 @@ function SmartField({ label, value, testID, last }: { label: string; value?: str
   if (!value) return null;
   return (
     <View className={last ? '' : 'mb-3'}>
-      <Text className="text-[#708090] text-sm font-medium mb-1">{label}:</Text>
-      <Text className="text-[#E6FAFF] text-base" testID={testID}>{value}</Text>
+      <Text className="text-ink-muted text-sm font-medium mb-1">{label}:</Text>
+      <Text className="text-ink-secondary text-base" testID={testID}>{value}</Text>
     </View>
   );
 }
@@ -236,20 +237,20 @@ function SmartField({ label, value, testID, last }: { label: string; value?: str
 function TaskRow({ task, muted }: { task: Task; muted?: boolean }) {
   return (
     <Pressable
-      className="flex-row justify-between items-center bg-[#2B42B6] rounded-xl p-4 mb-2 border border-[#33CFFF]"
+      className="flex-row justify-between items-center bg-surface-card rounded-xl p-4 mb-2 border border-accent"
       style={cardShadow}
       onPress={() => task.id && router.push(`/taskDetail/${task.id}`)}
       testID={`goal-detail-task-${task.id}`}
     >
       <View className="flex-1 mr-3">
         <Text
-          className={`text-base font-medium ${muted ? 'text-[#E6FAFF] opacity-70 line-through' : 'text-[#F1F5F9]'}`}
+          className={`text-base font-medium ${muted ? 'text-ink-secondary opacity-70 line-through' : 'text-ink-primary'}`}
           testID={`goal-detail-task-title-${task.id}`}
         >
           {task.title}
         </Text>
         {task.description ? (
-          <Text className="text-[#E6FAFF] text-sm mt-1 opacity-80" numberOfLines={2}>
+          <Text className="text-ink-secondary text-sm mt-1 opacity-80" numberOfLines={2}>
             {task.description}
           </Text>
         ) : null}
@@ -262,10 +263,10 @@ function TaskRow({ task, muted }: { task: Task; muted?: boolean }) {
 function EmptyTaskState({ message, testID }: { message: string; testID: string }) {
   return (
     <View
-      className="bg-[#2B42B6] rounded-2xl p-6 items-center border border-[#33CFFF]"
+      className="bg-surface-card rounded-2xl p-6 items-center border border-accent"
       style={cardShadow}
     >
-      <Text className="text-[#708090] text-base text-center italic" testID={testID}>
+      <Text className="text-ink-muted text-base text-center italic" testID={testID}>
         {message}
       </Text>
     </View>

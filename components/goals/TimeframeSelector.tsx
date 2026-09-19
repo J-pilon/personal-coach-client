@@ -17,7 +17,7 @@ export const TimeframeSelector = ({
 }: TimeframeSelectorProps) => {
   return (
     <View className="mb-8">
-      <Text className="text-lg font-semibold text-[#F1F5F9] mb-3">
+      <Text className="text-lg font-semibold text-ink-primary mb-3">
         What&apos;s your timeframe?
       </Text>
       <View className="gap-3">
@@ -25,8 +25,8 @@ export const TimeframeSelector = ({
           <Pressable
             key={option.value}
             className={`flex-row items-center p-4 rounded-2xl border-2 ${selectedTimeframe === option.value
-              ? 'border-[#33CFFF] bg-[#2B42B6]'
-              : 'border-[#708090] bg-[#13203a]'
+              ? 'border-accent bg-surface-card'
+              : 'border-border-muted bg-surface-input'
               }`}
             style={{
               shadowColor: '#274B8E',
@@ -39,8 +39,8 @@ export const TimeframeSelector = ({
           >
             <View
               className={`w-5 h-5 rounded-full border-2 mr-3 ${selectedTimeframe === option.value
-                ? 'border-[#33CFFF] bg-[#33CFFF]'
-                : 'border-[#708090]'
+                ? 'border-accent bg-[#33CFFF]'
+                : 'border-border-muted'
                 }`}
             >
               {selectedTimeframe === option.value && (
@@ -49,8 +49,8 @@ export const TimeframeSelector = ({
             </View>
             <Text
               className={`text-base ${selectedTimeframe === option.value
-                ? 'text-[#F1F5F9] font-semibold'
-                : 'text-[#E6FAFF]'
+                ? 'text-ink-primary font-semibold'
+                : 'text-ink-secondary'
                 }`}
             >
               {option.label}

@@ -30,12 +30,12 @@ export default function PrimaryButton({
 
   return (
     <TouchableOpacity
-      className={`flex-row items-center justify-center py-4 px-6 rounded-xl shadow-md ${isDisabled ? 'bg-[#808080]' : 'bg-cyan-400'} ${className}`}
+      className={`flex-row items-center justify-center py-4 px-6 rounded-xl shadow-md ${isDisabled ? 'bg-[#808080]' : 'bg-accent'} ${className}`}
       onPress={onPress}
       disabled={isDisabled}
       testID={testID}
     >
-      <Text className="text-lg font-semibold text-[#021A40]" testID="primary-button-text">
+      <Text className="text-lg font-semibold text-ink-onAccent" testID="primary-button-text">
         {displayText}
       </Text>
       {!isLoading && icon && (

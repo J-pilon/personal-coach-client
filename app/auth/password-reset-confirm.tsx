@@ -97,10 +97,10 @@ export default function PasswordResetConfirmScreen() {
         >
           <View>
             <View className="mb-8">
-              <Text testID="password-reset-confirm-title" className="text-[28px] font-semibold text-center text-[#F1F5F9] tracking-wide mb-2">
+              <Text testID="password-reset-confirm-title" className="text-[28px] font-semibold text-center text-ink-primary tracking-wide mb-2">
                 Enter Reset Code
               </Text>
-              <Text testID="password-reset-confirm-subtitle" className="text-center text-[#E6FAFF] text-lg">
+              <Text testID="password-reset-confirm-subtitle" className="text-center text-ink-secondary text-lg">
                 {email
                   ? `Enter the code we sent to ${email} and choose a new password.`
                   : 'Enter the code from your email and choose a new password.'}
@@ -109,7 +109,7 @@ export default function PasswordResetConfirmScreen() {
 
             <View className="mb-8">
               <View className="mb-4">
-                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                <Text className="mb-2 text-sm font-medium text-ink-secondary">
                   Reset Code
                 </Text>
                 <Controller
@@ -118,7 +118,7 @@ export default function PasswordResetConfirmScreen() {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextInput
                       testID="password-reset-confirm-code-input"
-                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      className="px-4 py-4 w-full rounded-xl border border-surface-card bg-surface-input text-ink-primary placeholder:text-ink-muted"
                       placeholder="Paste the code from your email"
                       value={value}
                       onChangeText={onChange}
@@ -142,7 +142,7 @@ export default function PasswordResetConfirmScreen() {
               </View>
 
               <View className="mb-4">
-                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                <Text className="mb-2 text-sm font-medium text-ink-secondary">
                   New Password
                 </Text>
                 <Controller
@@ -151,7 +151,7 @@ export default function PasswordResetConfirmScreen() {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextInput
                       testID="password-reset-confirm-password-input"
-                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      className="px-4 py-4 w-full rounded-xl border border-surface-card bg-surface-input text-ink-primary placeholder:text-ink-muted"
                       placeholder="Enter new password"
                       value={value}
                       onChangeText={onChange}
@@ -176,7 +176,7 @@ export default function PasswordResetConfirmScreen() {
               </View>
 
               <View>
-                <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+                <Text className="mb-2 text-sm font-medium text-ink-secondary">
                   Confirm Password
                 </Text>
                 <Controller
@@ -185,7 +185,7 @@ export default function PasswordResetConfirmScreen() {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextInput
                       testID="password-reset-confirm-confirmation-input"
-                      className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                      className="px-4 py-4 w-full rounded-xl border border-surface-card bg-surface-input text-ink-primary placeholder:text-ink-muted"
                       placeholder="Confirm new password"
                       value={value}
                       onChangeText={onChange}
@@ -212,7 +212,7 @@ export default function PasswordResetConfirmScreen() {
 
             <TouchableOpacity
               testID="password-reset-confirm-submit-button"
-              className={`w-full py-4 rounded-xl shadow-md mb-6 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-cyan-400'}`}
+              className={`w-full py-4 rounded-xl shadow-md mb-6 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-accent'}`}
               onPress={handleSubmit(onSubmit)}
               disabled={isLoading || !isValid}
               style={{
@@ -225,7 +225,7 @@ export default function PasswordResetConfirmScreen() {
               {isLoading ? (
                 <ActivityIndicator testID="password-reset-confirm-loading-indicator" color="#021A40" />
               ) : (
-                <Text className="text-lg font-semibold text-center text-[#021A40]">
+                <Text className="text-lg font-semibold text-center text-ink-onAccent">
                   Reset Password
                 </Text>
               )}
@@ -233,10 +233,10 @@ export default function PasswordResetConfirmScreen() {
 
             <View className="flex-row justify-between mb-2">
               <TouchableOpacity testID="password-reset-confirm-back-link" onPress={handleBackToLogin}>
-                <Text className="font-semibold text-cyan-400">Back to Sign In</Text>
+                <Text className="font-semibold text-accent">Back to Sign In</Text>
               </TouchableOpacity>
               <TouchableOpacity testID="password-reset-confirm-resend-link" onPress={handleResend} disabled={isResending}>
-                <Text className={`font-semibold ${isResending ? 'text-[#808080]' : 'text-cyan-400'}`}>
+                <Text className={`font-semibold ${isResending ? 'text-[#808080]' : 'text-accent'}`}>
                   {isResending ? 'Resending…' : 'Resend code'}
                 </Text>
               </TouchableOpacity>

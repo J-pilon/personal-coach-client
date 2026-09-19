@@ -71,16 +71,16 @@ export default function ForgotPasswordScreen() {
         >
           <View>
             <View className="mb-8">
-              <Text testID="forgot-password-title" className="text-[28px] font-semibold text-center text-[#F1F5F9] tracking-wide mb-2">
+              <Text testID="forgot-password-title" className="text-[28px] font-semibold text-center text-ink-primary tracking-wide mb-2">
                 Forgot Password
               </Text>
-              <Text testID="forgot-password-subtitle" className="text-center text-[#E6FAFF] text-lg">
+              <Text testID="forgot-password-subtitle" className="text-center text-ink-secondary text-lg">
                 Enter your email and we’ll send you a reset code.
               </Text>
             </View>
 
             <View className="mb-8">
-              <Text className="mb-2 text-sm font-medium text-[#E6FAFF]">
+              <Text className="mb-2 text-sm font-medium text-ink-secondary">
                 Email
               </Text>
               <Controller
@@ -89,7 +89,7 @@ export default function ForgotPasswordScreen() {
                 render={({ field: { value, onChange, onBlur } }) => (
                   <TextInput
                     testID="forgot-password-email-input"
-                    className="px-4 py-4 w-full rounded-xl border border-[#2B42B6] bg-[#13203a] text-[#F1F5F9] placeholder:text-[#708090]"
+                    className="px-4 py-4 w-full rounded-xl border border-surface-card bg-surface-input text-ink-primary placeholder:text-ink-muted"
                     placeholder="Enter your email"
                     value={value}
                     onChangeText={onChange}
@@ -115,7 +115,7 @@ export default function ForgotPasswordScreen() {
 
             <TouchableOpacity
               testID="forgot-password-submit-button"
-              className={`w-full py-4 rounded-xl shadow-md mb-8 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-cyan-400'}`}
+              className={`w-full py-4 rounded-xl shadow-md mb-8 ${isLoading || !isValid ? 'bg-[#808080]' : 'bg-accent'}`}
               onPress={handleSubmit(onSubmit)}
               disabled={isLoading || !isValid}
               style={{
@@ -128,7 +128,7 @@ export default function ForgotPasswordScreen() {
               {isLoading ? (
                 <ActivityIndicator testID="forgot-password-loading-indicator" color="#021A40" />
               ) : (
-                <Text className="text-lg font-semibold text-center text-[#021A40]">
+                <Text className="text-lg font-semibold text-center text-ink-onAccent">
                   Send Reset Code
                 </Text>
               )}
@@ -136,7 +136,7 @@ export default function ForgotPasswordScreen() {
 
             <View className="flex-row justify-center">
               <TouchableOpacity testID="forgot-password-back-link" onPress={handleBackToLogin}>
-                <Text className="font-semibold text-cyan-400">Cancel</Text>
+                <Text className="font-semibold text-accent">Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>

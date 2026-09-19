@@ -100,7 +100,7 @@ export default function LoadingSkeleton({
       {Array.from({ length: count }).map((_, index) => (
         <View
           key={index}
-          className="mb-4 bg-[#2B42B6]/10 rounded-2xl p-4 border border-[#33CFFF]/20"
+          className="mb-4 bg-surface-card/10 rounded-2xl p-4 border border-accent/20"
           testID={`${testID}-card-${index}`}
         >
           {/* Card header */}
@@ -151,7 +151,7 @@ export default function LoadingSkeleton({
       {Array.from({ length: count }).map((_, index) => (
         <View
           key={index}
-          className="flex-row items-center py-3 border-b border-[#33CFFF]/10"
+          className="flex-row items-center py-3 border-b border-accent/10"
           testID={`${testID}-list-item-${index}`}
         >
           <View

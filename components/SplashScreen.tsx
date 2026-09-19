@@ -50,28 +50,28 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
       >
         <View className="mb-12">
           <Text
-            className="text-5xl font-medium tracking-wide text-center text-cyan-400"
+            className="text-5xl font-medium tracking-wide text-center text-accent"
             testID="splash-app-title"
           >
             Personal Coach
           </Text>
           <Text
-            className="text-[#708090] text-center text-lg mt-2 tracking-wide"
+            className="text-ink-muted text-center text-lg mt-2 tracking-wide"
             testID="splash-app-tagline"
           >
             Turn intention into action
           </Text>
         </View>
 
-        <View className="bg-[#2B42B6]/20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-[#33CFFF]/20">
+        <View className="bg-surface-card/20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-accent/20">
           <Text
-            className="text-[#F1F5F9] text-2xl font-semibold text-center leading-relaxed mb-6 tracking-wide"
+            className="text-ink-primary text-2xl font-semibold text-center leading-relaxed mb-6 tracking-wide"
             testID="splash-quote-text"
           >
             &quot;{quote.text}&quot;
           </Text>
           <Text
-            className="text-[#E6FAFF] text-lg text-center font-medium tracking-wide"
+            className="text-ink-secondary text-lg text-center font-medium tracking-wide"
             testID="splash-quote-author"
           >
             — {quote.author}

@@ -48,10 +48,10 @@ function OnboardingContent() {
           {/* Header */}
           <View className="items-center mb-10">
             <Ionicons name="rocket" size={80} color={colors.tint} />
-            <Text className="text-[32px] font-bold text-center text-[#F1F5F9] mt-5 mb-2.5" testID="onboarding-welcome-title">
+            <Text className="text-[32px] font-bold text-center text-ink-primary mt-5 mb-2.5" testID="onboarding-welcome-title">
               Welcome to Personal Coach
             </Text>
-            <Text className="text-base text-center text-[#E6FAFF] opacity-70 leading-6" testID="onboarding-welcome-subtitle">
+            <Text className="text-base text-center text-ink-secondary opacity-70 leading-6" testID="onboarding-welcome-subtitle">
               Let&apos;s use AI to create your personalized SMART goals to achieve success
             </Text>
           </View>
@@ -60,35 +60,35 @@ function OnboardingContent() {
           <View className="mb-10">
             <View className="flex-row items-center mb-4">
               <Ionicons name="sparkles" size={24} color={colors.tint} />
-              <Text className="text-base text-[#F1F5F9] ml-3" testID="onboarding-feature-ai">
+              <Text className="text-base text-ink-primary ml-3" testID="onboarding-feature-ai">
                 AI-powered SMART goal creation
               </Text>
             </View>
             <View className="flex-row items-center mb-4">
               <Ionicons name="checkmark-circle" size={24} color={colors.tint} />
-              <Text className="text-base text-[#F1F5F9] ml-3" testID="onboarding-feature-clear-goals">
+              <Text className="text-base text-ink-primary ml-3" testID="onboarding-feature-clear-goals">
                 Set clear, measurable goals
               </Text>
             </View>
             <View className="flex-row items-center mb-4">
               <Ionicons name="checkmark-circle" size={24} color={colors.tint} />
-              <Text className="text-base text-[#F1F5F9] ml-3" testID="onboarding-feature-track-progress">
+              <Text className="text-base text-ink-primary ml-3" testID="onboarding-feature-track-progress">
                 Track your progress over time
               </Text>
             </View>
             <View className="flex-row items-center mb-4">
               <Ionicons name="checkmark-circle" size={24} color={colors.tint} />
-              <Text className="text-base text-[#F1F5F9] ml-3" testID="onboarding-feature-breakdown">
+              <Text className="text-base text-ink-primary ml-3" testID="onboarding-feature-breakdown">
                 Break down goals into actionable tasks
               </Text>
             </View>
           </View>
 
-          <View className="bg-[#2B42B6] p-5 rounded-xl mb-10 border border-[#33CFFF] shadow-md" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
-            <Text className="text-lg font-semibold text-[#F1F5F9] mb-2" testID="onboarding-smart-title">
+          <View className="bg-surface-card p-5 rounded-xl mb-10 border border-accent shadow-md" style={{ shadowColor: '#274B8E', shadowOpacity: 0.10, shadowRadius: 10, shadowOffset: { width: 0, height: 3 } }}>
+            <Text className="text-lg font-semibold text-ink-primary mb-2" testID="onboarding-smart-title">
               What are SMART Goals?
             </Text>
-            <Text className="text-sm text-[#E6FAFF] leading-5 opacity-80" testID="onboarding-smart-description">
+            <Text className="text-sm text-ink-secondary leading-5 opacity-80" testID="onboarding-smart-description">
               SMART goals are Specific, Measurable, Achievable, Relevant, and Time-bound objectives that help you focus your efforts and increase your chances of achieving what you want.
             </Text>
           </View>

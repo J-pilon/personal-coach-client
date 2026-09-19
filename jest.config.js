@@ -21,4 +21,6 @@ module.exports = {
   testTimeout: 10000, // 10 second timeout for individual tests
   // Force exit after tests complete to prevent hanging
   forceExit: true,
+  // Disable watchman to avoid sandbox permission issues
+  watchman: false,
 }; 

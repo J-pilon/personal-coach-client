@@ -15,12 +15,12 @@ export default function ChatBubble({ role, text, testID }: ChatBubbleProps) {
       className={`mb-3 max-w-[85%] p-3 rounded-2xl ${
         isUser
           ? 'self-end bg-cyan-500'
-          : 'self-start bg-slate-700 border border-cyan-400'
+          : 'self-start bg-slate-700 border border-accent'
       }`}
     >
       <Text
         className={`text-base ${
-          isUser ? 'text-[#021A40]' : 'text-[#E6FAFF]'
+          isUser ? 'text-ink-onAccent' : 'text-ink-secondary'
         }`}
       >
         {text}

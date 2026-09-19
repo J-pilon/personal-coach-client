@@ -111,7 +111,7 @@ export default function LoadingSpinner({
       {renderSpinner()}
       {text && (
         <Text
-          className={`${getTextSize()} text-[#F1F5F9] mt-3 text-center font-medium tracking-wide`}
+          className={`${getTextSize()} text-ink-primary mt-3 text-center font-medium tracking-wide`}
           testID={`${testID}-text`}
         >
           {text}
@@ -135,7 +135,7 @@ export default function LoadingSpinner({
   if (variant === 'card') {
     return (
       <View
-        className="bg-[#2B42B6]/20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-[#33CFFF]/20"
+        className="bg-surface-card/20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-accent/20"
         testID={testID}
       >
         {renderContent()}
@@ -150,7 +150,7 @@ export default function LoadingSpinner({
         {renderSpinner()}
         {text && (
           <Text
-            className={`${getTextSize()} text-[#708090] mt-2 text-center`}
+            className={`${getTextSize()} text-ink-muted mt-2 text-center`}
             testID={`${testID}-text`}
           >
             {text}

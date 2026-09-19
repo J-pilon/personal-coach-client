@@ -75,7 +75,7 @@ export function JournalEntryForm({
         <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 40 }}>
           <View className="gap-4">
             <Text
-              className="mt-6 mb-2 font-semibold text-center text-3xl text-[#F1F5F9]"
+              className="mt-6 mb-2 font-semibold text-center text-3xl text-ink-primary"
               testID="journal-form-heading"
             >
               {headingText}
@@ -97,7 +97,7 @@ export function JournalEntryForm({
                 name="title"
                 render={({ field: { value, onChange, onBlur } }) => (
                   <TextInput
-                    className="bg-[#2B42B6] rounded-2xl p-4 text-[#F1F5F9] text-base border border-[#274B8E]"
+                    className="bg-surface-card rounded-2xl p-4 text-ink-primary text-base border border-border-strong"
                     placeholder="Title"
                     placeholderTextColor="#708090"
                     value={value ?? ''}
@@ -129,7 +129,7 @@ export function JournalEntryForm({
                 name="body"
                 render={({ field: { value, onChange, onBlur } }) => (
                   <TextInput
-                    className="bg-[#2B42B6] rounded-2xl p-4 text-[#F1F5F9] text-base border border-[#274B8E] min-h-[180px]"
+                    className="bg-surface-card rounded-2xl p-4 text-ink-primary text-base border border-border-strong min-h-[180px]"
                     placeholder="Write your reflection…"
                     placeholderTextColor="#708090"
                     value={value}
