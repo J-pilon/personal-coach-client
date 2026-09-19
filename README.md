@@ -1,5 +1,29 @@
 ## Running development build with Metro bundler
-IMPORTANT: Until I find another way, use 'npx expo start --tunnel' to connect to the Metro bundler
+
+### Starting a Development Build on Device
+
+Build the app to a device:
+
+```bash
+npx expo run:ios --device
+```
+
+### Troubleshooting: "No development servers found"
+
+If you see "No development servers found" when opening the app:
+
+1. **Shake your phone** to open the dev menu
+2. Select **"Enter URL manually"** or **"Configure bundler"**
+3. Enter the Metro bundler URL:
+   - If on same WiFi: `http://10.0.0.238:8081` (use your Mac's local IP)
+   - If using tunnel: Use the tunnel URL shown in Metro terminal output
+
+**Why this happens:** The app's automatic discovery relies on the URI scheme being properly configured in the native build. If the scheme isn't found or network connectivity issues prevent auto-discovery, manual connection is required.
+
+**Finding your Mac's IP:**
+```bash
+ipconfig getifaddr en0
+```
 
 ## Toast notifications
 
