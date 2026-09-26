@@ -1,6 +1,6 @@
-import { API_BASE_URL } from '../constants/config';
-import { getAuthHeaders } from './api';
-import { getToastApi } from '../components/ToastManager';
+import { getToastApi } from "../components/ToastManager";
+import { API_BASE_URL } from "../constants/config";
+import { getAuthHeaders } from "./api";
 
 export interface ApiRequestOptions extends RequestInit {
   data?: any;
@@ -11,16 +11,40 @@ export interface ApiRequestOptions extends RequestInit {
 export interface ApiResponse<T> {
   data?: T;
   error?: string;
+  errorCode?: string;
+  errorDetails?: Record<string, any>;
   status: number;
 }
 
-const extractErrorMessage = (responseData: any, status: number, statusText: string): string => {
-  return (
-    responseData?.error ||
-    responseData?.status?.message ||
-    responseData?.message ||
-    `HTTP ${status}: ${statusText}`
-  );
+interface ErrorEnvelope {
+  code: string;
+  message: string;
+  details?: Record<string, any>;
+}
+
+interface ExtractedError {
+  message: string;
+  code?: string;
+  details?: Record<string, any>;
+}
+
+const extractError = (
+  responseData: any,
+  status: number,
+  statusText: string,
+): ExtractedError => {
+  // New error envelope format: { error: { code, message, details } }
+  if (responseData?.error && typeof responseData.error === "object") {
+    const errorEnv = responseData.error as ErrorEnvelope;
+    return {
+      message: errorEnv.message || `HTTP ${status}: ${statusText}`,
+      code: errorEnv.code,
+      details: errorEnv.details,
+    };
+  }
+
+  // Fallback to HTTP status for any other format
+  return { message: `HTTP ${status}: ${statusText}` };
 };
 
 const notifyError = (message: string, silent: boolean | undefined) => {
@@ -40,7 +64,7 @@ const notifyError = (message: string, silent: boolean | undefined) => {
  */
 export const apiRequest = async <T = any>(
   endpoint: string,
-  options: ApiRequestOptions = {}
+  options: ApiRequestOptions = {},
 ): Promise<ApiResponse<T>> => {
   const { data, params, silent, ...fetchOptions } = options;
 
@@ -65,7 +89,7 @@ export const apiRequest = async <T = any>(
     }
 
     const response = await fetch(url, {
-      method: options.method || (data ? 'POST' : 'GET'),
+      method: options.method || (data ? "POST" : "GET"),
       headers: {
         ...authHeaders,
         ...options.headers,
@@ -76,15 +100,15 @@ export const apiRequest = async <T = any>(
 
     // Handle 401 Unauthorized - token is invalid or expired
     if (response.status === 401) {
-      const { TokenManager } = await import('./api');
+      const { TokenManager } = await import("./api");
       const tokenManager = TokenManager.getInstance();
       await tokenManager.clearToken();
-      throw new Error('Authentication failed. Please sign in again.');
+      throw new Error("Authentication failed. Please sign in again.");
     }
 
     // Check if response has content and is JSON
-    const contentType = response.headers.get('content-type');
-    const hasContent = contentType && contentType.includes('application/json');
+    const contentType = response.headers.get("content-type");
+    const hasContent = contentType && contentType.includes("application/json");
 
     let responseData: any = undefined;
 
@@ -92,8 +116,8 @@ export const apiRequest = async <T = any>(
       try {
         responseData = await response.json();
       } catch (parseError) {
-        console.error('JSON parse error:', parseError);
-        const message = 'Invalid JSON response from server';
+        console.error("JSON parse error:", parseError);
+        const message = "Invalid JSON response from server";
         notifyError(message, silent);
         return {
           error: message,
@@ -103,10 +127,16 @@ export const apiRequest = async <T = any>(
     }
 
     if (!response.ok) {
-      const message = extractErrorMessage(responseData, response.status, response.statusText);
-      notifyError(message, silent);
+      const extracted = extractError(
+        responseData,
+        response.status,
+        response.statusText,
+      );
+      notifyError(extracted.message, silent);
       return {
-        error: message,
+        error: extracted.message,
+        errorCode: extracted.code,
+        errorDetails: extracted.details,
         status: response.status,
       };
     }
@@ -116,7 +146,7 @@ export const apiRequest = async <T = any>(
       status: response.status,
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Network error';
+    const message = error instanceof Error ? error.message : "Network error";
     notifyError(message, silent);
     return {
       error: message,
@@ -128,17 +158,19 @@ export const apiRequest = async <T = any>(
 /**
  * Convenience functions for common HTTP methods
  */
-export const apiGet = <T = any>(endpoint: string, params?: Record<string, string | number | boolean>) =>
-  apiRequest<T>(endpoint, { method: 'GET', params });
+export const apiGet = <T = any>(
+  endpoint: string,
+  params?: Record<string, string | number | boolean>,
+) => apiRequest<T>(endpoint, { method: "GET", params });
 
 export const apiPost = <T = any>(endpoint: string, data?: any) =>
-  apiRequest<T>(endpoint, { method: 'POST', data });
+  apiRequest<T>(endpoint, { method: "POST", data });
 
 export const apiPut = <T = any>(endpoint: string, data?: any) =>
-  apiRequest<T>(endpoint, { method: 'PUT', data });
+  apiRequest<T>(endpoint, { method: "PUT", data });
 
 export const apiPatch = <T = any>(endpoint: string, data?: any) =>
-  apiRequest<T>(endpoint, { method: 'PATCH', data });
+  apiRequest<T>(endpoint, { method: "PATCH", data });
 
 export const apiDelete = <T = any>(endpoint: string) =>
-  apiRequest<T>(endpoint, { method: 'DELETE' });
+  apiRequest<T>(endpoint, { method: "DELETE" });
